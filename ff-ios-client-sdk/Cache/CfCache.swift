@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 
 public protocol StorageRepositoryProtocol {
-	///Implementation of this method will `save` Codable value to cache and/or storage. Default implementation is CFCache.
+	///Implementation of this method will `save` Codable value to cache and/or storage. Default implementation is CfCache.
 	func saveValue<Value:Codable>(_ value:Value, key:String) throws
-	///Implementation of this method will `get` Codable value from cache and/or storage. Default implementation is CFCache.
+	///Implementation of this method will `get` Codable value from cache and/or storage. Default implementation is CfCache.
 	func getValue<Value:Codable>(forKey key: String) throws -> Value?
-	///Implementation of this method will `remove` Codable value from cache and/or storage. Default implementation is CFCache.
+	///Implementation of this method will `remove` Codable value from cache and/or storage. Default implementation is CfCache.
 	func removeValue(forKey key: String) throws
 }
 
-public final class CFCache: StorageRepositoryProtocol {
+public final class CfCache: StorageRepositoryProtocol {
 	///In-memory cache
 	var cache = [String:Any]()
 	public init(){

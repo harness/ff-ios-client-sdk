@@ -9,17 +9,17 @@ import Foundation
 class FeatureRepository {
 	var token: String
 	var storageSource: StorageRepositoryProtocol
-	var config:CFConfiguration
+	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
 	
-	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CFConfiguration?, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
+	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CfConfiguration?, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
 		self.token = token ?? ""
-		self.storageSource = storageSource ?? CFCache()
-		self.config = config ?? CFConfiguration.builder().build()
+		self.storageSource = storageSource ?? CfCache()
+		self.config = config ?? CfConfiguration.builder().build()
 		self.defaultAPIManager = defaultAPIManager
 	}
 	
-	/// Use this method to get `[Evaluation]` for a  target specified in `CFConfiguration` during the call to initialize `CFClient`.
+	/// Use this method to get `[Evaluation]` for a  target specified in `CfConfiguration` during the call to initialize `CfClient`.
 	/// - Parameters:
 	///   - onCompletion: completion block containing `[Evaluation]?` or `CFError?` from appropriate lower level methods.
 	func getEvaluations(onCompletion:@escaping(Result<[Evaluation], CFError>)->()) {
@@ -27,7 +27,7 @@ class FeatureRepository {
 		
 		Logger.log("Try to get ALL from CLOUD")
 		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.config.target, apiResponseQueue: .main) { (result) in
-			let allKey = CFConstants.Persistance.features(self.config.environmentId, self.config.target).value
+			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
 			switch result {
 				case .failure(let error):
 					Logger.log("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
@@ -43,7 +43,7 @@ class FeatureRepository {
 					Logger.log("SUCCESS: Got ALL from CLOUD")
 					
 					for eval in evaluations {
-						let key = CFConstants.Persistance.feature(self.config.environmentId, self.config.target, eval.flag).value
+						let key = CfConstants.Persistance.feature(self.config.environmentId, self.config.target, eval.flag).value
 						try? self.storageSource.saveValue(eval, key: key)
 					}
 					
@@ -53,14 +53,14 @@ class FeatureRepository {
 		}
 	}
 	
-	/// Use this method to get `Evaluation`for a  target specified in `CFConfiguration` during the call to initialize `CFClient`.
+	/// Use this method to get `Evaluation`for a  target specified in `CfConfiguration` during the call to initialize `CfClient`.
 	/// - Parameters:
 	///   - feature: `Feature ID`
 	///   - onCompletion: completion block containing `Evaluation?` or `CFError?` from appropriate lower level methods.
 	func getEvaluationById(_ evaluationId: String, target: String, useCache: Bool = false, onCompletion:@escaping(Result<Evaluation, CFError>)->()) {
 		if useCache {
 			do {
-				let key = CFConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
+				let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 				let evaluation: Evaluation? = try self.storageSource.getValue(forKey: key)
 				onCompletion(.success(evaluation!))
 			} catch {
@@ -71,7 +71,7 @@ class FeatureRepository {
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
 		defaultAPIManager.getEvaluationByIdentifier(environmentUUID: self.config.environmentId, feature: evaluationId, target: target, apiResponseQueue: .main) { (result) in
-			let key = CFConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
+			let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 			switch result {
 				case .failure(let error):
 					Logger.log("Failed getting |\(evaluationId)| from CLOUD. Try CACHE/STORAGE")
@@ -100,7 +100,7 @@ class FeatureRepository {
 	}
 	
 	private func updateAll(_ eval: Evaluation) {
-		let allKey = CFConstants.Persistance.features(self.config.environmentId, self.config.target).value
+		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
 		do {
 			let all: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
 			guard var evaluations = all else {return}

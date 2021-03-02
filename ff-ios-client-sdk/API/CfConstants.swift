@@ -1,5 +1,5 @@
 //
-//  CFConstants.swift
+//  CfConstants.swift
 //  CFiOSClient
 //
 //  Created by Dusan Juranovic on 14.1.21..
@@ -25,7 +25,7 @@ enum CFContentType: String
 	case textHtml = "text/html"
 }
 
-struct CFConstants
+struct CfConstants
 {
 	enum Persistance {
 		case feature(String, String, String)

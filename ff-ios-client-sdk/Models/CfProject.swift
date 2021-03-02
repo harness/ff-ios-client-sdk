@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public class CFProject:NSObject, Codable {
+@objc public class CfProject:NSObject, Codable {
 	public var projectIdentifier: String
 	public var organization: String
 	public var project: String

@@ -47,7 +47,7 @@ public enum EventType: Equatable {
 	}
 }
 
-public class CFClient {
+public class CfClient {
 	//MARK: - Private properties -
 	
 	private enum State {
@@ -66,7 +66,7 @@ public class CFClient {
 	private var lastEventId:String?
 	
 	///Cache and Storage provider used for in-memory and disk storage.
-	///- Defaults to `CFCache` if custom provider is not specified during CFClient initialization.
+	///- Defaults to `CfCache` if custom provider is not specified during CfClient initialization.
 	///- All providers must adopt `StorageRepositoryProtocol` in order to qualify.
 	private var storageSource: StorageRepositoryProtocol?
 	
@@ -85,18 +85,18 @@ public class CFClient {
 	
 	//MARK: - Internal properties -
 	
-	var configuration:CFConfiguration!
+	var configuration:CfConfiguration!
 	var authenticationManager: AuthenticationManagerProtocol!
 	var eventSourceManager: EventSourceManagerProtocol!
 	var onPollingResultCallback: ((Swift.Result<EventType, CFError>) -> ())?
 	
 	///Used for cloud communication
-	///Lazily instantiated during CFClient `initialize(clientID:config:cache:)` call, after it's dependencies are set.
+	///Lazily instantiated during CfClient `initialize(clientID:config:cache:)` call, after it's dependencies are set.
 	lazy var featureRepository = FeatureRepository(token: self.token, storageSource: self.storageSource, config: self.configuration)
 	
 	//MARK: - Public properties -
 	
-	public static var sharedInstance = CFClient()
+	public static var sharedInstance = CfClient()
 	
 	///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
 	public var isInitialized: Bool = false
@@ -122,12 +122,13 @@ public class CFClient {
 	///This method need to be run first, to initiate authorization.
 	/// - Parameters:
 	///   - clientId: `Client ID` / `apiKey`
-	///   - config: `CFConfiguration` to be used for Evaluation fetching
-	///   - cache: `StorageRepositoryProtocol`. Defaults to CFCache
+	///   - config: `CfConfiguration` to be used for Evaluation fetching
+	///   - cache: `StorageRepositoryProtocol`. Defaults to CfCache
 	/// - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
-	public func initialize(apiKey: String, configuration: CFConfiguration, cache: StorageRepositoryProtocol = CFCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
+	public func initialize(apiKey: String, configuration: CfConfiguration, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
 		self.configuration = configuration
-		OpenAPIClientAPI.basePath = configuration.baseUrl
+		OpenAPIClientAPI.configPath = configuration.configUrl
+		OpenAPIClientAPI.eventPath = configuration.eventUrl
 		let authRequest = AuthenticationRequest(apiKey: apiKey)
 		self.authenticate(authRequest, cache: cache) { (response) in
 			switch response {
@@ -152,7 +153,7 @@ public class CFClient {
 	/// 	 - `case` onPolling(`[Evaluation]?`)
 	///   - error: A `CFError`
 	public func registerEventsListener(_ events:[String] = ["*"], onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
-		let allKey = CFConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
+		let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
 		do {
 			let initialEvaluations: [Evaluation]? = try self.featureRepository.storageSource.getValue(forKey: allKey)
 			onCompletion(.success(EventType.onPolling(initialEvaluations)))
@@ -229,7 +230,7 @@ public class CFClient {
 	/// Initializes authentication and fetches initial Evaluations from the cloud, after successful  authorization.
 	/// - Parameters:
 	///   - authRequest: `apiKey`
-	///   - cache: Cache to be used. Defaults to internal `CFCache`.
+	///   - cache: Cache to be used. Defaults to internal `CfCache`.
 	///   - onCompletion: Completion block containing `Swift.Result<AuthenticationResponse, CFError>?`
 	private func authenticate(_ authRequest: AuthenticationRequest, cache: StorageRepositoryProtocol, onCompletion:@escaping(Swift.Result<Void, CFError>)->()) {
 		authenticationManager.authenticate(authenticationRequest: authRequest, apiResponseQueue: .main) { (response, error) in
@@ -241,12 +242,12 @@ public class CFClient {
 			}
 			Logger.log("AUTHENTICATION SUCCESS")
 			
-			//Set storage to provided cache or CFCache by default
+			//Set storage to provided cache or CfCache by default
 			self.storageSource = cache
 			
 			//Extract info from retrieved JWT
 			let dict = JWTDecoder().decode(jwtToken: response!.authToken)
-			let project = CFProject(dict:dict ?? [:])
+			let project = CfProject(dict:dict ?? [:])
 			self.isInitialized = true
 			self.configuration.environmentId = project.environment
 			self.token = response!.authToken
@@ -258,7 +259,7 @@ public class CFClient {
 			
 			//Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
-				let allKey = CFConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
+				let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
 				switch result {
 					case .success(let evaluations):
 						do {

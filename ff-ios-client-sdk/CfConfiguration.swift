@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// `CFConfiguration` is `required` in order to initialize the SDK.
+/// `CfConfiguration` is `required` in order to initialize the SDK.
 /// # Defaults: #
 /// - `baseUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
 /// - `streamEnabled`: `false`
@@ -28,8 +28,8 @@ public struct CFConfiguration {
 		self.target = target
 	}
 	
-	public static func builder() -> CFConfigurationBuilder {
-		return CFConfigurationBuilder()
+	public static func builder() -> CfConfigurationBuilder {
+		return CfConfigurationBuilder()
 	}
 }
 

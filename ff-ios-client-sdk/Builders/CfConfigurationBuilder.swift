@@ -1,5 +1,5 @@
 //
-//  CFConfigurationBuilder.swift
+//  CfConfigurationBuilder.swift
 //  CFiOSClient
 //
 //  Created by Dusan Juranovic on 19.1.21..
@@ -7,8 +7,8 @@
 
 import Foundation
 
-public class CFConfigurationBuilder {
-	var config : CFConfiguration!
+public class CfConfigurationBuilder {
+	var config : CfConfiguration!
 	private let minimumPollingInterval:TimeInterval = 60
 	
 	public init(){

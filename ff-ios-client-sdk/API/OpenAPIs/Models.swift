@@ -60,7 +60,7 @@ public enum CFError: Error {
 	case noDataError // 104
 	case storageError // 105
 	case streamError(StreamError) //106
-	case cacheError(CFCacheError)
+	case cacheError(CfCacheError)
 	
 	public var errorData: ErrorData {
 		switch self {
@@ -128,7 +128,7 @@ public enum CFError: Error {
 		}
 	}
 	
-	private func parseCacheError(_ cacheError: CFCacheError?) -> ErrorData {
+	private func parseCacheError(_ cacheError: CfCacheError?) -> ErrorData {
 		guard let cacheError = cacheError else {return ErrorData.defaultData}
 		switch cacheError {
 			case .fileAlreadyExists:
@@ -149,7 +149,7 @@ public enum CFError: Error {
 	}
 }
 
-public enum CFCacheError: Error {
+public enum CfCacheError: Error {
 	case fileAlreadyExists
 	case fileDoesNotExist
 	case invalidDirectory
