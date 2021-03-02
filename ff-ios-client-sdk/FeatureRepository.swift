@@ -29,7 +29,7 @@ class FeatureRepository {
 		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.config.target, apiResponseQueue: .main) { (result) in
 			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
 			switch result {
-				case .failure(let error):
+				case .failure(_):
 					Logger.log("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
 					do {
 						let evals: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
@@ -73,7 +73,7 @@ class FeatureRepository {
 		defaultAPIManager.getEvaluationByIdentifier(environmentUUID: self.config.environmentId, feature: evaluationId, target: target, apiResponseQueue: .main) { (result) in
 			let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 			switch result {
-				case .failure(let error):
+				case .failure(_):
 					Logger.log("Failed getting |\(evaluationId)| from CLOUD. Try CACHE/STORAGE")
 					do {
 						if let storedFeature: Evaluation? = try self.storageSource.getValue(forKey: key) {
