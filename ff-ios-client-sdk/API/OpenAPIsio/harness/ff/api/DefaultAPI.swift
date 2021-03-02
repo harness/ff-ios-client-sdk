@@ -35,7 +35,7 @@ open class DefaultAPI {
      */
     open class func authenticateWithRequestBuilder(authenticationRequest: AuthenticationRequest? = nil) -> RequestBuilder<AuthenticationResponse> {
         let path = "/client/auth"
-        let URLString = OpenAPIClientAPI.basePath + path
+        let URLString = OpenAPIClientAPI.configPath + path
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: authenticationRequest)
 
         let url = URLComponents(string: URLString)
@@ -84,7 +84,7 @@ open class DefaultAPI {
         let targetPreEscape = "\(APIHelper.mapValueToPathItem(target))"
         let targetPostEscape = targetPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{target}", with: targetPostEscape, options: .literal, range: nil)
-        let URLString = OpenAPIClientAPI.basePath + path
+        let URLString = OpenAPIClientAPI.configPath + path
         let parameters: [String:Any]? = nil
         
         let url = URLComponents(string: URLString)
@@ -128,7 +128,7 @@ open class DefaultAPI {
         let targetPreEscape = "\(APIHelper.mapValueToPathItem(target))"
         let targetPostEscape = targetPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{target}", with: targetPostEscape, options: .literal, range: nil)
-        let URLString = OpenAPIClientAPI.basePath + path
+        let URLString = OpenAPIClientAPI.configPath + path
         let parameters: [String:Any]? = nil
         
         let url = URLComponents(string: URLString)

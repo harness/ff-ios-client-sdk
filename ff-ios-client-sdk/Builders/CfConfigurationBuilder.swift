@@ -12,62 +12,86 @@ public class CfConfigurationBuilder {
 	private let minimumPollingInterval:TimeInterval = 60
 	
 	public init(){
-		self.config = CFConfiguration(baseUrl: CFConstants.Server.baseUrl,
+		self.config = CfConfiguration(configUrl: CfConstants.Server.configUrl,
+									  eventUrl: CfConstants.Server.eventUrl,
 									  streamEnabled: false,
+									  analyticsEnabled: true,
 									  pollingInterval: minimumPollingInterval,
 									  environmentId: "",
 									  target:"")
 	}
 	/**
-	Adds `baseUrl` to CFConfiguration
-	- Parameter baseUrl: `String`
+	Adds `configUrl` to CfConfiguration
+	- Parameter configUrl: `String`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setBaseUrl(_ baseUrl: String) -> CFConfigurationBuilder {
-		config.baseUrl = baseUrl
+	public func setConfigUrl(_ configUrl: String) -> CfConfigurationBuilder {
+		config.configUrl = configUrl
 		return self
 	}
 	/**
-	Adds `streamEnabled` flag  to CFConfiguration
+	Adds `eventUrl` to CfConfiguration
+	- Parameter eventUrl: `String`
+	- Note: `build()` needs to be called as the final method in the chain
+	*/
+	public func setEventUrl(_ eventUrl: String) -> CfConfigurationBuilder {
+		config.eventUrl = eventUrl
+		return self
+	}
+	/**
+	Adds `streamEnabled` flag  to CfConfiguration
 	- Parameter isEnabled: `Bool`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setStreamEnabled(_ isEnabled: Bool) -> CFConfigurationBuilder {
+	public func setStreamEnabled(_ isEnabled: Bool) -> CfConfigurationBuilder {
 		config.streamEnabled = isEnabled
 		return self
 	}
 	/**
-	Adds `pollingInterval`  to CFConfiguration
+	Adds `analyticsEnabled` flag  to CfConfiguration
+	- Parameter isEnabled: `Bool`
+	- Note: `build()` needs to be called as the final method in the chain
+	*/
+	public func setAnalyticsEnabled(_ isEnabled: Bool) -> CfConfigurationBuilder {
+		config.analyticsEnabled = isEnabled
+		return self
+	}
+	/**
+	Adds `pollingInterval`  to CfConfiguration
 	- Parameter interval: `TimeInterval`. Minimum 60 seconds.
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setPollingInterval(_ interval: TimeInterval) -> CFConfigurationBuilder {
+	public func setPollingInterval(_ interval: TimeInterval) -> CfConfigurationBuilder {
 		config.pollingInterval = interval < minimumPollingInterval ? minimumPollingInterval : interval
 		return self
 	}
 	/**
-	Adds `target`  to CFConfiguration
+	Adds `target`  to CfConfiguration
 	- Parameter target: `String`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setTarget(_ target: String) -> CFConfigurationBuilder {
+	public func setTarget(_ target: String) -> CfConfigurationBuilder {
 		config.target = target
 		return self
 	}
 	/**
-	Builds CFConfiguration object by providing components or is set to default component/s.
-	- `setBaseUrl(_:)`
+	Builds CfConfiguration object by providing components or is set to default component/s.
+	- `setConfigUrl(_:)`
+	- `setEventUrl(_:)`
 	- `setStreamEnabled(_:)`
+	- `setAnalyticsEnabled(_:)`
 	- `setPollingInterval(_:)`
 	- `setTarget(_:)`
 	
 	# Defaults: #
-	- `baseUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
+	- `configUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
+	- `eventUrl`:  "https://event.feature-flags.uat.harness.io/api/1.0"
 	- `streamEnabled`: `false`
+	- `analyticsEnabled`: `true`
 	- `pollingInterval`: `60` seconds
 	- `target`: `""`
 	*/
-	public func build() -> CFConfiguration {
+	public func build() -> CfConfiguration {
 		return config
 	}
 }

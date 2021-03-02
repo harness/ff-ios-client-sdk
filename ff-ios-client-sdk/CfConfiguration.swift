@@ -9,20 +9,26 @@ import Foundation
 
 /// `CfConfiguration` is `required` in order to initialize the SDK.
 /// # Defaults: #
-/// - `baseUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
+/// - `configUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
+/// - `eventUrl`:  "https://event.feature-flags.uat.harness.io/api/1.0"
 /// - `streamEnabled`: `false`
+/// - `analyticsEnabled`: `true`
 /// - `pollingInterval`: `60` seconds
 /// - `target`: `""`
-public struct CFConfiguration {
-	var baseUrl: String
+public struct CfConfiguration {
+	var configUrl: String
+	var eventUrl: String
 	var streamEnabled: Bool
+	var analyticsEnabled: Bool
 	var pollingInterval: TimeInterval
 	var environmentId: String
 	var target: String
 	
-	internal init(baseUrl: String, streamEnabled: Bool, pollingInterval:TimeInterval, environmentId: String, target: String) {
-		self.baseUrl = baseUrl
+	internal init(configUrl: String, eventUrl: String, streamEnabled: Bool, analyticsEnabled: Bool, pollingInterval:TimeInterval, environmentId: String, target: String) {
+		self.configUrl = configUrl
+		self.eventUrl = eventUrl
 		self.streamEnabled = streamEnabled
+		self.analyticsEnabled = analyticsEnabled
 		self.pollingInterval = pollingInterval
 		self.environmentId = environmentId
 		self.target = target
