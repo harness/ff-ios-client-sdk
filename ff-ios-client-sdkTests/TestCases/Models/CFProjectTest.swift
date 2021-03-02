@@ -1,5 +1,5 @@
 //
-//  CFProjectTest.swift
+//  CfProjectTest.swift
 //  ff_ios_client_sdkTests
 //
 //  Created by Dusan Juranovic on 6.2.21..
@@ -8,9 +8,9 @@
 import XCTest
 @testable import ff_ios_client_sdk
 
-class CFProjectTest: XCTestCase {
+class CfProjectTest: XCTestCase {
     
-    var sut: CFProject!
+    var sut: CfProject!
     
     override func setUp() {
         super.setUp()
@@ -21,7 +21,7 @@ class CFProjectTest: XCTestCase {
     }
     
     func testInit() {
-        sut = .init(dict: CFProjectMocks.projectInitDict)
+        sut = .init(dict: CfProjectMocks.projectInitDict)
         XCTAssertNotNil(sut)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  CFCacheTests.swift
+//  CfCacheTests.swift
 //  ff_ios_client_sdkTests
 //
 //  Created by Dusan Juranovic on 1.2.21..
@@ -8,13 +8,13 @@
 import XCTest
 @testable import ff_ios_client_sdk
 
-class CFCacheTest: XCTestCase {
+class CfCacheTest: XCTestCase {
 	let key = "dummy-key"
-	var sut: CFCache!
+	var sut: CfCache!
 	
 	override func setUp() {
 		super.setUp()
-		sut = CFCache()
+		sut = CfCache()
 	}
 	
 	override func tearDown() {
@@ -23,7 +23,7 @@ class CFCacheTest: XCTestCase {
 	}
 	
 	func testInit() {
-		XCTAssertTrue(type(of: sut) === CFCache.self)
+		XCTAssertTrue(type(of: sut) === CfCache.self)
 	}
 	
 	//MARK: Writing Tests

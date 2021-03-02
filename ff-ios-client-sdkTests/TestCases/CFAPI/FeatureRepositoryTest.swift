@@ -15,7 +15,7 @@ class FeatureRepositoryTest: XCTestCase {
 	var expectation: XCTestExpectation!
     override func setUp() {
         super.setUp()
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		sut = FeatureRepository(token: nil, storageSource: mockCache, config: config)
 		sut!.defaultAPIManager = DefaultAPIManagerMock()
@@ -30,14 +30,14 @@ class FeatureRepositoryTest: XCTestCase {
     func testInitDefaultRepository() {
 		// Given
 		let token = "SomeTestToken"
-		let config = CFConfiguration.builder().build()
+		let config = CfConfiguration.builder().build()
 		
 		// When
 		let defaultRepo = FeatureRepository(token: token, storageSource: mockCache, config: config)
 		
 		// Then
 		XCTAssertEqual(defaultRepo.token, token)
-		XCTAssertEqual(defaultRepo.config.baseUrl, config.baseUrl)
+		XCTAssertEqual(defaultRepo.config.configUrl, config.configUrl)
 		XCTAssertEqual(defaultRepo.config.environmentId, config.environmentId)
 		XCTAssertEqual(defaultRepo.config.target, config.target)
 		XCTAssertEqual(defaultRepo.config.pollingInterval, config.pollingInterval)
@@ -76,7 +76,7 @@ class FeatureRepositoryTest: XCTestCase {
 		let manager = operation?.defaultAPIManager as! DefaultAPIManagerMock
 		manager.replacementEnabled = true
 		sut?.config.target = "success"
-		let allKey = CFConstants.Persistance.features("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "success").value
+		let allKey = CfConstants.Persistance.features("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "success").value
 		let initialEvals = CacheMocks.createAllTypeFlagMocks()
 		var callbackCalled = false
 		var fetchedEval: Evaluation?
@@ -124,7 +124,7 @@ class FeatureRepositoryTest: XCTestCase {
 		let eval = CacheMocks.createFlagMocks(count: 1).first!
 		let target = "success"
 		var callbackCalled = false
-		let key = CFConstants.Persistance.feature("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", target, eval.flag).value
+		let key = CfConstants.Persistance.feature("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", target, eval.flag).value
 		try? operation!.storageSource.saveValue(eval, key: key)
 		
 		// When
@@ -183,7 +183,7 @@ class FeatureRepositoryTest: XCTestCase {
 		let operation = sut
 		let eval = CacheMocks.createEvalForStringType(CacheMocks.TestFlagValue(.string).key)!
 		operation?.config.target = "cloud_failure_cache_failure"
-		let key = CFConstants.Persistance.feature("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "cloud_failure_cache_failure", eval.flag).value
+		let key = CfConstants.Persistance.feature("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "cloud_failure_cache_failure", eval.flag).value
 		try? operation?.storageSource.saveValue(eval, key: key)
 		
 		// When
