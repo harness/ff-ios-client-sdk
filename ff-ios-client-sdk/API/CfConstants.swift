@@ -1,6 +1,6 @@
 //
 //  CfConstants.swift
-//  CFiOSClient
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 14.1.21..
 //

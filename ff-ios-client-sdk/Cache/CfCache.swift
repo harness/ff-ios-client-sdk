@@ -1,6 +1,6 @@
 //
-//  CFCache.swift
-//  CFiOSClient
+//  CfCache.swift
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 28.1.21..
 //

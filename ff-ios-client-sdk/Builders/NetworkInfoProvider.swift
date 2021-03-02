@@ -1,6 +1,6 @@
 //
 //  NetworkInfoProvider.swift
-//  CFiOSClient
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 15.2.21..
 //

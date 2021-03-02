@@ -1,6 +1,6 @@
 //
-//  CFClient.swift
-//  CFiOSClient
+//  CfClient.swift
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 13.1.21..
 //

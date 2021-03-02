@@ -1,6 +1,6 @@
 //
 //  CfConfigurationBuilder.swift
-//  CFiOSClient
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 19.1.21..
 //

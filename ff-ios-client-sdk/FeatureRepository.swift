@@ -1,6 +1,6 @@
 //
 //  FeatureRepository.swift
-//  CFiOSClient
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 2.2.21..
 //
