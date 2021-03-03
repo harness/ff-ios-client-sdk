@@ -96,7 +96,19 @@ public class CfClient {
 	
 	//MARK: - Public properties -
 	
-	public static var sharedInstance = CfClient()
+	struct Static {
+		fileprivate static var instance: CfClient?
+	}
+	public static var sharedInstance: CfClient {
+		if Static.instance == nil {
+			Static.instance = CfClient()
+		}
+		return Static.instance!
+	}
+	
+	func dispose() {
+		CfClient.Static.instance = nil
+	}
 	
 	///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
 	public var isInitialized: Bool = false
@@ -220,9 +232,20 @@ public class CfClient {
 		}
 	}
 	
+	/**
+	 Clears the occupied resources and shuts down the sdk.
+	 After calling this method, the [intialize](x-source-tag://initialize) must be called again. It will also
+	 remove any registered event listeners.
+	*/
 	public func destroy() {
-		self.disconnectStream()
-		self.stopPolling()
+		self.eventSourceManager.destroy()
+		self.setupFlowFor(.offline)
+		self.configuration.streamEnabled = false
+		self.isInitialized = false
+		self.lastEventId = nil
+		self.onPollingResultCallback = nil
+		self.featureRepository.defaultAPIManager = nil
+		CfClient.sharedInstance.dispose()
 	}
 	
 	//MARK: - Private methods -
@@ -258,7 +281,8 @@ public class CfClient {
 			self.featureRepository.config = self.configuration
 			
 			//Initial getEvaluations to be stored in cache
-			self.featureRepository.getEvaluations(onCompletion: { (result) in
+			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
+				guard let self = self else {return}
 				let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
 				switch result {
 					case .success(let evaluations):
@@ -316,7 +340,11 @@ public class CfClient {
 	}
 	
 	private func registerForNetworkConditionNotifications() {
-		self.networkInfoProvider?.networkStatus { (isOnline) in
+		if self.networkInfoProvider?.isReachable == true {
+			self.setupFlowFor(.onlineStreaming)
+		}
+		self.networkInfoProvider?.networkStatus { [weak self] (isOnline) in
+			guard let self = self else {return}
 			self.pollingEnabled = isOnline
 			if isOnline {
 				if self.configuration.streamEnabled {
@@ -336,8 +364,7 @@ public class CfClient {
 	///   - events: Optional `[String]`
 	///   - onCompletion: completion block containing `Swift.Result<EventType, CFError>`
 	private func startStream(_ events:[String], onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
-		let stream = eventSourceManager!
-		registerStreamCallbacks(from: stream, environmentId: self.configuration!.environmentId, events: events) { (eventType, error) in
+		registerStreamCallbacks(environmentId: self.configuration!.environmentId, events: events) { (eventType, error) in
 			guard error == nil else {
 				onCompletion(.failure(error!))
 				return
@@ -346,9 +373,9 @@ public class CfClient {
 		}
 	}
 	
-	private func registerStreamCallbacks(from eventSource:EventSourceManagerProtocol, environmentId: String, events:[String], onEvent:@escaping(EventType, CFError?)->()) {
+	private func registerStreamCallbacks(environmentId: String, events:[String], onEvent:@escaping(EventType, CFError?)->()) {
 		//ON OPEN
-		eventSource.onOpen() {
+		eventSourceManager.onOpen() {
 			Logger.log("SSE connection has been opened")
 			onEvent(EventType.onOpen, nil)
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
@@ -364,7 +391,7 @@ public class CfClient {
 		}
 		
 		//ON COMPLETE
-		eventSource.onComplete() {(statusCode, retry, error) in
+		eventSourceManager.onComplete() {(statusCode, retry, error) in
 			self.setupFlowFor(.onlinePolling)
 			guard error == nil else {
 				onEvent(EventType.onComplete, error)
@@ -374,7 +401,7 @@ public class CfClient {
 		}
 		
 		//ON MESSAGE
-		eventSource.onMessage() {(id, event, data) in
+		eventSourceManager.onMessage() {(id, event, data) in
 			print("Got message with empty data \(Date())")
 			guard let stringData = data else {
 				onEvent(EventType.onMessage(Message(event: "message", domain: "", identifier: "", version: 0)), nil)
@@ -391,7 +418,8 @@ public class CfClient {
 		
 		for event in events {
 			//ON EVENT
-			eventSource.addEventListener(event) { (id, event, data) in
+			eventSourceManager.addEventListener(event) { [weak self] (id, event, data) in
+				guard let self = self else {return}
 				Logger.log("An Event has been received")
 				guard let stringData = data else {
 					onEvent(EventType.onEventListener(nil), CFError.noDataError)
