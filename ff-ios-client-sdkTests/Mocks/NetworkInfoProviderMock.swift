@@ -21,6 +21,10 @@ class ReachabilityMock {
 	}
 }
 class NetworkInfoProviderMock: NetworkInfoProviderProtocol {
+	var isReachable: Bool {
+		return true
+	}
+	
 	private var reachability = ReachabilityMock()
 	
 	func networkStatus(_ completion:@escaping(Bool)->()) {

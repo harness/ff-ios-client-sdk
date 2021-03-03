@@ -26,7 +26,8 @@ class FeatureRepository {
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
-		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.config.target, apiResponseQueue: .main) { (result) in
+		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.config.target, apiResponseQueue: .main) { [weak self] (result) in
+			guard let self = self else {return}
 			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
 			switch result {
 				case .failure(_):
@@ -70,7 +71,8 @@ class FeatureRepository {
 		}
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
-		defaultAPIManager.getEvaluationByIdentifier(environmentUUID: self.config.environmentId, feature: evaluationId, target: target, apiResponseQueue: .main) { (result) in
+		defaultAPIManager.getEvaluationByIdentifier(environmentUUID: self.config.environmentId, feature: evaluationId, target: target, apiResponseQueue: .main) { [weak self] (result) in
+			guard let self = self else {return}
 			let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 			switch result {
 				case .failure(_):

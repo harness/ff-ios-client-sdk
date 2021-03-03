@@ -19,6 +19,7 @@ protocol EventSourceManagerProtocol {
 	func addEventListener(_ event: String, completion:@escaping(String?, String?, String?)->())
 	func connect(lastEventId: String?)
 	func disconnect()
+	func destroy()
 }
 
 class EventSourceManager: EventSourceManagerProtocol {
@@ -98,6 +99,12 @@ class EventSourceManager: EventSourceManagerProtocol {
 	}
 	func disconnect() {
 		eventSource?.disconnect()
+	}
+	
+	func destroy() {
+		eventSource?.removeEventListener("*")
+		disconnect()
+		eventSource = nil
 	}
 
 }

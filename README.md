@@ -3,7 +3,7 @@
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 
 ---
-[Harness](https://www.harness.io/) is a feature management platform that helps teams to build better software and enable features faster.
+[Harness](https://www.harness.io/) is a feature management platform that helps teams to build better software and to test features quicker.
 &nbsp;
 # _Installing the `ff-ios-client-sdk`_
 Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM)`
@@ -47,7 +47,6 @@ Upon successful initialization and authorization, the completion block of `CfCli
 
 &nbsp;
 ### <u>_initialize(apiKey:configuration:cache:onCompletion:)_</u>
-_Code example:_
 ```Swift
 let configuration = CfConfiguration.builder().setStreamEnabled(true).setTarget("Your_Account_Identifier").build()
 CfClient.sharedInstance.initialize(apiKey: "YOUR_API_KEY", configuration: configuration) { (result) in
@@ -68,6 +67,8 @@ Please note that all of the below methods are called on `CfClient.sharedInstance
 
 * `public func registerEventsListener(events:onCompletion:)` -> Called in the ViewController where you would like to receive the events. `(Mandatory)`
 
+* `public func destroy()`
+
 	### Fetching from cache methods
 	---
 * `public func stringVariation(evaluationId:target:defaultValue:completion:)`
@@ -86,8 +87,6 @@ In order to be notified of the SSE events sent from the server, you need to call
 <u style="color:red">**NOTE**</u>: Registering to events is usually done in `viewDidLoad()` method when events are required in only one ViewController _OR_ `viewDidAppear()` if there are more than one registration calls throughout the app, so the events could be re-registered for the currently visible ViewController.
 
 The completion block of this method will deliver `Swift.Result<EventType, CFError>` object. You can use `switch` statement within it's `.success(EventType)` case to distinguish which event has been received and act accordingly as in the example below or handle the error gracefully from it's `.failure(CFError)` case.
-
-_Code example:_
 ```Swift
 CfClient.sharedInstance.registerEventsListener() { (result) in
 	switch result {
@@ -111,14 +110,11 @@ CfClient.sharedInstance.registerEventsListener() { (result) in
 	}
 }
 ```
-
 ## _Fetching from cache methods_
-
 The following methods can be used to fetch an Evaluation from cache, by it's known key. Completion handler delivers `Evaluation` result. If `defaultValue` is specified, it will be returned if key does not exist. If `defaultValue` is omitted, `nil` will be delivered in the completion block. 
 
 Use appropriate method to fetch the desired Evaluation of a certain type.
 ### <u>_stringVariation(forKey:target:defaultValue:completion:)_</u>
-_Code example:_
 ```Swift
 CfClient.sharedInstance.stringVariation("your_evaluation_id", defaultValue: String?) { (evaluation) in
 	//Make use of the fetched `String` Evaluation
@@ -148,3 +144,10 @@ CfClient.sharedInstance.jsonVariation("your_evaluation_id", defaultValue: [Strin
 * `ValueType.string(String)`
 * `ValueType.int(Int)`
 * `ValueType.object([String:ValueType])`
+
+## _Shutting down the SDK_
+### <u>_destroy()_</u>
+To avoid potential memory leak, when SDK is no longer needed (when the app is closed, for example), a caller should call this method.
+```Swift
+CfClient.sharedInstance.destroy() 
+```

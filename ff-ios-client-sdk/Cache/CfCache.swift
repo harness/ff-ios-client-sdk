@@ -70,12 +70,8 @@ public final class CfCache: StorageRepositoryProtocol {
 		guard let url = makeURL(forFileNamed: name) else {
 			throw CFError.cacheError(.invalidDirectory)
 		}
-		do {
-			let data = try JSONEncoder().encode(feature)
-			try data.write(to: url, options: .atomic)
-		} catch {
-			throw error
-		}
+		let data = try! JSONEncoder().encode(feature)
+		try data.write(to: url, options: .atomic)
 	}
 	
 	private func readFromDisk<Value:Codable>(_ name: String, using fileManager: FileManager = .default) throws -> Value? {

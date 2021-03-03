@@ -25,7 +25,7 @@ class RegisterForEventsTest: XCTestCase {
 
 		cfClient.featureRepository = repository
 		cfClient.configuration = config
-		
+		cfClient.isInitialized = true
 		cfClient.eventSourceManager = EventSourceManagerMock.shared()
 	}
 	
@@ -212,5 +212,24 @@ class RegisterForEventsTest: XCTestCase {
 		
 		// Then
 		XCTAssertTrue(callbackCalled)
+	}
+	
+	func testDestroy() {
+		// Given
+		cfClient.configuration.streamEnabled = true
+		cfClient.isInitialized = true
+		cfClient.onPollingResultCallback = {(result) in
+			// Then pre destroy
+			XCTAssertNotNil(result)
+		}
+		
+		// When
+		cfClient.onPollingResultCallback?(.success(.onOpen))
+		cfClient.destroy()
+		
+		// Then
+		XCTAssertFalse(cfClient.configuration.streamEnabled)
+		XCTAssertFalse(cfClient.isInitialized)
+		XCTAssertNil(cfClient.onPollingResultCallback)
 	}
 }
