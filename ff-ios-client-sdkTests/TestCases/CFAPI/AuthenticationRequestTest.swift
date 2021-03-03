@@ -126,7 +126,7 @@ class AuthenticationRequestTest: XCTestCase {
 		cfClient.featureRepository.config = config
 		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
-		cfClient.stringVariation(eval.flag, target: config.target, defaultValue: "defaultString") { (evaluation) in
+		cfClient.stringVariation(evaluationId: eval.flag, target: config.target, defaultValue: "defaultString") { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -150,7 +150,7 @@ class AuthenticationRequestTest: XCTestCase {
 		cfClient.featureRepository.config = config
 		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
-		cfClient.boolVariation(eval.flag, target: config.target, defaultValue: false) { (evaluation) in
+		cfClient.boolVariation(evaluationId: eval.flag, target: config.target, defaultValue: false) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -174,7 +174,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 
 		// When
-		cfClient.numberVariation(eval.flag, target: config.target, defaultValue: 1) { (evaluation) in
+		cfClient.numberVariation(evaluationId: eval.flag, target: config.target, defaultValue: 1) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -198,7 +198,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 
 		// When
-		cfClient.jsonVariation(eval.flag, target: config.target, defaultValue: ["defaultObjKey":.bool(false)]) { (evaluation) in
+		cfClient.jsonVariation(evaluationId: eval.flag, target: config.target, defaultValue: ["defaultObjKey":.bool(false)]) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -222,7 +222,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		cfClient.stringVariation("randomString", target: config.target, defaultValue: "defaultString") { (evaluation) in
+		cfClient.stringVariation(evaluationId: "randomString", target: config.target, defaultValue: "defaultString") { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -246,7 +246,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		cfClient.boolVariation("randomBool", target: config.target, defaultValue: false) { (evaluation) in
+		cfClient.boolVariation(evaluationId: "randomBool", target: config.target, defaultValue: false) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -270,7 +270,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		cfClient.numberVariation("randomInt", target: config.target, defaultValue: 1) { (evaluation) in
+		cfClient.numberVariation(evaluationId: "randomInt", target: config.target, defaultValue: 1) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -294,7 +294,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		cfClient.jsonVariation("randomObject", target: config.target, defaultValue: ["defaultObjKey":.bool(false)]) { (evaluation) in
+		cfClient.jsonVariation(evaluationId: "randomObject", target: config.target, defaultValue: ["defaultObjKey":.bool(false)]) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -318,7 +318,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 
 		// When
-		cfClient.stringVariation("non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
+		cfClient.stringVariation(evaluationId: "non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -341,7 +341,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 
 		// When
-		cfClient.boolVariation("non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
+		cfClient.boolVariation(evaluationId: "non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -364,7 +364,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		cfClient.numberVariation("non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
+		cfClient.numberVariation(evaluationId: "non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -387,7 +387,7 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 
 		// When
-		cfClient.jsonVariation("non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
+		cfClient.jsonVariation(evaluationId: "non-existentKey_forcing_failure", target: config.target, defaultValue: nil) { (evaluation) in
 			resultEval = evaluation
 			exp.fulfill()
 		}
@@ -405,7 +405,7 @@ class AuthenticationRequestTest: XCTestCase {
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: eval!.flag)
 		
 		// When
-		cfClient.stringVariation(eval!.flag, target: config.target, { (evaluation) in
+		cfClient.stringVariation(evaluationId: eval!.flag, target: config.target, { (evaluation) in
 			// Then
 			XCTAssertNil(evaluation)
 		})

@@ -50,6 +50,16 @@ class CfCacheTest: XCTestCase {
 		XCTAssertThrowsError(try sut.saveValue(value, key: emptyKey))
 	}
 	
+	func testWriteEncodingFailure() {
+		// Given
+		let value = NonEvaluation(name: "NonName", value: "NonValue")
+		let key = "invalidValueKey"
+		try? sut.saveValue(value, key: key)
+		sut.cache[key] = nil
+		// Then/When
+		XCTAssertThrowsError(try throwsErrorFunctionReadValue(key: key))
+	}
+	
 	//MARK: Reading Tests
 	func testReadValueSuccess() {
 		// Given

@@ -53,4 +53,8 @@ class EventSourceManagerMock: EventSourceManagerProtocol {
 			completion(nil, nil, nil)
 		}
     }
+	
+	func destroy() {
+		self.streamReady = false
+	}
 }
