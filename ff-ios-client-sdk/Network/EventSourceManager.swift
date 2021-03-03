@@ -103,6 +103,7 @@ class EventSourceManager: EventSourceManagerProtocol {
 	
 	func destroy() {
 		eventSource?.removeEventListener("*")
+		disconnect()
 		eventSource = nil
 	}
 
