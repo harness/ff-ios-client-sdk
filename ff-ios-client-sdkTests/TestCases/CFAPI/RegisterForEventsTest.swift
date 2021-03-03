@@ -10,14 +10,14 @@ import XCTest
 
 class RegisterForEventsTest: XCTestCase {
 	
-	let cfClient = CFClient.sharedInstance
+	let cfClient = CfClient.sharedInstance
 	let mockCache = MockStorageSource()
 	override func setUp() {
 		super.setUp()
 		let authManager = AuthenticationManagerMock()
 		cfClient.authenticationManager = authManager
 		
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "someId"
 		
 		let defaultAPIManager = DefaultAPIManagerMock()
@@ -36,7 +36,7 @@ class RegisterForEventsTest: XCTestCase {
 	
 	func testRegisterForEventsFailure() {
 		// Given
-		var config = CFConfiguration.builder().setStreamEnabled(true).setTarget("failure").build()
+		var config = CfConfiguration.builder().setStreamEnabled(true).setTarget("failure").build()
 		config.environmentId = "failID"
 		cfClient.configuration = config
 		var callbackCalled = false
@@ -86,7 +86,7 @@ class RegisterForEventsTest: XCTestCase {
 	func testRegisterForEventsSuccess() {
 		// Given
 		let exp = XCTestExpectation(description: #function)
-		var config = CFConfiguration.builder().setStreamEnabled(true).setTarget("success").build()
+		var config = CfConfiguration.builder().setStreamEnabled(true).setTarget("success").build()
 		let eval = Evaluation(flag: "testRegisterEventSuccessFlag", value: .bool(true))
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: "SODOD")
 		config.environmentId = "successID"

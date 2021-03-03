@@ -104,7 +104,7 @@ class MockStorageSource: StorageRepositoryProtocol {
 	func saveValue<Value>(_ value: Value, key: String) throws where Value : Decodable, Value : Encodable {
 		print("saving...")
 		if key == CacheMocks.TestFlagValue.unsupported(.unsupported).key {
-			throw ff_ios_client_sdk.CFError.cacheError(CFCacheError.writingToCacheFailed)
+			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.writingToCacheFailed)
 		}
 		cache[key] = value
 	}
@@ -112,7 +112,7 @@ class MockStorageSource: StorageRepositoryProtocol {
 	func getValue<Value>(forKey key: String) throws -> Value? where Value : Decodable, Value : Encodable {
 		print("getting...")
 		guard let entry = cache[key] else {
-			throw ff_ios_client_sdk.CFError.cacheError(CFCacheError.readingFromCacheFailed)
+			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.readingFromCacheFailed)
 		}
 		return entry as? Value
 	}

@@ -1,5 +1,5 @@
 //
-//  CFProjectMocks.swift
+//  CfProjectMocks.swift
 //  ff_ios_client_sdkTests
 //
 //  Created by Dusan Juranovic on 6.2.21..
@@ -9,7 +9,7 @@ import Foundation
 
 
 
-struct CFProjectMocks {
+struct CfProjectMocks {
     static var projectInitDict: [String: Any] {
         var dict: [String: Any]   = [:]
         dict["projectIdentifier"]       = "projectIdentifier_value"

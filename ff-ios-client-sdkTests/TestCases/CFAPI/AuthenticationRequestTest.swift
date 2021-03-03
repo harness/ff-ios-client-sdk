@@ -10,7 +10,7 @@ import XCTest
 
 class AuthenticationRequestTest: XCTestCase {
     
-	let cfClient = CFClient.sharedInstance
+	let cfClient = CfClient.sharedInstance
 	let mockCache = MockStorageSource() //storage that does not save and throws an error
     override func setUp() {
         super.setUp()
@@ -20,7 +20,7 @@ class AuthenticationRequestTest: XCTestCase {
 		
 		cfClient.authenticationManager = mockAuthManager
 		cfClient.eventSourceManager = mockEventSourceManager
-		let config = CFConfiguration.builder().build()
+		let config = CfConfiguration.builder().build()
 		
 		let repository = FeatureRepository(token: "someToken", storageSource: mockCache, config: config, defaultAPIManager: mockAPIManager)
 		cfClient.featureRepository = repository
@@ -33,7 +33,7 @@ class AuthenticationRequestTest: XCTestCase {
 	func testAuthorizationSuccess() {
 		// Given
 		let exp = XCTestExpectation(description: #function)
-		let configuration = CFConfiguration.builder().setTarget("success").build()
+		let configuration = CfConfiguration.builder().setTarget("success").build()
 		// When
 		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, cache: mockCache) { (result) in
 			switch result {
@@ -53,7 +53,7 @@ class AuthenticationRequestTest: XCTestCase {
 	func testAuthorizationSuccessFailedStorage() {
 		// Given
 		let exp = XCTestExpectation(description: #function)
-		let configuration = CFConfiguration.builder().setTarget("success").build()
+		let configuration = CfConfiguration.builder().setTarget("success").build()
 		
 		// When
 		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, cache: mockCache) { (result) in
@@ -74,7 +74,7 @@ class AuthenticationRequestTest: XCTestCase {
 	func testAuthorizationFailure() {
 		// Given
 		let exp = XCTestExpectation(description: #function)
-		let configuration = CFConfiguration.builder().setTarget("failure").build()
+		let configuration = CfConfiguration.builder().setTarget("failure").build()
 		
 		// When
 		cfClient.initialize(apiKey: "someFailureApiKey", configuration: configuration, cache: mockCache) { (result) in
@@ -95,7 +95,7 @@ class AuthenticationRequestTest: XCTestCase {
 	func testProperURLsFromSetConfiguration() {
 		// Given
 		let exp = XCTestExpectation(description: #function)
-		let config = CFConfiguration.builder().setBaseUrl("https://testBaseURL.com").setTarget("success").build()
+		let config = CfConfiguration.builder().setConfigUrl("https://testBaseURL.com").setTarget("success").build()
 		
 		// When
 		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: config, cache: mockCache) { (result) in
@@ -106,7 +106,7 @@ class AuthenticationRequestTest: XCTestCase {
 					exp.fulfill()
 				case .success:
 					// Then
-					XCTAssertEqual(OpenAPIClientAPI.basePath, "https://testBaseURL.com")
+					XCTAssertEqual(OpenAPIClientAPI.configPath, "https://testBaseURL.com")
 					exp.fulfill()
 			}
 		}
@@ -120,11 +120,11 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		cfClient.stringVariation(eval.flag, target: config.target, defaultValue: "defaultString") { (evaluation) in
 			resultEval = evaluation
@@ -144,11 +144,11 @@ class AuthenticationRequestTest: XCTestCase {
 		var resultEval: Evaluation?
 		
 		// When
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		cfClient.boolVariation(eval.flag, target: config.target, defaultValue: false) { (evaluation) in
 			resultEval = evaluation
@@ -165,11 +165,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.int(5), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 
@@ -189,11 +189,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.object(["objectKey":.int(5)]), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 
@@ -213,11 +213,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.string("stringVal"), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 		
@@ -237,11 +237,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.bool(true), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 		
@@ -261,11 +261,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.int(5), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 		
@@ -285,11 +285,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(.object(["objectKey":.bool(false)]), count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 		
@@ -309,11 +309,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 
@@ -332,11 +332,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 
@@ -355,11 +355,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 		
@@ -378,11 +378,11 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let eval = CacheMocks.createFlagMocks(count: 1).first!
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		config.target = "success"
 		cfClient.featureRepository.config = config
-		let key = CFConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
+		let key = CfConstants.Persistance.feature(config.environmentId, config.target, eval.flag).value
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: key)
 		var resultEval: Evaluation?
 
@@ -399,7 +399,7 @@ class AuthenticationRequestTest: XCTestCase {
 	
 	func testSaveUnsupportedValue() {
 		// Given
-		var config = CFConfiguration.builder().build()
+		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		let eval = CacheMocks.createEvalForStringType(CacheMocks.TestFlagValue.unsupported(.unsupported).key)
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: eval!.flag)

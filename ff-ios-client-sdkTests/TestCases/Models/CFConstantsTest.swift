@@ -1,5 +1,5 @@
 //
-//  CFConstantsTest.swift
+//  CfConstantsTest.swift
 //  ff_ios_client_sdkTests
 //
 //  Created by Dusan Juranovic on 6.2.21..
@@ -9,8 +9,8 @@ import XCTest
 @testable import ff_ios_client_sdk
 
 
-class CFConstantsTest: XCTestCase {
-    var sut: CFConstants.Persistance!
+class CfConstantsTest: XCTestCase {
+    var sut: CfConstants.Persistance!
     
     override func setUp() {
         super.setUp()
