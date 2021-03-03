@@ -130,13 +130,16 @@ public class CfClient {
 	}
 	
 	//MARK: - Public methods -
-	
-	///This method need to be run first, to initiate authorization.
-	/// - Parameters:
-	///   - clientId: `Client ID` / `apiKey`
-	///   - config: `CfConfiguration` to be used for Evaluation fetching
-	///   - cache: `StorageRepositoryProtocol`. Defaults to CfCache
-	/// - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
+	/**
+	This method needs to be run first, to initiate authorization.
+	 - Parameters:
+	   - apiKey: `YOUR_API_KEY`
+	   - configuration: `CfConfiguration` to be used for Evaluation fetching
+	   - cache: `StorageRepositoryProtocol`. Defaults to CfCache
+	   - onCompletion: Optional completion block, should you want to be notified of the authorization `success/failure`
+	 - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
+	 - Tag: initialize
+	*/
 	public func initialize(apiKey: String, configuration: CfConfiguration, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
 		self.configuration = configuration
 		OpenAPIClientAPI.configPath = configuration.configUrl
@@ -151,20 +154,23 @@ public class CfClient {
 			}
 		}
 	}
-	
-	///Completion block of this method will be called on each SSE response event.
-	///This method needs to be called in order to get SSE events.
-	/// - Parameters:
-	///	  - events: An optional `[String]?`, representing the Events we want to subscribe to. Defaults to `[*]`, which subscribes to all events.
-	///   - onCompletion: Completion block containing `Swift.Result<EventType, CFError>`
-	///   - eventType: An enum with associated values, representing possible event types
-	///   	 - `case` onOpen
-	/// 	 - `case` onComplete
-	/// 	 - `case` onMessage(`Message?`)
-	/// 	 - `case` onEventListener(`Evaluation?`)
-	/// 	 - `case` onPolling(`[Evaluation]?`)
-	///   - error: A `CFError`
-	public func registerEventsListener(_ events:[String] = ["*"], onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
+	/**
+	Completion block of this method will be called on each SSE response event.
+	This method needs to be called in order to get SSE events. Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	- Parameters:
+		- events: An optional `[String]?`, representing the Events we want to subscribe to. Defaults to `[*]`, which subscribes to all events.
+		- onCompletion: Completion block containing `Swift.Result<EventType, CFError>`
+		- result:
+			- EventType:
+				- onOpen
+				- onComplete
+				- onMessage(`Message?`)
+				- onEventListener(`Evaluation?`)
+				- onPolling(`[Evaluation]?`)
+			- Error: `CFError`
+	*/
+	public func registerEventsListener(_ events:[String] = ["*"], onCompletion:@escaping(_ result: Swift.Result<EventType, CFError>)->()) {
+		guard isInitialized else {return}
 		let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.configuration.target).value
 		do {
 			let initialEvaluations: [Evaluation]? = try self.featureRepository.storageSource.getValue(forKey: allKey)
@@ -202,21 +208,53 @@ public class CfClient {
 		self.registerForNetworkConditionNotifications()
 	}
 	
-	public func stringVariation(_ evaluationId: String, target: String, defaultValue: String? = nil, _ completion:@escaping(Evaluation?)->()) {
+	/**
+	Fetch `String` `Evaluation` from cache.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	- Parameters:
+	   - evaluationId: ID of the `Evaluation` you want to fetch.
+	   - target: The account name for which this `Evaluation` is evaluated.
+	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - result: `Evaluation?`
+	*/
+	public func stringVariation(evaluationId: String, target: String, defaultValue: String? = nil, _ completion:@escaping(_ result:Evaluation?)->()) {
 		if let defaultValue = defaultValue {
 			self.getEvaluationById(forKey: evaluationId, target: target, defaultValue: ValueType.string(defaultValue), completion: completion)
 		} else {
 			self.getEvaluationById(forKey: evaluationId, target: target, completion: completion)
 		}
 	}
-	public func boolVariation(_ evaluationId: String, target: String, defaultValue: Bool? = nil, _ completion:@escaping(Evaluation?)->()) {
+	
+	/**
+	Fetch `Bool` `Evaluation` from cache.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	- Parameters:
+	   - evaluationId: ID of the `Evaluation` you want to fetch.
+	   - target: The account name for which this `Evaluation` is evaluated.
+	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - result: `Evaluation?`
+	*/
+	public func boolVariation(evaluationId: String, target: String, defaultValue: Bool? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
 		if let defaultValue = defaultValue {
 			self.getEvaluationById(forKey: evaluationId, target: target, defaultValue: ValueType.bool(defaultValue), completion: completion)
 		} else {
 			self.getEvaluationById(forKey: evaluationId, target: target, completion: completion)
 		}
 	}
-	public func numberVariation(_ evaluationId: String, target: String, defaultValue:Int? = nil, _ completion:@escaping(Evaluation?)->()) {
+	
+	/**
+	Fetch `Number` `Evaluation` from cache.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	- Parameters:
+	   - evaluationId: ID of the `Evaluation` you want to fetch.
+	   - target: The account name for which this `Evaluation` is evaluated.
+	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - result: `Evaluation?`
+	*/
+	public func numberVariation(evaluationId: String, target: String, defaultValue:Int? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
 		if let defaultValue = defaultValue {
 			self.getEvaluationById(forKey: evaluationId, target: target, defaultValue: ValueType.int(defaultValue), completion: completion)
 		} else {
@@ -224,7 +262,23 @@ public class CfClient {
 		}
 	}
 	
-	public func jsonVariation(_ evaluationId: String, target: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(Evaluation?)->()) {
+	/**
+	Fetch `[String:ValueType]` `Evaluation` from cache.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	 - Note:
+	 `ValueType` can be one of the following:
+	   	- `ValueType.bool(Bool)`
+	   	- `ValueType.string(String)`
+	   	- `ValueType.int(Int)`
+	   	- `ValueType.object([String:ValueType])`
+	 - Parameters:
+	 	- evaluationId: ID of the `Evaluation` you want to fetch.
+	 	- target: The account name for which this `Evaluation` is evaluated.
+		- defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+		- completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+		- result: `Evaluation?`
+	*/
+	public func jsonVariation(evaluationId: String, target: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
 		if let defaultValue = defaultValue {
 			self.getEvaluationById(forKey: evaluationId, target: target, defaultValue: ValueType.object(defaultValue), completion: completion)
 		} else {
@@ -252,11 +306,15 @@ public class CfClient {
 	
 	/// Initializes authentication and fetches initial Evaluations from the cloud, after successful  authorization.
 	/// - Parameters:
-	///   - authRequest: `apiKey`
+	///   - authRequest: `AuthenticationRequest`, containing `apiKey` property.
 	///   - cache: Cache to be used. Defaults to internal `CfCache`.
-	///   - onCompletion: Completion block containing `Swift.Result<AuthenticationResponse, CFError>?`
-	private func authenticate(_ authRequest: AuthenticationRequest, cache: StorageRepositoryProtocol, onCompletion:@escaping(Swift.Result<Void, CFError>)->()) {
-		authenticationManager.authenticate(authenticationRequest: authRequest, apiResponseQueue: .main) { (response, error) in
+	///   - onCompletion: Completion block containing `Swift.Result<Void, CFError>?`
+	///	  - result:
+	///	  	- Void: ()
+	///	  	- Error: `CFError`
+	private func authenticate(_ authRequest: AuthenticationRequest, cache: StorageRepositoryProtocol, onCompletion:@escaping(_ result: Swift.Result<Void, CFError>)->()) {
+		authenticationManager.authenticate(authenticationRequest: authRequest, apiResponseQueue: .main) { [weak self] (response, error) in
+			guard let self = self else {return}
 			guard error == nil else {
 				onCompletion(.failure(error!))
 				self.isInitialized = false
@@ -301,6 +359,7 @@ public class CfClient {
 		}
 	}
 	
+	///Make sure to call [initialize](x-source-tag://initialize) prior to calling this method.
 	private func getEvaluationById(forKey key: String, target: String, defaultValue: ValueType? = nil, completion:@escaping(Evaluation?)->()) {
 		self.featureRepository.getEvaluationById(key, target: target, useCache: true) { (result) in
 			switch result {

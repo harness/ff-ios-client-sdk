@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// `CfConfiguration` is `required` in order to initialize the SDK.
+/// `CfConfiguration` is `required` in order to [intialize](x-source-tag://initialize) the SDK.
 /// # Defaults: #
 /// - `configUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
 /// - `eventUrl`:  "https://event.feature-flags.uat.harness.io/api/1.0"
