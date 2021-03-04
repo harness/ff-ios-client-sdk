@@ -1,14 +1,15 @@
 # ff-ios-client-sdk overview
 
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
+[![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-4BC51D.svg?style=flat)](https://github.com/CocoaPods/CocoaPods)
 
 ---
 [Harness](https://www.harness.io/) is a feature management platform that helps teams to build better software and to test features quicker.
 &nbsp;
 # _Installing the `ff-ios-client-sdk`_
-Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM)`
+Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM) & CocoaPods`
 
-TO BE ADDED: `CocoaPods` and `Carthage`
+TO BE ADDED: `Carthage`
 
 &nbsp;
 ## <u>_Swift Package Manager (SPM)_</u>
@@ -24,7 +25,37 @@ dependencies: [
 ]
 ```
 &nbsp;
-## <u>_CocoaPods -> TO BE ADDED_</u>
+## <u>_CocoaPods_</u>
+The [CocoaPods](https://cocoapods.org//) CocoaPods is a dependency manager for Swift and Objective-C Cocoa projects. It has over 81 thousand libraries and is used in over 3 million apps. CocoaPods can help you scale your projects elegantly.
+
+CocoaPods is built with Ruby and it will be installable with the default Ruby available on macOS. You can use a Ruby Version manager, however we recommend that you use the standard Ruby available on macOS unless you know what you're doing.
+
+Using the default Ruby install will require you to use sudo when installing gems. (This is only an issue for the duration of the gem installation, though.)
+```Swift
+$ sudo gem install cocoapods
+```
+
+Once cocoapods are installed, from your root project folder, create a `Podfile`, which will be located in your project's root folder, by entering the next command in your terminal:
+```Swift
+$ pod init
+```
+
+To import `ff-ios-client-sdk` to your `.xcproject`, simply add `ff-ios-client-sdk` to your newly created Podfile and save the Podfile changes.
+```Swift
+platform :ios, '10.0'
+use_frameworks!
+
+target 'MyApp' do
+  pod 'ff-ios-client-sdk', '~> 0.0.1'
+end
+```
+
+Only thing left to do is to install your packages by running the next command.
+```Swift
+$ pod install
+```
+NOTE: A new `.xcworkspace` will be created and you should use that, instead of your `.xcodeproj` from now on in order to utilize the imported Pods.
+
 &nbsp;
 ## <u>_Carthage -> TO BE ADDED_</u>
 
