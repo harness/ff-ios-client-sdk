@@ -11,7 +11,7 @@ protocol EventSourceManagerProtocol {
 	static func shared(parameterConfig: ParameterConfig?) -> EventSourceManagerProtocol
 	var forceDisconnected: Bool {get set}
 	var parameterConfig: ParameterConfig? {get set}
-	var configuration: CFConfiguration? {get set}
+	var configuration: CfConfiguration? {get set}
 	var streamReady: Bool {get}
 	func onOpen(_ completion:@escaping()->())
 	func onComplete(_ completion:@escaping(Int?, Bool?, CFError?)->())
@@ -19,6 +19,7 @@ protocol EventSourceManagerProtocol {
 	func addEventListener(_ event: String, completion:@escaping(String?, String?, String?)->())
 	func connect(lastEventId: String?)
 	func disconnect()
+	func destroy()
 }
 
 class EventSourceManager: EventSourceManagerProtocol {
@@ -32,11 +33,11 @@ class EventSourceManager: EventSourceManagerProtocol {
 	
 	var forceDisconnected = false
 	var eventSource: EventSource?
-	var configuration: CFConfiguration?
+	var configuration: CfConfiguration?
 	var parameterConfig: ParameterConfig? {
 		didSet {
 			let config = self.configuration!
-			let streamUrl = URL(string: config.baseUrl)!.appendingPathComponent("/stream/environments/\(parameterConfig?.environmentId ?? "")")
+			let streamUrl = URL(string: config.eventUrl)!.appendingPathComponent("/stream/environments/\(parameterConfig?.environmentId ?? "")")
 			let headers = parameterConfig?.authHeader ?? [:]
 			if eventSource == nil {
 				//Create new instance if instance is nil
@@ -98,6 +99,12 @@ class EventSourceManager: EventSourceManagerProtocol {
 	}
 	func disconnect() {
 		eventSource?.disconnect()
+	}
+	
+	func destroy() {
+		eventSource?.removeEventListener("*")
+		disconnect()
+		eventSource = nil
 	}
 
 }

@@ -1,6 +1,6 @@
 //
 //  NetworkInfoProvider.swift
-//  CFiOSClient
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 15.2.21..
 //
@@ -11,9 +11,14 @@ protocol NetworkInfoProviderProtocol {
 	func networkStatus(_ completion:@escaping(Bool)->())
 	func startNotifier()
 	func stopNotifier()
+	var isReachable: Bool {get}
 }
 class NetworkInfoProvider: NetworkInfoProviderProtocol {
 	private var reachability = try! Reachability()
+	
+	var isReachable: Bool {
+		return reachability.connection != .unavailable
+	}
 	
 	func networkStatus(_ completion:@escaping(Bool)->()) {
 		reachability.whenReachable = { _ in

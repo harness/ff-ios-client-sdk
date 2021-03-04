@@ -1,6 +1,6 @@
 //
-//  CFConstants.swift
-//  CFiOSClient
+//  CfConstants.swift
+//  ff-ios-client-sdk
 //
 //  Created by Dusan Juranovic on 14.1.21..
 //
@@ -25,7 +25,7 @@ enum CFContentType: String
 	case textHtml = "text/html"
 }
 
-struct CFConstants
+struct CfConstants
 {
 	enum Persistance {
 		case feature(String, String, String)
@@ -40,7 +40,8 @@ struct CFConstants
 	}
 	struct Server
 	{
-		static let baseUrl 	 = "https://config.feature-flags.uat.harness.io/api/1.0"
+		static let configUrl 	 = "https://config.feature-flags.uat.harness.io/api/1.0"
+		static let eventUrl 	 = "https://config.feature-flags.uat.harness.io/api/1.0"
 	}
 	
 	struct ParamKey

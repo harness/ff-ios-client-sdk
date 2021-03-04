@@ -10,7 +10,7 @@ import Foundation
 
 class EventSourceManagerMock: EventSourceManagerProtocol {
 	var forceDisconnected: Bool
-	var configuration: CFConfiguration?
+	var configuration: CfConfiguration?
 	var parameterConfig: ParameterConfig?
 	
 	static func shared(parameterConfig: ParameterConfig? = nil) -> EventSourceManagerProtocol {
@@ -53,4 +53,8 @@ class EventSourceManagerMock: EventSourceManagerProtocol {
 			completion(nil, nil, nil)
 		}
     }
+	
+	func destroy() {
+		self.streamReady = false
+	}
 }

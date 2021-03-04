@@ -1,5 +1,5 @@
 //
-//  CFConfigurationBuilderTests.swift
+//  CfConfigurationBuilderTests.swift
 //  ff_ios_client_sdkTests
 //
 //  Created by Dusan Juranovic on 4.2.21..
@@ -9,13 +9,13 @@ import XCTest
 @testable import ff_ios_client_sdk
 
  
-class CFConfigurationBuilderTest: XCTestCase {
+class CfConfigurationBuilderTest: XCTestCase {
     
-    var sut: CFConfigurationBuilder!
+    var sut: CfConfigurationBuilder!
     
     override func setUp() {
         super.setUp()
-        sut = CFConfigurationBuilder()
+        sut = CfConfigurationBuilder()
     }
     
     override func tearDown() {
@@ -24,26 +24,58 @@ class CFConfigurationBuilderTest: XCTestCase {
     }
     
     func testInit() {
-        XCTAssertTrue(type(of: sut) === CFConfigurationBuilder.self)
+        XCTAssertTrue(type(of: sut) === CfConfigurationBuilder.self)
     }
     
     func testBuild() {
         let config = sut.build()
-        XCTAssertTrue(config.baseUrl == ConfigurationMocks.baseUrl)
+        XCTAssertTrue(config.configUrl == ConfigurationMocks.baseUrl)
     }
+	
     func testAttachBaseUrl() {
         let mockBaseUrl = "https://www.base-url"
-        sut = sut.setBaseUrl(mockBaseUrl)
+        sut = sut.setConfigUrl(mockBaseUrl)
         let config = sut.build()
-        XCTAssert(config.baseUrl.contains(mockBaseUrl))
+        XCTAssert(config.configUrl.contains(mockBaseUrl))
     }
+	
+	func testAttachEventUrl() {
+		let mockEventUrl = "https://www.event-url"
+		sut = sut.setEventUrl(mockEventUrl)
+		let config = sut.build()
+		XCTAssert(config.eventUrl.contains(mockEventUrl))
+	}
     
+	func testStreamEnabledDefault() {
+		let config = sut.build()
+		XCTAssertFalse(config.streamEnabled)
+	}
+	
     func testStreamEnabled() {
         let streamEnabled = true
         sut = sut.setStreamEnabled(streamEnabled)
         let config = sut.build()
         XCTAssert(config.streamEnabled == streamEnabled)
     }
+	
+	func testAnalyticsEnabledDefault() {
+		let config = sut.build()
+		XCTAssert(config.analyticsEnabled)
+	}
+	
+	func testAnalyticsEnabled() {
+		let analyticsEnabled = true
+		sut = sut.setStreamEnabled(analyticsEnabled)
+		let config = sut.build()
+		XCTAssert(config.analyticsEnabled == analyticsEnabled)
+	}
+	
+	func testAnalyticsDisabled() {
+		let analyticsEnabled = false
+		sut = sut.setAnalyticsEnabled(analyticsEnabled)
+		let config = sut.build()
+		XCTAssert(config.analyticsEnabled == analyticsEnabled)
+	}
     
     func testTarget() {
         let target = "target-test"
@@ -68,8 +100,8 @@ class CFConfigurationBuilderTest: XCTestCase {
     }
     
     func testDefault() {
-		let config = CFConfiguration.builder().build()
-        XCTAssertTrue(config.baseUrl == ConfigurationMocks.baseUrl)
+		let config = CfConfiguration.builder().build()
+        XCTAssertTrue(config.configUrl == ConfigurationMocks.baseUrl)
 
     }
     
