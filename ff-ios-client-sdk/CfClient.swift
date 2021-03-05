@@ -179,7 +179,7 @@ public class CfClient {
 			print("Could not fetch from cache")
 		}
 		if self.configuration.streamEnabled {
-			let parameterConfig = ParameterConfig(environmentId: self.configuration.environmentId, authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")"])
+			let parameterConfig = ParameterConfig(authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")"])
 			self.eventSourceManager.configuration = self.configuration
 			self.eventSourceManager.parameterConfig = parameterConfig
 			
