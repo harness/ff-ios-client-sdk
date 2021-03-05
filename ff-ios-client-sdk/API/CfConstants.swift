@@ -14,6 +14,7 @@ enum CFHTTPHeaderField: String
 	case acceptType     = "Accept"
 	case acceptEncoding = "Accept-Encoding"
 	case cacheControl	= "Cache-Control"
+	case apiKey			= "API-Key"
 }
 
 enum CFContentType: String

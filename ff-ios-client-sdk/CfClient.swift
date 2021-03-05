@@ -82,6 +82,7 @@ public class CfClient {
 	///Provides network state
 	var networkInfoProvider: NetworkInfoProviderProtocol?
 	private var pollingEnabled: Bool = true
+	private var apiKey: String = ""
 	
 	//MARK: - Internal properties -
 	
@@ -142,6 +143,7 @@ public class CfClient {
 	*/
 	public func initialize(apiKey: String, configuration: CfConfiguration, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
 		self.configuration = configuration
+		self.apiKey = apiKey
 		OpenAPIClientAPI.configPath = configuration.configUrl
 		OpenAPIClientAPI.eventPath = configuration.eventUrl
 		let authRequest = AuthenticationRequest(apiKey: apiKey)
@@ -179,7 +181,8 @@ public class CfClient {
 			print("Could not fetch from cache")
 		}
 		if self.configuration.streamEnabled {
-			let parameterConfig = ParameterConfig(environmentId: self.configuration.environmentId, authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")"])
+			let parameterConfig = ParameterConfig(authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
+															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey])
 			self.eventSourceManager.configuration = self.configuration
 			self.eventSourceManager.parameterConfig = parameterConfig
 			
