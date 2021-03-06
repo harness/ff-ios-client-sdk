@@ -29,5 +29,6 @@ let package = Package(
             name: "ff-ios-client-sdkTests",
             dependencies: ["ff-ios-client-sdk"],
 			path: "ff-ios-client-sdkTests"),
-    ]
+    ],
+	swiftLanguageVersions: [.v5]
 )
