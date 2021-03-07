@@ -8,7 +8,7 @@
 # _Installing the `ff-ios-client-sdk`_
 Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM)`
 
-TO BE ADDED: `CocoaPods` and `Carthage`
+TO BE ADDED: `CocoaPods`
 
 &nbsp;
 ## <u>_Swift Package Manager (SPM)_</u>
@@ -23,10 +23,53 @@ dependencies: [
 	.package(url: "https://github.com/drone/ff-ios-client-sdk.git", .upToNextMinor(from: "0.0.1"))
 ]
 ```
+## <u>_Carthage_</u>
+Carthage is intended to be the simplest way to add frameworks to your Cocoa application.
+Carthage builds your dependencies and provides you with binary frameworks, but you retain full control over your project structure and setup. Carthage does not automatically modify your project files or your build settings.
+In order to integrate `ff-ios-client-sdk` into your app, there are a few steps to follow.
+Navigate to the root folder of your project and create a `Cartfile`. This is the file where you would input all of your dependencies that you plan to use with Carthage. You can create it by entering 
+```Swift
+$ touch Cartfile
+``` 
+in Terminal at your project's root folder. Once you open the `Cartfile`, you can copy/paste below line and save the changes.
+```Swift
+github "drone/ff-ios-client-sdk" ~> 0.0.1
+```
+
+Now, you need to run
+```Swift
+$ carthage update
+```
+This command will fetch the source for `ff-ios-client-sdk` from the repository specified in the `Cartfile`.
+You will now have a new folder, named `Carthage` at the same location your `Cartfile` and your `.xcodeproj` are.
+Within the `Carthage` folder, you will see another `Checkout` folder where the source code is located.
+Next, we nned to create a project for `ff-ios-client-sdk` dependency. We can do this easily by entering the following in the termial.
+```Swift
+//From your project's root folder
+$ cd Carthage/Checkouts/ff-ios-client-sdk
+```
+followed by
+```Swift
+$ swift package generate-xcodeproj
+```
+...or, you can enter it all on the same line.
+```Swift
+//From your project's root folder
+$ cd Carthage/Checkouts/ff-ios-client-sdk && swift package generate-xcodeproj
+```
+The last terminal command would be:
+```Swift
+$ carthage build
+```
+This command will build the project and place it in the `Build` folder next to `Checkouts`.
+On your application targets’ `General` settings tab, in the `Frameworks, Libraries, and Embedded Content` section, drag and drop the `.framework` file from the `Carthage/Build` folder. In the `"Embed"` section, select `"Embed & Sign"`.
+
+Only thing left to do is:
+```Swift
+import ff-iso-client-sdk
+```
 &nbsp;
 ## <u>_CocoaPods -> TO BE ADDED_</u>
-&nbsp;
-## <u>_Carthage -> TO BE ADDED_</u>
 
 &nbsp;
 # _Using the `ff-ios-client-sdk`_
