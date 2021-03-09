@@ -36,7 +36,98 @@ class EvaluationTest: XCTestCase {
 		XCTAssertNil(evaluation.value.objectValue)
     }
 	
-	func testInitBoolEvaluation() {
+	func testInitStringIntConvertableEvaluation() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.string("30")
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
+		XCTAssertNil(evaluation.value.boolValue)
+		XCTAssertEqual(evaluation.value.intValue, 30)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitStringBoolConvertableEvaluationTrue() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.string("true")
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
+		XCTAssertEqual(evaluation.value.boolValue, true)
+		XCTAssertNil(evaluation.value.intValue)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitStringBoolConvertableEvaluationFalse() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.string("false")
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
+		XCTAssertEqual(evaluation.value.boolValue, false)
+		XCTAssertNil(evaluation.value.intValue)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitStringNotConvertableObjectEvaluation() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.string("{key:value}")
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
+		XCTAssertNil(evaluation.value.boolValue)
+		XCTAssertNil(evaluation.value.intValue)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	
+	func testInitIntEvaluationOne() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.int(1)
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
+		XCTAssertEqual(evaluation.value.stringValue, "1")
+		XCTAssertEqual(evaluation.value.boolValue, true)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitIntEvaluationZero() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.int(0)
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
+		XCTAssertEqual(evaluation.value.stringValue, "0")
+		XCTAssertEqual(evaluation.value.boolValue, false)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitBoolConvertableEvaluationTrue() {
 		// Given
 		let flag  = "flag-mock"
 		let value = ValueType.bool(true)
@@ -46,12 +137,27 @@ class EvaluationTest: XCTestCase {
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.boolValue == value.boolValue)
-		XCTAssertNil(evaluation.value.stringValue)
-		XCTAssertNil(evaluation.value.intValue)
+		XCTAssertEqual(evaluation.value.stringValue, "true")
+		XCTAssertEqual(evaluation.value.intValue, 1)
 		XCTAssertNil(evaluation.value.objectValue)
 	}
 	
-	func testInitIntEvaluation() {
+	func testInitBoolConvertableEvaluationFalse() {
+		// Given
+		let flag  = "flag-mock"
+		let value = ValueType.bool(false)
+		
+		// When
+		let evaluation = Evaluation(flag: flag, value: value)
+		
+		// Then
+		XCTAssertEqual(evaluation.flag == flag, evaluation.value.boolValue == value.boolValue)
+		XCTAssertEqual(evaluation.value.stringValue, "false")
+		XCTAssertEqual(evaluation.value.intValue, 0)
+		XCTAssertNil(evaluation.value.objectValue)
+	}
+	
+	func testInitIntNonConvertableBoolEvaluation() {
 		// Given
 		let flag  = "flag-mock"
 		let value = ValueType.int(5)
@@ -61,7 +167,7 @@ class EvaluationTest: XCTestCase {
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
-		XCTAssertNil(evaluation.value.stringValue)
+		XCTAssertEqual(evaluation.value.stringValue, "5")
 		XCTAssertNil(evaluation.value.boolValue)
 		XCTAssertNil(evaluation.value.objectValue)
 	}
@@ -76,7 +182,7 @@ class EvaluationTest: XCTestCase {
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.objectValue == value.objectValue)
-		XCTAssertNil(evaluation.value.stringValue)
+		XCTAssertEqual(evaluation.value.stringValue, "\(value)")
 		XCTAssertNil(evaluation.value.boolValue)
 		XCTAssertNil(evaluation.value.intValue)
 	}
