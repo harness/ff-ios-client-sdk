@@ -34,8 +34,10 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let configuration = CfConfiguration.builder().setTarget("success").build()
+		let target = CfTarget.builder().build()
+		
 		// When
-		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, cache: mockCache) { (result) in
+		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, target: target, cache: mockCache) { (result) in
 			switch result {
 				case .failure(let error):
 					// Then
@@ -54,9 +56,10 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let configuration = CfConfiguration.builder().setTarget("success").build()
+		let target = CfTarget.builder().build()
 		
 		// When
-		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, cache: mockCache) { (result) in
+		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: configuration, target: target, cache: mockCache) { (result) in
 			switch result {
 				case .failure(let error):
 					// Then
@@ -75,9 +78,10 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let configuration = CfConfiguration.builder().setTarget("failure").build()
+		let target = CfTarget.builder().build()
 		
 		// When
-		cfClient.initialize(apiKey: "someFailureApiKey", configuration: configuration, cache: mockCache) { (result) in
+		cfClient.initialize(apiKey: "someFailureApiKey", configuration: configuration, target: target, cache: mockCache) { (result) in
 			switch result {
 				case .failure(let error):
 					// Then
@@ -96,9 +100,10 @@ class AuthenticationRequestTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		let config = CfConfiguration.builder().setConfigUrl("https://testBaseURL.com").setTarget("success").build()
+		let target = CfTarget.builder().build()
 		
 		// When
-		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: config, cache: mockCache) { (result) in
+		cfClient.initialize(apiKey: "someSuccessApiKey", configuration: config, target: target, cache: mockCache) { (result) in
 			switch result {
 				case .failure(let error):
 					// Then
