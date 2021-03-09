@@ -14,17 +14,6 @@ public struct Message: Codable {
 	public var version: Double?
 }
 
-public struct CFErrorMessage: Codable {
-	public var message: String?
-}
-
-public struct DummyData: Codable {
-	public var data: DummyFlag
-}
-
-public struct DummyFlag: Codable {
-	public var flag_id: String
-	public var flag_value: String
 }
 
 
