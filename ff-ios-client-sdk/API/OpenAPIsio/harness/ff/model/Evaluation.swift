@@ -49,6 +49,8 @@ public enum ValueType: Codable, Equatable {
 	public var boolValue: Bool? {
 		switch self {
 			case .bool(let boolVal): return boolVal
+			case .string(let stringVal): return stringVal.lowercased() == "true" ? true : false
+			case .int(let intVal): return intVal == 1 ? true : false
 			default: return nil
 		}
 	}
@@ -56,6 +58,8 @@ public enum ValueType: Codable, Equatable {
 	public var intValue: Int? {
 		switch self {
 			case .int(let intVal): return intVal
+			case .string(let stringVal): return Int(stringVal)
+			case .bool(let boolVal): return boolVal == true ? 1 : 0
 			default: return nil
 		}
 	}
@@ -63,7 +67,10 @@ public enum ValueType: Codable, Equatable {
 	public var stringValue: String? {
 		switch self {
 			case .string(let stringVal): return stringVal
-			default: return nil
+			case .bool(let boolVal): 	 return "\(boolVal)"
+			case .int(let intVal): 		 return "\(intVal)"
+			case .object(let objectVal): return "\(objectVal)"
+			case .unsupported:			 return nil
 		}
 	}
 	
