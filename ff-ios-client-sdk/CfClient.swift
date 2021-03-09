@@ -141,7 +141,7 @@ public class CfClient {
 	 - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
 	 - Tag: initialize
 	*/
-	public func initialize(apiKey: String, configuration: CfConfiguration, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
+	public func initialize(apiKey: String, configuration: CfConfiguration, target: CfTarget, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
 		self.configuration = configuration
 		self.apiKey = apiKey
 		OpenAPIClientAPI.configPath = configuration.configUrl
