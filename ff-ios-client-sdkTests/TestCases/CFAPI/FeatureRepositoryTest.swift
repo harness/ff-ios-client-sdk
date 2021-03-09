@@ -11,7 +11,7 @@ import XCTest
 class FeatureRepositoryTest: XCTestCase {
     
 	var sut: FeatureRepository?
-	let mockCache = MockStorageSource()
+	let mockCache = CfCache()
 	var expectation: XCTestExpectation!
     override func setUp() {
         super.setUp()

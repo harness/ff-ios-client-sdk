@@ -99,26 +99,41 @@ struct CacheMocks {
 	}
 }
 
-class MockStorageSource: StorageRepositoryProtocol {
-	var cache = [String:Any]()
-	func saveValue<Value>(_ value: Value, key: String) throws where Value : Decodable, Value : Encodable {
-		print("saving...")
-		if key == CacheMocks.TestFlagValue.unsupported(.unsupported).key {
-			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.writingToCacheFailed)
-		}
-		cache[key] = value
-	}
-	
-	func getValue<Value>(forKey key: String) throws -> Value? where Value : Decodable, Value : Encodable {
-		print("getting...")
-		guard let entry = cache[key] else {
-			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.readingFromCacheFailed)
-		}
-		return entry as? Value
-	}
-	
-	func removeValue(forKey key: String) throws {
-		print("removing...")
-		cache = [:]
-	}
-}
+//class MockStorageSource: StorageRepositoryProtocol {
+//	var cache = [String:Any]()
+//	func saveValue<Value>(_ value: Value, key: String) throws where Value : Decodable, Value : Encodable {
+//		print("saving...")
+//		if key == CacheMocks.TestFlagValue.unsupported(.unsupported).key {
+//			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.writingToCacheFailed)
+//		}
+//		if key == "" {
+//			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.writingToCacheFailed)
+//		}
+//		cache[key] = value
+//	}
+//	
+//	func getValue<Value>(forKey key: String) throws -> Value? where Value : Decodable, Value : Encodable {
+//		print("getting...")
+//		guard let entry = cache[key] else {
+//			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.readingFromCacheFailed)
+//		}
+//		return entry as? Value
+//	}
+//	
+//	func removeValue(forKey key: String) throws {
+//		print("removing...")
+//		if key == "" {
+//			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.readingFromCacheFailed)
+//		}
+//		if cache.keys.contains(key) {
+//			cache[key] = nil
+//		} else {
+//			throw ff_ios_client_sdk.CFError.cacheError(CfCacheError.readingFromCacheFailed)
+//		}
+//	}
+//	
+//	func cleanupCache() {
+//		print("Cleanup in progress...")
+//		cache = [:]
+//	}
+//}

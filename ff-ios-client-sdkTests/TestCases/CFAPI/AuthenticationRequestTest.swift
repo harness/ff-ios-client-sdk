@@ -11,7 +11,7 @@ import XCTest
 class AuthenticationRequestTest: XCTestCase {
     
 	let cfClient = CfClient.sharedInstance
-	let mockCache = MockStorageSource() //storage that does not save and throws an error
+	let mockCache = CfCache() //storage that does not save and throws an error
     override func setUp() {
         super.setUp()
 		let mockAuthManager = AuthenticationManagerMock()

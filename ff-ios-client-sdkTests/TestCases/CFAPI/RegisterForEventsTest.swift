@@ -11,7 +11,7 @@ import XCTest
 class RegisterForEventsTest: XCTestCase {
 	
 	let cfClient = CfClient.sharedInstance
-	let mockCache = MockStorageSource()
+	let mockCache = CfCache()
 	override func setUp() {
 		super.setUp()
 		let authManager = AuthenticationManagerMock()
