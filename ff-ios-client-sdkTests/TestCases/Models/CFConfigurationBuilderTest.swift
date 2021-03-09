@@ -77,13 +77,6 @@ class CfConfigurationBuilderTest: XCTestCase {
 		XCTAssert(config.analyticsEnabled == analyticsEnabled)
 	}
     
-    func testTarget() {
-        let target = "target-test"
-        sut = sut.setTarget(target)
-        let config = sut.build()
-        XCTAssert(config.target == target)
-    }
-    
     func testPollingInterval() {
         let interval = TimeInterval(100)
         sut = sut.setPollingInterval(interval)
