@@ -70,12 +70,13 @@ github "drone/ff-ios-client-sdk" ~> 0.0.1
 
 Now, you need to run
 ```Swift
-$ carthage update
+$ carthage update --no-build
 ```
 This command will fetch the source for `ff-ios-client-sdk` from the repository specified in the `Cartfile`.
+
 You will now have a new folder, named `Carthage` at the same location your `Cartfile` and your `.xcodeproj` are.
 Within the `Carthage` folder, you will see another `Checkout` folder where the source code is located.
-Next, we nned to create a project for `ff-ios-client-sdk` dependency. We can do this easily by entering the following in the termial.
+Next, we need to create a project for `ff-ios-client-sdk` dependency. We can do this easily by entering the following in the termial.
 ```Swift
 //From your project's root folder
 $ cd Carthage/Checkouts/ff-ios-client-sdk
@@ -89,9 +90,9 @@ $ swift package generate-xcodeproj
 //From your project's root folder
 $ cd Carthage/Checkouts/ff-ios-client-sdk && swift package generate-xcodeproj
 ```
-The last terminal command would be:
+Go back into your project's root folder and enter the next command:
 ```Swift
-$ carthage build
+$ carthage build --use-xcframeworks --platform iOS
 ```
 This command will build the project and place it in the `Build` folder next to `Checkouts`.
 On your application targets’ `General` settings tab, in the `Frameworks, Libraries, and Embedded Content` section, drag and drop the `.framework` file from the `Carthage/Build` folder. In the `"Embed"` section, select `"Embed & Sign"`.
@@ -100,6 +101,13 @@ Only thing left to do is:
 ```Swift
 import ff-iso-client-sdk
 ```
+...wherever you need to use `ff-ios-client-sdk`
+
+When a new version of `ff-ios-client-sdk` is available and you wish to update this dependency, run 
+```Swift
+$ carthage update --use-xcframeworks --platform iOS
+```
+And your embedded library will be updated.
 
 &nbsp;
 # _Using the `ff-ios-client-sdk`_
