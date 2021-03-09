@@ -17,7 +17,8 @@ class FeatureRepositoryTest: XCTestCase {
         super.setUp()
 		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
-		sut = FeatureRepository(token: nil, storageSource: mockCache, config: config)
+		let target = CfTarget.builder().build()
+		sut = FeatureRepository(token: nil, storageSource: mockCache, config: config, target: target)
 		sut!.defaultAPIManager = DefaultAPIManagerMock()
 		expectation = XCTestExpectation(description: #function)
     }
@@ -31,15 +32,16 @@ class FeatureRepositoryTest: XCTestCase {
 		// Given
 		let token = "SomeTestToken"
 		let config = CfConfiguration.builder().build()
+		let target = CfTarget.builder().setIdentifier("testID").build()
 		
 		// When
-		let defaultRepo = FeatureRepository(token: token, storageSource: mockCache, config: config)
+		let defaultRepo = FeatureRepository(token: token, storageSource: mockCache, config: config, target: target)
 		
 		// Then
 		XCTAssertEqual(defaultRepo.token, token)
 		XCTAssertEqual(defaultRepo.config.configUrl, config.configUrl)
 		XCTAssertEqual(defaultRepo.config.environmentId, config.environmentId)
-		XCTAssertEqual(defaultRepo.config.target, config.target)
+		XCTAssertEqual(defaultRepo.target.identifier, target.identifier)
 		XCTAssertEqual(defaultRepo.config.pollingInterval, config.pollingInterval)
 		XCTAssertEqual(defaultRepo.config.streamEnabled, config.streamEnabled)
 		XCTAssertNotNil(defaultRepo.storageSource)
@@ -47,7 +49,7 @@ class FeatureRepositoryTest: XCTestCase {
     
     func testGetEvaluationSuccess() {
 		// Given
-		sut?.config.target = "success"
+		sut?.target.identifier = "success"
 		
 		// When
 		let result = await(sut!.getEvaluations(onCompletion:))
@@ -59,7 +61,7 @@ class FeatureRepositoryTest: XCTestCase {
 	
 	func testGetEvaluationFailure() {
 		// Given
-		sut?.config.target = "failure"
+		sut?.target.identifier = "failure"
 		
 		// When
 		let result = await(sut!.getEvaluations(onCompletion:))
@@ -75,7 +77,7 @@ class FeatureRepositoryTest: XCTestCase {
 		let operation = sut
 		let manager = operation?.defaultAPIManager as! DefaultAPIManagerMock
 		manager.replacementEnabled = true
-		sut?.config.target = "success"
+		sut?.target.identifier = "success"
 		let allKey = CfConstants.Persistance.features("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "success").value
 		let initialEvals = CacheMocks.createAllTypeFlagMocks()
 		var callbackCalled = false
@@ -182,7 +184,7 @@ class FeatureRepositoryTest: XCTestCase {
 		var callbackCalled = false
 		let operation = sut
 		let eval = CacheMocks.createEvalForStringType(CacheMocks.TestFlagValue(.string).key)!
-		operation?.config.target = "cloud_failure_cache_failure"
+		operation?.target.identifier = "cloud_failure_cache_failure"
 		let key = CfConstants.Persistance.feature("c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d", "cloud_failure_cache_failure", eval.flag).value
 		try? operation?.storageSource.saveValue(eval, key: key)
 		

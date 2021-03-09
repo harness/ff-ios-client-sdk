@@ -14,6 +14,15 @@ public struct Message: Codable {
 	public var version: Double?
 }
 
+public struct CfTarget: Codable {
+	public var identifier: String
+	public var name: String
+	public var anonymous: Bool
+	public var attributes: [String:String]
+	
+	public static func builder() -> CfTargetBuilder {
+		return CfTargetBuilder()
+	}
 }
 
 

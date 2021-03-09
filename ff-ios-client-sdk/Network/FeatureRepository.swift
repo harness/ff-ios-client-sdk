@@ -11,12 +11,14 @@ class FeatureRepository {
 	var storageSource: StorageRepositoryProtocol
 	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
+	var target: CfTarget
 	
-	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CfConfiguration?, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
+	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CfConfiguration?, target: CfTarget, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
 		self.token = token ?? ""
 		self.storageSource = storageSource ?? CfCache()
 		self.config = config ?? CfConfiguration.builder().build()
 		self.defaultAPIManager = defaultAPIManager
+		self.target = target
 	}
 	
 	/// Use this method to get `[Evaluation]` for a  target specified in `CfConfiguration` during the call to initialize `CfClient`.
@@ -26,9 +28,9 @@ class FeatureRepository {
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
-		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.config.target, apiResponseQueue: .main) { [weak self] (result) in
+		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.target.identifier, apiResponseQueue: .main) { [weak self] (result) in
 			guard let self = self else {return}
-			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
+			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 			switch result {
 				case .failure(_):
 					Logger.log("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
@@ -44,7 +46,7 @@ class FeatureRepository {
 					Logger.log("SUCCESS: Got ALL from CLOUD")
 					
 					for eval in evaluations {
-						let key = CfConstants.Persistance.feature(self.config.environmentId, self.config.target, eval.flag).value
+						let key = CfConstants.Persistance.feature(self.config.environmentId, self.target.identifier, eval.flag).value
 						try? self.storageSource.saveValue(eval, key: key)
 					}
 					
@@ -102,7 +104,7 @@ class FeatureRepository {
 	}
 	
 	private func updateAll(_ eval: Evaluation) {
-		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.config.target).value
+		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 		do {
 			let all: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
 			guard var evaluations = all else {return}
