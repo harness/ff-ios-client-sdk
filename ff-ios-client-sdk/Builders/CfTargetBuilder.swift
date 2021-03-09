@@ -30,7 +30,7 @@ public class CfTargetBuilder {
 	- Parameter name: `String`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setEventUrl(_ name: String) -> CfTargetBuilder {
+	public func setName(_ name: String) -> CfTargetBuilder {
 		target.name = name
 		return self
 	}
@@ -55,7 +55,7 @@ public class CfTargetBuilder {
 	/**
 	Builds CfTarget object by providing components or is set to default component/s.
 	- `setIdentifier(_:)`
-	- `setEventUrl(_:)`
+	- `setName(_:)`
 	- `setAnonymous(_:)`
 	- `setAttributes(_:)`
 	

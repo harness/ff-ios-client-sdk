@@ -17,8 +17,7 @@ public class CfConfigurationBuilder {
 									  streamEnabled: false,
 									  analyticsEnabled: true,
 									  pollingInterval: minimumPollingInterval,
-									  environmentId: "",
-									  target:"")
+									  environmentId: "")
 	}
 	/**
 	Adds `configUrl` to CfConfiguration
@@ -66,22 +65,12 @@ public class CfConfigurationBuilder {
 		return self
 	}
 	/**
-	Adds `target`  to CfConfiguration
-	- Parameter target: `String`
-	- Note: `build()` needs to be called as the final method in the chain
-	*/
-	public func setTarget(_ target: String) -> CfConfigurationBuilder {
-		config.target = target
-		return self
-	}
-	/**
 	Builds CfConfiguration object by providing components or is set to default component/s.
 	- `setConfigUrl(_:)`
 	- `setEventUrl(_:)`
 	- `setStreamEnabled(_:)`
 	- `setAnalyticsEnabled(_:)`
 	- `setPollingInterval(_:)`
-	- `setTarget(_:)`
 	
 	# Defaults: #
 	- `configUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
@@ -89,7 +78,6 @@ public class CfConfigurationBuilder {
 	- `streamEnabled`: `false`
 	- `analyticsEnabled`: `true`
 	- `pollingInterval`: `60` seconds
-	- `target`: `""`
 	*/
 	public func build() -> CfConfiguration {
 		return config
