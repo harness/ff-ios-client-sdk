@@ -95,7 +95,7 @@ Go back into your project's root folder and enter the next command:
 $ carthage build --use-xcframeworks --platform iOS
 ```
 This command will build the project and place it in the `Build` folder next to `Checkouts`.
-On your application targets’ `General` settings tab, in the `Frameworks, Libraries, and Embedded Content` section, drag and drop the `.framework` file from the `Carthage/Build` folder. In the `"Embed"` section, select `"Embed & Sign"`.
+On your application targets’ `General` settings tab, in the `Frameworks, Libraries, and Embedded Content` section, drag and drop the `.xcframework` file from the `Carthage/Build` folder. In the `"Embed"` section, select `"Embed & Sign"`.
 
 Only thing left to do is:
 ```Swift
