@@ -343,6 +343,7 @@ public class CfClient {
 			self.featureRepository.token = self.token!
 			self.featureRepository.storageSource = self.storageSource!
 			self.featureRepository.config = self.configuration
+			self.featureRepository.target = self.target
 			
 			//Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
