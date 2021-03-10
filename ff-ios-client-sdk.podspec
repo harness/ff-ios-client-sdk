@@ -1,5 +1,5 @@
 #
-#  Be sure to run `pod spec lint FFiOSClientSDK.podspec' to ensure this is a
+#  Be sure to run `pod spec lint ff-ios-client-sdk' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #
 #  To learn more about Podspec attributes see https://guides.cocoapods.org/syntax/podspec.html
@@ -15,9 +15,9 @@ Pod::Spec.new do |ff|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  ff.name         = "FFiOSClientSDK"
+  ff.name         = "ff-ios-client-sdk"
   ff.version      = "0.0.1"
-  ff.summary      = "A brief description FFiOSClientSDK use cases and general purpose of the SDK."
+  ff.summary      = "iOS SDK for Harness Feature Flags Management"
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -25,7 +25,7 @@ Pod::Spec.new do |ff|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   ff.description  = <<-DESC
-	FFiOSClientSDK servers the purpose of communicating to SSE servers to fetch the latest feature flags for different environments. You can easily modify your App and present new features to your clients at the touch of a button (switch in our case) from your dedicated portal.
+	Feature Flag Management platform from Harness. iOS SDK can be used to integrate with the platform in your iOS applications.
                    DESC
 
   ff.homepage     = "https://github.com/drone/ff-ios-client-sdk"
@@ -53,10 +53,7 @@ Pod::Spec.new do |ff|
   #  profile URL.
   #
 
-  ff.author             = { "Harness.io" => "rushabh@harness.io" }
-  # Or just: ff.author    = "Dusan Juranovic"
-  # ff.authors            = { "Harness.io" => "rushabh@harness.io" }
-  # ff.social_media_url   = ""
+  ff.author             =  "Harness Inc" 
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
