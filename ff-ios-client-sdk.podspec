@@ -1,5 +1,5 @@
 #
-#  Be sure to run `pod spec lint FFiOSClientSDK.podspec' to ensure this is a
+#  Be sure to run `pod spec lint ff-ios-client-sdk' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #
 #  To learn more about Podspec attributes see https://guides.cocoapods.org/syntax/podspec.html
@@ -15,9 +15,9 @@ Pod::Spec.new do |ff|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  ff.name         = "FFiOSClientSDK"
+  ff.name         = "ff-ios-client-sdk"
   ff.version      = "0.0.1"
-  ff.summary      = "A brief description FFiOSClientSDK use cases and general purpose of the SDK."
+  ff.summary      = "iOS SDK for Harness Feature Flags Management"
 
   # This description is used to generate tags and improve search results.
   #   * Think: What does it do? Why did you write it? What is the focus?
@@ -25,10 +25,10 @@ Pod::Spec.new do |ff|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   ff.description  = <<-DESC
-	FFiOSClientSDK servers the purpose of communicating to SSE servers to fetch the latest feature flags for different environments. You can easily modify your App and present new features to your clients at the touch of a button (switch in our case) from your dedicated portal.
+	Feature Flag Management platform from Harness. iOS SDK can be used to integrate with the platform in your iOS applications.
                    DESC
 
-  ff.homepage     = "https://github.com/drone/ff-ios-client-sdk"
+  ff.homepage     = "https://github.com/dusan-juranovic/ff-ios-client-sdk"
   # ff.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -53,10 +53,7 @@ Pod::Spec.new do |ff|
   #  profile URL.
   #
 
-  ff.author             = { "Harness.io" => "rushabh@harness.io" }
-  # Or just: ff.author    = "Dusan Juranovic"
-  # ff.authors            = { "Harness.io" => "rushabh@harness.io" }
-  # ff.social_media_url   = ""
+  ff.author             =  "Harness Inc" 
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
@@ -66,9 +63,9 @@ Pod::Spec.new do |ff|
 
   # ff.platform     = :ios
   ff.platform     = :ios, "10.0"
+  ff.ios.deployment_target = "10.0"
 
   #  When using multiple platforms
-  # ff.ios.deployment_target = "5.0"
   # ff.osx.deployment_target = "10.7"
   # ff.watchos.deployment_target = "2.0"
   # ff.tvos.deployment_target = "9.0"
@@ -91,10 +88,10 @@ Pod::Spec.new do |ff|
   #  Not including the public_header_files will make all headers public.
   #
 
-  ff.source_files  = "ff-ios-client-sdk/**/*.{h,m,swift}"
+  ff.source_files  = "Sources", "Sources/ff-ios-client-sdk/**/*.{h,m,swift}"
   # ff.exclude_files = "Classes/Exclude"
-
-  ff.public_header_files = "ff-ios-client-sdk/*.h"
+  ff.public_header_files = "Sources/ff-ios-client-sdk/**/*.{h}"
+  ff.pod_target_xcconfig = { 'ENABLED_TESTABILITY' => 'YES' }
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -117,7 +114,7 @@ Pod::Spec.new do |ff|
   #  the lib prefix of their name.
   #
 
-  # ff.framework  = "SomeFramework"
+  ff.framework  = "XCTest"
   # ff.frameworks = "SomeFramework", "AnotherFramework"
 
   # ff.library   = "iconv"
@@ -131,7 +128,7 @@ Pod::Spec.new do |ff|
   #  you can include multiple dependencies to ensure it works.
 
   ff.requires_arc = true
-  ff.swift_version = '5.0'
+  ff.swift_versions = ['5.0', '5.1', '5.2', '5.3']
 
   # ff.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # ff.dependency "JSONKit", "~> 1.4"
