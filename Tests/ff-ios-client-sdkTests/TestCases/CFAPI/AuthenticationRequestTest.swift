@@ -9,11 +9,11 @@ import XCTest
 @testable import ff_ios_client_sdk
 
 class AuthenticationRequestTest: XCTestCase {
-    
+	
 	let cfClient = CfClient.sharedInstance
 	let mockCache = CfCache() //storage that does not save and throws an error
-    override func setUp() {
-        super.setUp()
+	override func setUp() {
+		super.setUp()
 		let mockAuthManager = AuthenticationManagerMock()
 		let mockAPIManager = DefaultAPIManagerMock()
 		let mockEventSourceManager = EventSourceManagerMock()
@@ -25,11 +25,11 @@ class AuthenticationRequestTest: XCTestCase {
 		
 		let repository = FeatureRepository(token: "someToken", storageSource: mockCache, config: config, target: target, defaultAPIManager: mockAPIManager)
 		cfClient.featureRepository = repository
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
+	}
+	
+	override func tearDown() {
+		super.tearDown()
+	}
 	
 	func testAuthorizationSuccess() {
 		// Given
