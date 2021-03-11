@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ff-ios-client-sdk",
 	platforms: [
-		.iOS(.v10),
+		.iOS(.v10)
 	],
     products: [
         .library(
