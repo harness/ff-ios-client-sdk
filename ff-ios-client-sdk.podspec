@@ -28,7 +28,7 @@ Pod::Spec.new do |ff|
 	Feature Flag Management platform from Harness. iOS SDK can be used to integrate with the platform in your iOS applications.
                    DESC
 
-  ff.homepage     = "https://github.com/dusan-juranovic/ff-ios-client-sdk"
+  ff.homepage     = "https://github.com/drone/ff-ios-client-sdk"
   # ff.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
