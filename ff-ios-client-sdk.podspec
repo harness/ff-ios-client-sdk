@@ -63,9 +63,9 @@ Pod::Spec.new do |ff|
 
   # ff.platform     = :ios
   ff.platform     = :ios, "10.0"
+  ff.ios.deployment_target = "10.0"
 
   #  When using multiple platforms
-  # ff.ios.deployment_target = "5.0"
   # ff.osx.deployment_target = "10.7"
   # ff.watchos.deployment_target = "2.0"
   # ff.tvos.deployment_target = "9.0"
@@ -88,10 +88,10 @@ Pod::Spec.new do |ff|
   #  Not including the public_header_files will make all headers public.
   #
 
-  ff.source_files  = "ff-ios-client-sdk/**/*.{h,m,swift}"
+  ff.source_files  = "Sources", "Sources/ff-ios-client-sdk/**/*.{h,m,swift}"
   # ff.exclude_files = "Classes/Exclude"
-
-  ff.public_header_files = "ff-ios-client-sdk/*.h"
+  ff.public_header_files = "Sources/ff-ios-client-sdk/**/*.{h}"
+  ff.pod_target_xcconfig = { 'ENABLED_TESTABILITY' => 'YES' }
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -114,7 +114,7 @@ Pod::Spec.new do |ff|
   #  the lib prefix of their name.
   #
 
-  # ff.framework  = "SomeFramework"
+  ff.framework  = "XCTest"
   # ff.frameworks = "SomeFramework", "AnotherFramework"
 
   # ff.library   = "iconv"
@@ -128,7 +128,7 @@ Pod::Spec.new do |ff|
   #  you can include multiple dependencies to ensure it works.
 
   ff.requires_arc = true
-  ff.swift_version = '5.0'
+  ff.swift_versions = ['5.0', '5.1', '5.2', '5.3']
 
   # ff.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # ff.dependency "JSONKit", "~> 1.4"

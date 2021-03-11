@@ -21,11 +21,11 @@ let package = Package(
         .target(
             name: "ff-ios-client-sdk",
             dependencies: [],
-			path: "ff-ios-client-sdk/ff-ios-client-sdk"),
+			path: "Sources/ff-ios-client-sdk"),
         .testTarget(
             name: "ff-ios-client-sdkTests",
             dependencies: ["ff-ios-client-sdk"],
-			path: "ff-ios-client-sdk/ff-ios-client-sdkTests"),
+			path: "Tests/ff-ios-client-sdkTests"),
     ],
 	swiftLanguageVersions: [.v5]
 )
