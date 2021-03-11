@@ -5,10 +5,6 @@
 //  Created by Dusan Juranovic on 6.2.21..
 //
 
-import Foundation
-
-
-
 struct CfProjectMocks {
     static var projectInitDict: [String: Any] {
         var dict: [String: Any]   = [:]

@@ -5,7 +5,6 @@
 //  Created by Dusan Juranovic on 26.2.21..
 //
 
-import Foundation
 @testable import ff_ios_client_sdk
 
 class ReachabilityMock {
