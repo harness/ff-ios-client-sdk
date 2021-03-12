@@ -92,6 +92,7 @@ Pod::Spec.new do |ff|
   # ff.exclude_files = "Classes/Exclude"
   ff.public_header_files = "Sources/ff-ios-client-sdk/**/*.{h}"
   # ff.pod_target_xcconfig = { 'ENABLED_TESTABILITY' => 'YES' }
+  ff.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'NO' }
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
