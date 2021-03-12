@@ -14,9 +14,9 @@ Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM), Coco
 ## <u>_Swift Package Manager (SPM)_</u>
 The [Swift Package Manager](https://swift.org/package-manager/) is a dependency manager integrated into the `swift` compiler and `Xcode`.
 
-To integrate `ff-ios-client-sdk` into an Xcode project, go to the project editor, and select `Swift Packages`. From here hit the `+` button and follow the prompts using  `https://github.com/wings-software/ff-ios-client-sdk.git` as the URL.
+To integrate `ff-ios-client-sdk` into an Xcode project, go to the project editor, and select `Swift Packages`. From here hit the `+` button and follow the prompts using  `https://github.com/drone/ff-ios-client-sdk.git` as the URL.
 
-To include `ff-ios-client-sdk` in a Swift package, simply add it to the dependencies section of your `Package.swift` file. And add the product "HarnessSDKiOS" as a dependency for your targets.
+To include `ff-ios-client-sdk` in a Swift package, simply add it to the dependencies section of your `Package.swift` file. And add the product `ff-ios-client-sdk` as a dependency for your targets.
 
 ```Swift
 dependencies: [
@@ -45,7 +45,7 @@ platform :ios, '10.0'
 use_frameworks!
 
 target 'MyApp' do
-  pod 'ff-ios-client-sdk', '~> 0.0.1'
+  pod 'ff-ios-client-sdk'
 end
 ```
 
@@ -65,7 +65,7 @@ $ touch Cartfile
 ``` 
 in Terminal at your project's root folder. Once you open the `Cartfile`, you can copy/paste below line and save the changes.
 ```Swift
-github "drone/ff-ios-client-sdk" ~> 0.0.1
+github "drone/ff-ios-client-sdk"
 ```
 
 Now, you need to run
@@ -99,7 +99,7 @@ On your application targets’ `General` settings tab, in the `Frameworks, Libra
 
 Only thing left to do is:
 ```Swift
-import ff-iso-client-sdk
+import ff_iso_client_sdk
 ```
 ...wherever you need to use `ff-ios-client-sdk`
 
