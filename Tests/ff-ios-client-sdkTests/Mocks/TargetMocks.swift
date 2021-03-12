@@ -5,8 +5,6 @@
 //  Created by Dusan Juranovic on 9.3.21..
 //
 
-import Foundation
-
 struct TargetMocks {
 	static let identifier                  = ""
 	static let name                        = ""

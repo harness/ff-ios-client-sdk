@@ -8,7 +8,6 @@
 import XCTest
 @testable import ff_ios_client_sdk
 
-
 class CfConstantsTest: XCTestCase {
     var sut: CfConstants.Persistance!
     

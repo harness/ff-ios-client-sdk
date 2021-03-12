@@ -8,7 +8,6 @@
 import XCTest
 @testable import ff_ios_client_sdk
 
- 
 class CfConfigurationBuilderTest: XCTestCase {
     
     var sut: CfConfigurationBuilder!
