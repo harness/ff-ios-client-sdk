@@ -28,7 +28,7 @@ Pod::Spec.new do |ff|
 	Feature Flag Management platform from Harness. iOS SDK can be used to integrate with the platform in your iOS applications.
                    DESC
 
-  ff.homepage     = "https://github.com/drone/ff-ios-client-sdk"
+  ff.homepage     = "https://github.com/dusan-juranovic/ff-ios-client-sdk"
   # ff.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -91,7 +91,7 @@ Pod::Spec.new do |ff|
   ff.source_files  = "Sources", "Sources/ff-ios-client-sdk/**/*.{h,m,swift}"
   # ff.exclude_files = "Classes/Exclude"
   ff.public_header_files = "Sources/ff-ios-client-sdk/**/*.{h}"
-  ff.pod_target_xcconfig = { 'ENABLED_TESTABILITY' => 'YES' }
+  # ff.pod_target_xcconfig = { 'ENABLED_TESTABILITY' => 'YES' }
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -114,7 +114,7 @@ Pod::Spec.new do |ff|
   #  the lib prefix of their name.
   #
 
-  ff.framework  = "XCTest"
+  # ff.framework  = "XCTest"
   # ff.frameworks = "SomeFramework", "AnotherFramework"
 
   # ff.library   = "iconv"
