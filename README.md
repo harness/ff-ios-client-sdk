@@ -99,7 +99,7 @@ On your application targets’ `General` settings tab, in the `Frameworks, Libra
 
 Only thing left to do is:
 ```Swift
-import ff_iso_client_sdk
+import ff_ios_client_sdk
 ```
 ...wherever you need to use `ff-ios-client-sdk`
 
