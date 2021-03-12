@@ -25,8 +25,7 @@ let package = Package(
         .testTarget(
             name: "ff-ios-client-sdkTests",
             dependencies: ["ff-ios-client-sdk"],
-			path: "Tests/ff-ios-client-sdkTests",
-			linkerSettings: [.linkedFramework("XCTest")]),
+			path: "Tests/ff-ios-client-sdkTests"),
     ],
 	swiftLanguageVersions: [.v5]
 )
