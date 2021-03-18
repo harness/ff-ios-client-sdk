@@ -407,7 +407,9 @@ public class CfClient {
 	
 	private func registerForNetworkConditionNotifications() {
 		if self.networkInfoProvider?.isReachable == true {
-			self.setupFlowFor(.onlineStreaming)
+			if self.configuration.streamEnabled {
+				self.setupFlowFor(.onlineStreaming)
+			}
 		}
 		self.networkInfoProvider?.networkStatus { [weak self] (isOnline) in
 			guard let self = self else {return}
