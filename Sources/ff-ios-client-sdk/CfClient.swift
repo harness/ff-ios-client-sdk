@@ -297,15 +297,20 @@ public class CfClient {
 	 remove any registered event listeners.
 	*/
 	public func destroy() {
-		self.eventSourceManager.destroy()
-		self.setupFlowFor(.offline)
-		self.configuration.streamEnabled = false
-		self.isInitialized = false
-		self.lastEventId = nil
-		self.target = nil
-		self.onPollingResultCallback = nil
-		self.featureRepository.defaultAPIManager = nil
-		CfClient.sharedInstance.dispose()
+		if self.configuration != nil {
+			self.pollingEnabled = false
+			self.eventSourceManager.destroy()
+			self.setupFlowFor(.offline)
+			self.configuration.streamEnabled = false
+			self.isInitialized = false
+			self.lastEventId = nil
+			self.target = nil
+			self.onPollingResultCallback = nil
+			self.featureRepository.defaultAPIManager = nil
+			CfClient.sharedInstance.dispose()
+		} else {
+			Logger.log("destroy() already called. Please reinitialize the SDK.")
+		}
 	}
 	
 	//MARK: - Private methods -
@@ -398,6 +403,8 @@ public class CfClient {
 								self.onPollingResultCallback?(.success(eventType))
 						}
 					}
+				} else {
+					Logger.log("POLLING disabled due to destroy() call")
 				}
 			case .onlineStreaming:
 				self.stopPolling()

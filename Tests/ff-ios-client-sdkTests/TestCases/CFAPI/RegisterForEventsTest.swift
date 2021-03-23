@@ -236,5 +236,10 @@ class RegisterForEventsTest: XCTestCase {
 		XCTAssertFalse(cfClient.configuration.streamEnabled)
 		XCTAssertFalse(cfClient.isInitialized)
 		XCTAssertNil(cfClient.onPollingResultCallback)
+		
+		let newSharedInstance = CfClient.sharedInstance
+		newSharedInstance.destroy()
+		
+		XCTAssertNil(newSharedInstance.configuration)
 	}
 }

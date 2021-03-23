@@ -37,7 +37,7 @@ class EventSourceManager: EventSourceManagerProtocol {
 	var parameterConfig: ParameterConfig? {
 		didSet {
 			let config = self.configuration!
-			let streamUrl = URL(string: config.eventUrl)!.appendingPathComponent("/stream")
+			let streamUrl = URL(string: config.eventUrl)!
 			let headers = parameterConfig?.authHeader ?? [:]
 			if eventSource == nil {
 				//Create new instance if instance is nil

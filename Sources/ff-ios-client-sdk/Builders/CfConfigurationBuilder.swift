@@ -74,7 +74,7 @@ public class CfConfigurationBuilder {
 	
 	# Defaults: #
 	- `configUrl`:  "https://config.feature-flags.uat.harness.io/api/1.0"
-	- `eventUrl`:  "https://event.feature-flags.uat.harness.io/api/1.0"
+	- `eventUrl`:  "https://event.feature-flags.uat.harness.io/api/1.0/stream"
 	- `streamEnabled`: `false`
 	- `analyticsEnabled`: `true`
 	- `pollingInterval`: `60` seconds
