@@ -12,9 +12,11 @@ public struct AuthenticationRequest: Codable {
 
 
     public var apiKey: String
+	public var target: CfTarget
 
-    public init(apiKey: String) {
+	public init(apiKey: String, target: CfTarget) {
         self.apiKey = apiKey
+		self.target = target
     }
 
 }

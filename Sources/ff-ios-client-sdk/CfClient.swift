@@ -148,7 +148,7 @@ public class CfClient {
 		self.target = target
 		OpenAPIClientAPI.configPath = configuration.configUrl
 		OpenAPIClientAPI.eventPath = configuration.eventUrl
-		let authRequest = AuthenticationRequest(apiKey: apiKey)
+		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
 			switch response {
 				case .failure(let error):
