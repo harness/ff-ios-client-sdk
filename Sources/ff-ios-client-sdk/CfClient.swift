@@ -83,6 +83,9 @@ public class CfClient {
 	var networkInfoProvider: NetworkInfoProviderProtocol?
 	private var pollingEnabled: Bool = true
 	private var apiKey: String = ""
+	
+	///Tracks the `ready` state of CfClient.
+	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
 	private var ready: Bool = false
 	
 	//MARK: - Internal properties -
@@ -218,11 +221,12 @@ public class CfClient {
 	/**
 	Fetch `String` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
 	- Parameters:
 	   - evaluationId: ID of the `Evaluation` you want to fetch.
 	   - target: The account name for which this `Evaluation` is evaluated.
 	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
-	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
 	   - result: `Evaluation?`
 	*/
 	public func stringVariation(evaluationId: String, defaultValue: String? = nil, _ completion:@escaping(_ result:Evaluation?)->()) {
@@ -236,11 +240,12 @@ public class CfClient {
 	/**
 	Fetch `Bool` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
 	- Parameters:
 	   - evaluationId: ID of the `Evaluation` you want to fetch.
 	   - target: The account name for which this `Evaluation` is evaluated.
 	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
-	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
 	   - result: `Evaluation?`
 	*/
 	public func boolVariation(evaluationId: String, defaultValue: Bool? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
@@ -254,11 +259,12 @@ public class CfClient {
 	/**
 	Fetch `Number` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
 	- Parameters:
 	   - evaluationId: ID of the `Evaluation` you want to fetch.
 	   - target: The account name for which this `Evaluation` is evaluated.
 	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
-	   - completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+	   - completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
 	   - result: `Evaluation?`
 	*/
 	public func numberVariation(evaluationId: String, defaultValue:Int? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
@@ -272,6 +278,7 @@ public class CfClient {
 	/**
 	Fetch `[String:ValueType]` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
 	 - Note:
 	 `ValueType` can be one of the following:
 	   	- `ValueType.bool(Bool)`
@@ -282,7 +289,7 @@ public class CfClient {
 	 	- evaluationId: ID of the `Evaluation` you want to fetch.
 	 	- target: The account name for which this `Evaluation` is evaluated.
 		- defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
-		- completion: Contains an optional `Evaluation`. `Nil` is returned if no such value exists and no `defaultValue` was specified
+		- completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
 		- result: `Evaluation?`
 	*/
 	public func jsonVariation(evaluationId: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
@@ -400,7 +407,8 @@ public class CfClient {
 			}
 		}
 	}
-
+	
+	//Setup event observing flow based on `State`
 	private func setupFlowFor(_ state: State) {
 		switch state {
 			case .offline:
@@ -426,6 +434,7 @@ public class CfClient {
 		}
 	}
 	
+	//Setup network condition observing
 	private func registerForNetworkConditionNotifications() {
 		if self.networkInfoProvider?.isReachable == true {
 			if self.configuration.streamEnabled {
@@ -462,6 +471,7 @@ public class CfClient {
 		}
 	}
 	
+	//Handle SSE callbacks
 	private func registerStreamCallbacks(environmentId: String, events:[String], onEvent:@escaping(EventType, CFError?)->()) {
 		//ON OPEN
 		eventSourceManager.onOpen() {
@@ -544,6 +554,7 @@ public class CfClient {
 		}
 	}
 	
+	//Initiate polling sequence and retry SSE connection if SSE is enabled, every `pollingInterval`
 	private func startPolling(onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
 		Logger.log("Try reconnecting to STREAM with retry interval of \(self.configuration.pollingInterval) seconds")
 		if timer == nil {
