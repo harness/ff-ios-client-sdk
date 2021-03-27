@@ -83,6 +83,7 @@ public class CfClient {
 	var networkInfoProvider: NetworkInfoProviderProtocol?
 	private var pollingEnabled: Bool = true
 	private var apiKey: String = ""
+	private var ready: Bool = false
 	
 	//MARK: - Internal properties -
 	
@@ -146,6 +147,7 @@ public class CfClient {
 		self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target
+		self.ready = true
 		OpenAPIClientAPI.configPath = configuration.configUrl
 		OpenAPIClientAPI.eventPath = configuration.eventUrl
 		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
@@ -224,11 +226,11 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func stringVariation(evaluationId: String, defaultValue: String? = nil, _ completion:@escaping(_ result:Evaluation?)->()) {
-		if let defaultValue = defaultValue {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: ValueType.string(defaultValue), completion: completion)
-		} else {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, completion: completion)
+		guard let value = defaultValue else {
+			self.fetchIfReady(evaluationId: evaluationId, completion)
+			return
 		}
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.string(value), completion)
 	}
 	
 	/**
@@ -242,11 +244,11 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func boolVariation(evaluationId: String, defaultValue: Bool? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		if let defaultValue = defaultValue {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: ValueType.bool(defaultValue), completion: completion)
-		} else {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, completion: completion)
+		guard let value = defaultValue else {
+			self.fetchIfReady(evaluationId: evaluationId, completion)
+			return
 		}
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.bool(value), completion)
 	}
 	
 	/**
@@ -260,11 +262,11 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func numberVariation(evaluationId: String, defaultValue:Int? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		if let defaultValue = defaultValue {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: ValueType.int(defaultValue), completion: completion)
-		} else {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, completion: completion)
+		guard let value = defaultValue else {
+			self.fetchIfReady(evaluationId: evaluationId, completion)
+			return
 		}
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.int(value), completion)
 	}
 	
 	/**
@@ -284,11 +286,11 @@ public class CfClient {
 		- result: `Evaluation?`
 	*/
 	public func jsonVariation(evaluationId: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		if let defaultValue = defaultValue {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: ValueType.object(defaultValue), completion: completion)
-		} else {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, completion: completion)
+		guard let value = defaultValue else {
+			self.fetchIfReady(evaluationId: evaluationId, completion)
+			return
 		}
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.object(value), completion)
 	}
 	
 	/**
@@ -304,9 +306,9 @@ public class CfClient {
 			self.configuration.streamEnabled = false
 			self.isInitialized = false
 			self.lastEventId = nil
-			self.target = nil
 			self.onPollingResultCallback = nil
 			self.featureRepository.defaultAPIManager = nil
+			self.ready = false
 			CfClient.sharedInstance.dispose()
 		} else {
 			Logger.log("destroy() already called. Please reinitialize the SDK.")
@@ -371,6 +373,18 @@ public class CfClient {
 		}
 	}
 	
+	private func fetchIfReady(evaluationId: String, defaultValue:ValueType? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
+		if ready {
+			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: defaultValue, completion: completion)
+		} else {
+			guard let defaultValue = defaultValue else {
+				completion(nil)
+				return
+			}
+			completion(Evaluation(flag:evaluationId, value: defaultValue))
+		}
+	}
+	
 	///Make sure to call [initialize](x-source-tag://initialize) prior to calling this method.
 	private func getEvaluationById(forKey key: String, target: String, defaultValue: ValueType? = nil, completion:@escaping(Evaluation?)->()) {
 		self.featureRepository.getEvaluationById(key, target: target, useCache: true) { (result) in
@@ -386,7 +400,7 @@ public class CfClient {
 			}
 		}
 	}
-	
+
 	private func setupFlowFor(_ state: State) {
 		switch state {
 			case .offline:
