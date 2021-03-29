@@ -230,11 +230,7 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func stringVariation(evaluationId: String, defaultValue: String? = nil, _ completion:@escaping(_ result:Evaluation?)->()) {
-		guard let value = defaultValue else {
-			self.fetchIfReady(evaluationId: evaluationId, completion)
-			return
-		}
-		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.string(value), completion)
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
 	
 	/**
@@ -249,11 +245,7 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func boolVariation(evaluationId: String, defaultValue: Bool? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		guard let value = defaultValue else {
-			self.fetchIfReady(evaluationId: evaluationId, completion)
-			return
-		}
-		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.bool(value), completion)
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
 	
 	/**
@@ -268,11 +260,7 @@ public class CfClient {
 	   - result: `Evaluation?`
 	*/
 	public func numberVariation(evaluationId: String, defaultValue:Int? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		guard let value = defaultValue else {
-			self.fetchIfReady(evaluationId: evaluationId, completion)
-			return
-		}
-		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.int(value), completion)
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
 	
 	/**
@@ -293,11 +281,7 @@ public class CfClient {
 		- result: `Evaluation?`
 	*/
 	public func jsonVariation(evaluationId: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		guard let value = defaultValue else {
-			self.fetchIfReady(evaluationId: evaluationId, completion)
-			return
-		}
-		self.fetchIfReady(evaluationId: evaluationId, defaultValue: ValueType.object(value), completion)
+		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
 	
 	/**
@@ -380,11 +364,19 @@ public class CfClient {
 		}
 	}
 	
-	private func fetchIfReady(evaluationId: String, defaultValue:ValueType? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
+	private func fetchIfReady(evaluationId: String, defaultValue:Any? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
+		var valueType: ValueType?
+		switch defaultValue {
+			case is String: valueType = ValueType.string(defaultValue as! String)
+			case is Bool: valueType = ValueType.bool(defaultValue as! Bool)
+			case is Int: valueType = ValueType.int(defaultValue as! Int)
+			case is [String:ValueType]: valueType = ValueType.object(defaultValue as! [String:ValueType])
+			default: valueType = nil
+		}
 		if ready {
-			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: defaultValue, completion: completion)
+			self.getEvaluationById(forKey: evaluationId, target: target.identifier, defaultValue: valueType, completion: completion)
 		} else {
-			guard let defaultValue = defaultValue else {
+			guard let defaultValue = valueType else {
 				completion(nil)
 				return
 			}
