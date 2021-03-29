@@ -402,18 +402,4 @@ class AuthenticationRequestTest: XCTestCase {
 		wait(for: [exp], timeout: 2)
 		XCTAssertNil(resultEval)
 	}
-	
-	func testSaveUnsupportedValue() {
-		// Given
-		var config = CfConfiguration.builder().build()
-		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
-		let eval = CacheMocks.createEvalForStringType(CacheMocks.TestFlagValue.unsupported(.unsupported).key)
-		try? cfClient.featureRepository.storageSource.saveValue(eval, key: eval!.flag)
-		
-		// When
-		cfClient.stringVariation(evaluationId: eval!.flag, { (evaluation) in
-			// Then
-			XCTAssertNil(evaluation)
-		})
-	}
 }

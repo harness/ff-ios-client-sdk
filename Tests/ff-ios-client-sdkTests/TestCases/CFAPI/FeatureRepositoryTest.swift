@@ -56,7 +56,7 @@ class FeatureRepositoryTest: XCTestCase {
 		
 		// Then
 		XCTAssertNotNil(result)
-		XCTAssertEqual(result?.count, 5, "Expected count == 5")
+		XCTAssertEqual(result?.count, 4, "Expected count == 4")
     }
 	
 	func testGetEvaluationFailure() {
