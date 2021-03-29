@@ -12,7 +12,6 @@ public enum ValueType: Codable, Equatable {
 	case string(String)
 	case int(Int)
 	case object(Value)
-	case unsupported
 	
 	public init(from decoder: Decoder) throws {
 		let singleValueContainer = try decoder.singleValueContainer()
@@ -28,9 +27,6 @@ public enum ValueType: Codable, Equatable {
 		}else if let value = try? singleValueContainer.decode(Value.self) {
 			self = .object(value)
 			return
-		} else if singleValueContainer.decodeNil(){
-			self = .unsupported
-			return
 		}
 		throw CFError.parsingError
 	}
@@ -42,7 +38,6 @@ public enum ValueType: Codable, Equatable {
 			case .string(let stringVal): try container.encode(stringVal)
 			case .int(let intVal): try container.encode(intVal)
 			case .object(let objectVal): try container.encode(objectVal)
-			case .unsupported: try container.encodeNil()
 		}
 	}
 	
@@ -84,7 +79,6 @@ public enum ValueType: Codable, Equatable {
 			case .bool(let boolVal): 	 return "\(boolVal)"
 			case .int(let intVal): 		 return "\(intVal)"
 			case .object(let objectVal): return "\(ValueType.object(objectVal))"
-			case .unsupported:			 return nil
 		}
 	}
 	
