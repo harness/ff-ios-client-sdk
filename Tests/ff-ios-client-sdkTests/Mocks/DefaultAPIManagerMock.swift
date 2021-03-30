@@ -33,7 +33,6 @@ class DefaultAPIManagerMock: DefaultAPIManagerProtocol {
 					case .bool(let bool):  modifiedEval = Evaluation(flag: evaluation.flag, value: .bool(!bool))
 					case .int(let int): modifiedEval = Evaluation(flag: evaluation.flag, value: .int(int + 5))
 					case .object(_): modifiedEval = Evaluation(flag: evaluation.flag, value: .object(["added":ValueType.bool(true)]))
-					case .unsupported: modifiedEval = Evaluation(flag: evaluation.flag, value: .unsupported)
 				}
 				completion(.success(modifiedEval!))
 			} else {

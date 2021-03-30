@@ -154,7 +154,7 @@ class RegisterForEventsTest: XCTestCase {
 						case .onPolling(let evaluations):
 							// Then
 							callbackCalled = true
-							XCTAssertEqual(evaluations?.count, 5)
+							XCTAssertEqual(evaluations?.count, 4)
 							exp.fulfill()
 						default: break
 					}

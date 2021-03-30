@@ -186,22 +186,6 @@ class EvaluationTest: XCTestCase {
 		XCTAssertNil(evaluation.value.intValue)
 	}
 	
-	func testInitUnsupportedEvaluation() {
-		// Given
-		let flag = "flag-mock"
-		let value = ValueType.unsupported
-		
-		// Then
-		let evaluation = Evaluation(flag: flag, value: value)
-		
-		// Then
-		XCTAssertEqual(evaluation.flag == flag, evaluation.value == value)
-		XCTAssertNil(evaluation.value.stringValue)
-		XCTAssertNil(evaluation.value.boolValue)
-		XCTAssertNil(evaluation.value.intValue)
-		XCTAssertNil(evaluation.value.objectValue)
-	}
-	
 	func testDecodedEvaluationsSuccess() {
 		let evaluations = CacheMocks.createAllTypeFlagMocks()
 		
