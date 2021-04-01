@@ -550,19 +550,21 @@ public class CfClient {
 	private func startPolling(onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
 		Logger.log("Try reconnecting to STREAM with retry interval of \(self.configuration.pollingInterval) seconds")
 		if timer == nil {
-			self.timer = Timer.scheduledTimer(withTimeInterval: self.configuration.pollingInterval, repeats: true) {[weak self] _ in
-				if self?.configuration.streamEnabled == true {
-					self?.setupFlowFor(.onlineStreaming)
-				}
-				self?.featureRepository.getEvaluations() { (result) in
-					switch result {
-						case .failure(let error):
-							onCompletion(.failure(error))
-						case .success(let evaluations):
-							onCompletion(.success(EventType.onPolling(evaluations)))
+			DispatchQueue.main.async {
+				self.timer = Timer.scheduledTimer(withTimeInterval: self.configuration.pollingInterval, repeats: true) {[weak self] _ in
+					if self?.configuration.streamEnabled == true {
+						self?.setupFlowFor(.onlineStreaming)
+					}
+					self?.featureRepository.getEvaluations() { (result) in
+						switch result {
+							case .failure(let error):
+								onCompletion(.failure(error))
+							case .success(let evaluations):
+								onCompletion(.success(EventType.onPolling(evaluations)))
+						}
 					}
 				}
-			}			
+			}
 		}
 	}
 }
