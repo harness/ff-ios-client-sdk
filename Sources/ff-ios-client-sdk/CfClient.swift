@@ -77,6 +77,7 @@ public class CfClient {
 	///		- `signature`
 	///separated by a `dot` (`.`)
 	private var token: String?
+    private var clusterIdentifier: String?
 	private var timer: Timer?
 	
 	///Provides network state
@@ -98,7 +99,14 @@ public class CfClient {
 	
 	///Used for cloud communication
 	///Lazily instantiated during CfClient `initialize(clientID:config:cache:)` call, after it's dependencies are set.
-	lazy var featureRepository = FeatureRepository(token: self.token, storageSource: self.storageSource, config: self.configuration, target: self.target)
+	lazy var featureRepository = FeatureRepository(
+        
+        token: self.token,
+        clusterIdentifier: self.clusterIdentifier,
+        storageSource: self.storageSource,
+        config: self.configuration,
+        target: self.target
+    )
 	
 	//MARK: - Public properties -
 	
@@ -333,15 +341,18 @@ public class CfClient {
 			//Extract info from retrieved JWT
 			let dict = JWTDecoder().decode(jwtToken: response!.authToken)
 			let project = CfProject(dict:dict ?? [:])
-			self.isInitialized = true
+			
+            self.isInitialized = true
 			self.configuration.environmentId = project.environment
 			self.token = response!.authToken
+            self.clusterIdentifier = project.clusterIdentifier
 			
 			//Assign retrieved values to lazily instantiated `featureRepository`
 			self.featureRepository.token = self.token!
 			self.featureRepository.storageSource = self.storageSource!
 			self.featureRepository.config = self.configuration
 			self.featureRepository.target = self.target
+            self.featureRepository.clusterIdentifier = self.clusterIdentifier!
 			
 			//Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in

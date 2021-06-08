@@ -10,11 +10,10 @@ import Foundation
 
 public struct AuthenticationResponse: Codable { 
 
-
     public var authToken: String
 
     public init(authToken: String) {
+        
         self.authToken = authToken
     }
-
 }

@@ -7,14 +7,26 @@
 
 import Foundation
 class FeatureRepository {
-	var token: String
+	
+    var token: String
+    var clusterIdentifier: String
 	var storageSource: StorageRepositoryProtocol
 	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
 	var target: CfTarget
 	
-	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CfConfiguration?, target: CfTarget, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
-		self.token = token ?? ""
+	init(
+        
+        token: String?,
+        clusterIdentifier: String?,
+        storageSource: StorageRepositoryProtocol?,
+        config:CfConfiguration?,
+        target: CfTarget,
+        defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()
+    ) {
+		
+        self.token = token ?? ""
+        self.clusterIdentifier = clusterIdentifier ?? ""
 		self.storageSource = storageSource ?? CfCache()
 		self.config = config ?? CfConfiguration.builder().build()
 		self.defaultAPIManager = defaultAPIManager
