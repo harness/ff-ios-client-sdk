@@ -127,7 +127,7 @@ open class DefaultAPI {
         clusterIdentifier: String
     
     ) -> RequestBuilder<[Evaluation]> {
-        var path = "/client/env/{environmentUUID}/target/{target}/evaluations"
+        var path = "/client/env/{environmentUUID}/target/{target}/evaluations?cluster=\(clusterIdentifier)"
         let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
         let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{environmentUUID}", with: environmentUUIDPostEscape, options: .literal, range: nil)
@@ -164,7 +164,7 @@ open class DefaultAPI {
         clusterIdentifier: String
     
     ) -> RequestBuilder<Evaluation> {
-        var path = "/client/env/{environmentUUID}/target/{target}/evaluations/{feature}"
+        var path = "/client/env/{environmentUUID}/target/{target}/evaluations/{feature}?cluster=\(clusterIdentifier)"
         let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
         let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{environmentUUID}", with: environmentUUIDPostEscape, options: .literal, range: nil)
