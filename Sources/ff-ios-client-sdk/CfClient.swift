@@ -170,7 +170,9 @@ public class CfClient {
 			
                 case .success(_):
                     
-                    OpenAPIClientAPI.eventPath = "\(configuration.eventUrl)?cluster=\(self.cluster!)"
+                    let url = "\(configuration.eventUrl)?cluster=\(self.cluster!)"
+                    NSLog("Api, events url: \(url)")
+                    OpenAPIClientAPI.eventPath = url
 					onCompletion?(.success(()))
 			}
 		}
