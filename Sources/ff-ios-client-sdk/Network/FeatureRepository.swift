@@ -9,7 +9,7 @@ import Foundation
 class FeatureRepository {
 	
     var token: String
-    var clusterIdentifier: String
+    var cluster: String
 	var storageSource: StorageRepositoryProtocol
 	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
@@ -18,7 +18,7 @@ class FeatureRepository {
 	init(
         
         token: String?,
-        clusterIdentifier: String?,
+        cluster: String?,
         storageSource: StorageRepositoryProtocol?,
         config:CfConfiguration?,
         target: CfTarget,
@@ -26,7 +26,7 @@ class FeatureRepository {
     ) {
 		
         self.token = token ?? ""
-        self.clusterIdentifier = clusterIdentifier ?? ""
+        self.cluster = cluster ?? ""
 		self.storageSource = storageSource ?? CfCache()
 		self.config = config ?? CfConfiguration.builder().build()
 		self.defaultAPIManager = defaultAPIManager
@@ -44,7 +44,7 @@ class FeatureRepository {
             
             environmentUUID: self.config.environmentId,
             target: self.target.identifier,
-            clusterIDentifier: clusterIdentifier,
+            cluster: cluster,
             apiResponseQueue: .main
         
         ) { [weak self] (result) in
@@ -98,7 +98,7 @@ class FeatureRepository {
             environmentUUID: self.config.environmentId,
             feature: evaluationId,
             target: target,
-            clusterIDentifier: clusterIdentifier,
+            cluster: cluster,
             apiResponseQueue: .main
         
         ) { [weak self] (result) in

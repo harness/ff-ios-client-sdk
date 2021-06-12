@@ -57,7 +57,7 @@ open class DefaultAPI {
         
         environmentUUID: String,
         target: String,
-        clusterIDentifier: String,
+        cluster: String,
         apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue,
         completion: @escaping ((_ data: [Evaluation]?,_ error: Error?) -> Void)
     
@@ -66,7 +66,7 @@ open class DefaultAPI {
             
             environmentUUID: environmentUUID,
             target: target,
-            clusterIdentifier: clusterIDentifier
+            cluster: cluster
         
         ).execute(apiResponseQueue) { result -> Void in
             switch result {
@@ -92,7 +92,7 @@ open class DefaultAPI {
         environmentUUID: String,
         feature: String,
         target: String, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue,
-        clusterIdentifier: String,
+        cluster: String,
         completion: @escaping ((_ data: Evaluation?,_ error: Error?) -> Void)
     
     ) {
@@ -101,7 +101,7 @@ open class DefaultAPI {
             environmentUUID: environmentUUID,
             feature: feature,
             target: target,
-            clusterIdentifier: clusterIdentifier
+            cluster: cluster
         
         ).execute(apiResponseQueue) { result -> Void in
             switch result {
@@ -124,10 +124,10 @@ open class DefaultAPI {
         
         environmentUUID: String,
         target: String,
-        clusterIdentifier: String
+        cluster: String
     
     ) -> RequestBuilder<[Evaluation]> {
-        var path = "/client/env/{environmentUUID}/target/{target}/evaluations?cluster=\(clusterIdentifier)"
+        var path = "/client/env/{environmentUUID}/target/{target}/evaluations?cluster=\(cluster)"
         let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
         let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{environmentUUID}", with: environmentUUIDPostEscape, options: .literal, range: nil)
@@ -135,7 +135,7 @@ open class DefaultAPI {
         let targetPostEscape = targetPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{target}", with: targetPostEscape, options: .literal, range: nil)
         let URLString = OpenAPIClientAPI.configPath + path
-        let parameters: [String:Any] = ["clusterIdentifier": clusterIdentifier]
+        let parameters: [String:Any] = ["cluster": cluster]
         
         let url = URLComponents(string: URLString)
 
@@ -161,10 +161,10 @@ open class DefaultAPI {
         
         environmentUUID: String,
         feature: String, target: String,
-        clusterIdentifier: String
+        cluster: String
     
     ) -> RequestBuilder<Evaluation> {
-        var path = "/client/env/{environmentUUID}/target/{target}/evaluations/{feature}?cluster=\(clusterIdentifier)"
+        var path = "/client/env/{environmentUUID}/target/{target}/evaluations/{feature}?cluster=\(cluster)"
         let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
         let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{environmentUUID}", with: environmentUUIDPostEscape, options: .literal, range: nil)
@@ -175,7 +175,7 @@ open class DefaultAPI {
         let targetPostEscape = targetPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{target}", with: targetPostEscape, options: .literal, range: nil)
         let URLString = OpenAPIClientAPI.configPath + path
-        let parameters: [String:Any] = ["clusterIdentifier": clusterIdentifier]
+        let parameters: [String:Any] = ["cluster": cluster]
         
         let url = URLComponents(string: URLString)
 

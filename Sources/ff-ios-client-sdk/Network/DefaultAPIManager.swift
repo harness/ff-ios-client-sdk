@@ -13,7 +13,7 @@ protocol DefaultAPIManagerProtocol {
         
         environmentUUID: String,
         target: String,
-        clusterIDentifier: String,
+        cluster: String,
         apiResponseQueue: DispatchQueue,
         completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ()))
 	
@@ -22,7 +22,7 @@ protocol DefaultAPIManagerProtocol {
         environmentUUID: String,
         feature: String,
         target: String,
-        clusterIDentifier: String,
+        cluster: String,
         apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ()))
 }
 
@@ -32,7 +32,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
         
         environmentUUID: String,
         target: String,
-        clusterIDentifier: String,
+        cluster: String,
         apiResponseQueue: DispatchQueue,
         completion: @escaping (Swift.Result<[Evaluation], CFError>) -> ()
     
@@ -41,7 +41,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
             
             environmentUUID: environmentUUID,
             target: target,
-            clusterIDentifier: clusterIDentifier,
+            cluster: cluster,
             apiResponseQueue: apiResponseQueue
         
         ) { (evaluations, error) in
@@ -62,7 +62,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
         environmentUUID: String,
         feature: String,
         target: String,
-        clusterIDentifier: String,
+        cluster: String,
         apiResponseQueue: DispatchQueue,
         completion: @escaping (Swift.Result<Evaluation, CFError>) -> ()
     
@@ -73,7 +73,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
             feature: feature,
             target: target,
             apiResponseQueue: apiResponseQueue,
-            clusterIdentifier: clusterIDentifier
+            cluster: cluster
         
         ) { (evaluation, error) in
 			guard error == nil else {

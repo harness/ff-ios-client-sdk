@@ -77,7 +77,7 @@ public class CfClient {
 	///		- `signature`
 	///separated by a `dot` (`.`)
 	private var token: String?
-    private var clusterIdentifier: String?
+    private var cluster: String?
 	private var timer: Timer?
 	
 	///Provides network state
@@ -102,7 +102,7 @@ public class CfClient {
 	lazy var featureRepository = FeatureRepository(
         
         token: self.token,
-        clusterIdentifier: self.clusterIdentifier,
+        cluster: self.cluster,
         storageSource: self.storageSource,
         config: self.configuration,
         target: self.target
@@ -345,14 +345,14 @@ public class CfClient {
             self.isInitialized = true
 			self.configuration.environmentId = project.environment
 			self.token = response!.authToken
-            self.clusterIdentifier = project.clusterIdentifier
+            self.cluster = project.clusterIdentifier
 			
 			//Assign retrieved values to lazily instantiated `featureRepository`
 			self.featureRepository.token = self.token!
 			self.featureRepository.storageSource = self.storageSource!
 			self.featureRepository.config = self.configuration
 			self.featureRepository.target = self.target
-            self.featureRepository.clusterIdentifier = self.clusterIdentifier!
+            self.featureRepository.cluster = self.cluster!
 			
 			//Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
