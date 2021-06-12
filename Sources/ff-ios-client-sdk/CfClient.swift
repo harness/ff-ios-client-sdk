@@ -170,9 +170,7 @@ public class CfClient {
 			
                 case .success(_):
                     
-                    let url = "\(configuration.eventUrl)?cluster=\(self.cluster!)"
-                    NSLog("Api, events url: \(url)")
-                    OpenAPIClientAPI.eventPath = url
+                    OpenAPIClientAPI.eventPath = configuration.eventUrl
 					onCompletion?(.success(()))
 			}
 		}
@@ -202,8 +200,13 @@ public class CfClient {
 			print("Could not fetch from cache")
 		}
 		if self.configuration.streamEnabled {
-			let parameterConfig = ParameterConfig(authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
-															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey])
+			
+            let parameterConfig = ParameterConfig(
+                
+                authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
+															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey],
+                cluster: self.cluster!
+            )
 			self.eventSourceManager.configuration = self.configuration
 			self.eventSourceManager.parameterConfig = parameterConfig
 			

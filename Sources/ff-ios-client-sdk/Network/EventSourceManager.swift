@@ -8,12 +8,15 @@
 import Foundation
 
 protocol EventSourceManagerProtocol {
-	static func shared(parameterConfig: ParameterConfig?) -> EventSourceManagerProtocol
-	var forceDisconnected: Bool {get set}
+	
+    static func shared(parameterConfig: ParameterConfig?) -> EventSourceManagerProtocol
+	
+    var forceDisconnected: Bool {get set}
 	var parameterConfig: ParameterConfig? {get set}
 	var configuration: CfConfiguration? {get set}
 	var streamReady: Bool {get}
-	func onOpen(_ completion:@escaping()->())
+	
+    func onOpen(_ completion:@escaping()->())
 	func onComplete(_ completion:@escaping(Int?, Bool?, CFError?)->())
 	func onMessage(_ completion:@escaping(String?, String?, String?)->())
 	func addEventListener(_ event: String, completion:@escaping(String?, String?, String?)->())
@@ -23,7 +26,8 @@ protocol EventSourceManagerProtocol {
 }
 
 class EventSourceManager: EventSourceManagerProtocol {
-	//MARK: - Internal properties -
+	
+    //MARK: - Internal properties -
 	var streamReady: Bool {
 		switch eventSource?.readyState {
 			case .connecting, .open: return true
@@ -35,12 +39,14 @@ class EventSourceManager: EventSourceManagerProtocol {
 	var eventSource: EventSource?
 	var configuration: CfConfiguration?
 	var parameterConfig: ParameterConfig? {
-		didSet {
+		
+        didSet {
 			
             let config = self.configuration!
-			let streamUrl = URL(string: config.eventUrl)!
-			let headers = parameterConfig?.authHeader ?? [:]
-			
+            let cluster = parameterConfig?.cluster ?? ""
+			let streamUrl = URL(string: "\(config.eventUrl)?cluster=\(cluster)")!
+            let headers = parameterConfig?.authHeader ?? [:]
+			    
             NSLog("Api, streamUrl: \(streamUrl)")
             
             if eventSource == nil {
@@ -114,5 +120,7 @@ class EventSourceManager: EventSourceManagerProtocol {
 }
 
 struct ParameterConfig {
-	let authHeader: [String:String]
+	
+    let authHeader: [String:String]
+    let cluster: String
 }
