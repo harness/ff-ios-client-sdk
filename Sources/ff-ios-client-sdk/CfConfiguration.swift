@@ -15,15 +15,26 @@ import Foundation
 /// - `analyticsEnabled`: `true`
 /// - `pollingInterval`: `60` seconds
 public struct CfConfiguration {
-	var configUrl: String
+	
+    var configUrl: String
 	var eventUrl: String
 	var streamEnabled: Bool
 	var analyticsEnabled: Bool
 	var pollingInterval: TimeInterval
 	var environmentId: String
 	
-	internal init(configUrl: String, eventUrl: String, streamEnabled: Bool, analyticsEnabled: Bool, pollingInterval:TimeInterval, environmentId: String) {
-		self.configUrl = configUrl
+	internal init(
+        
+        configUrl: String,
+        eventUrl: String,
+        streamEnabled: Bool,
+        analyticsEnabled: Bool,
+        pollingInterval:TimeInterval,
+        environmentId: String
+        
+    ) {
+		
+        self.configUrl = configUrl
 		self.eventUrl = eventUrl
 		self.streamEnabled = streamEnabled
 		self.analyticsEnabled = analyticsEnabled
@@ -32,7 +43,8 @@ public struct CfConfiguration {
 	}
 	
 	public static func builder() -> CfConfigurationBuilder {
-		return CfConfigurationBuilder()
+		
+        return CfConfigurationBuilder()
 	}
 }
 

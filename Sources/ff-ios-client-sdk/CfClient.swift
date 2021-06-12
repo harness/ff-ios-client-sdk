@@ -160,13 +160,17 @@ public class CfClient {
 		self.target = target
 		self.ready = true
 		OpenAPIClientAPI.configPath = configuration.configUrl
-		OpenAPIClientAPI.eventPath = configuration.eventUrl
 		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
-			switch response {
-				case .failure(let error):
+			
+            switch response {
+				
+                case .failure(let error):
 					onCompletion?(.failure(error))
-				case .success(_):
+			
+                case .success(_):
+                    
+                    OpenAPIClientAPI.eventPath = "\(configuration.eventUrl)?cluster=\(self.cluster!)"
 					onCompletion?(.success(()))
 			}
 		}
