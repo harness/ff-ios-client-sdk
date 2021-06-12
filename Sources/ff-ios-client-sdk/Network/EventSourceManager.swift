@@ -36,10 +36,14 @@ class EventSourceManager: EventSourceManagerProtocol {
 	var configuration: CfConfiguration?
 	var parameterConfig: ParameterConfig? {
 		didSet {
-			let config = self.configuration!
+			
+            let config = self.configuration!
 			let streamUrl = URL(string: config.eventUrl)!
 			let headers = parameterConfig?.authHeader ?? [:]
-			if eventSource == nil {
+			
+            NSLog("Api, streamUrl: \(streamUrl)")
+            
+            if eventSource == nil {
 				//Create new instance if instance is nil
 				self.eventSource = EventSource(url: streamUrl, headers:headers)
 			} else if (eventSource?.url != streamUrl && eventSource?.headers != headers) {
