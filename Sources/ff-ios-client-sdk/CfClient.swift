@@ -503,7 +503,7 @@ public class CfClient {
 			self.setupFlowFor(.onlinePolling)
 			guard error == nil else {
 				
-                NSLog("Api, eventSourceManager.onComplete: \(statusCode!), \(error!)")
+                NSLog("Api, eventSourceManager.onComplete: \(error!)")
                 onEvent(EventType.onComplete, error)
 				return
 			}
