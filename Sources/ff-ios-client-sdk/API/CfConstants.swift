@@ -41,8 +41,8 @@ struct CfConstants
 	}
 	struct Server
 	{
-		static let configUrl 	 = "https://config.feature-flags.uat.harness.io/api/1.0"
-		static let eventUrl 	 = "https://config.feature-flags.uat.harness.io/api/1.0/stream" //TODO: Change `config.` -> `event.` once ready
+		static let configUrl 	 = "https://config.ff.harness.io/api/1.0"
+		static let eventUrl 	 = "https://config.ff.harness.io/api/1.0/stream" //TODO: Change `config.` -> `event.` once ready
 	}
 	
 	struct ParamKey

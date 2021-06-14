@@ -7,8 +7,8 @@
 import Foundation
 
 open class OpenAPIClientAPI {
-	public static var configPath = CfConstants.Server.configUrl //"https://config.feature-flags.uat.harness.io/api/1.0"
-	public static var eventPath = CfConstants.Server.eventUrl //"https://event.feature-flags.uat.harness.io/api/1.0"
+	public static var configPath = CfConstants.Server.configUrl //"https://config.ff.harness.io/api/1.0"
+	public static var eventPath = CfConstants.Server.eventUrl //"https://config.ff.harness.io/api/1.0"
     public static var credential: URLCredential?
     public static var customHeaders: [String:String] = [:]
     public static var requestBuilderFactory: RequestBuilderFactory = URLSessionRequestBuilderFactory()
