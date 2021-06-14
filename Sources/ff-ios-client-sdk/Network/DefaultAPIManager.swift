@@ -8,13 +8,43 @@
 import Foundation
 
 protocol DefaultAPIManagerProtocol {
-	func getEvaluations(environmentUUID: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ()))
-	func getEvaluationByIdentifier(environmentUUID: String, feature: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ()))
+	
+    func getEvaluations(
+        
+        environmentUUID: String,
+        target: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ()))
+	
+    func getEvaluationByIdentifier(
+        
+        environmentUUID: String,
+        feature: String,
+        target: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ()))
 }
 
 class DefaultAPIManager: DefaultAPIManagerProtocol {
-	func getEvaluations(environmentUUID: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<[Evaluation], CFError>) -> ()) {
-		DefaultAPI.getEvaluations(environmentUUID: environmentUUID, target: target, apiResponseQueue: apiResponseQueue) { (evaluations, error) in
+	
+    func getEvaluations(
+        
+        environmentUUID: String,
+        target: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping (Swift.Result<[Evaluation], CFError>) -> ()
+    
+    ) {
+		DefaultAPI.getEvaluations(
+            
+            environmentUUID: environmentUUID,
+            target: target,
+            cluster: cluster,
+            apiResponseQueue: apiResponseQueue
+        
+        ) { (evaluations, error) in
 			guard error == nil else {
 				completion(.failure(CFError.serverError(error as! ErrorResponse)))
 				return
@@ -27,8 +57,25 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
 		}
 	}
 	
-	func getEvaluationByIdentifier(environmentUUID: String, feature: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<Evaluation, CFError>) -> ()) {
-		DefaultAPI.getEvaluationByIdentifier(environmentUUID: environmentUUID, feature: feature, target: target, apiResponseQueue: apiResponseQueue) { (evaluation, error) in
+	func getEvaluationByIdentifier(
+        
+        environmentUUID: String,
+        feature: String,
+        target: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping (Swift.Result<Evaluation, CFError>) -> ()
+    
+    ) {
+		DefaultAPI.getEvaluationByIdentifier(
+            
+            environmentUUID: environmentUUID,
+            feature: feature,
+            target: target,
+            apiResponseQueue: apiResponseQueue,
+            cluster: cluster
+        
+        ) { (evaluation, error) in
 			guard error == nil else {
 				completion(.failure(CFError.serverError(error as! ErrorResponse)))
 				return

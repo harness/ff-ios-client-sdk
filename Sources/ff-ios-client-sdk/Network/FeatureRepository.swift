@@ -7,14 +7,26 @@
 
 import Foundation
 class FeatureRepository {
-	var token: String
+	
+    var token: String
+    var cluster: String
 	var storageSource: StorageRepositoryProtocol
 	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
 	var target: CfTarget
 	
-	init(token: String?, storageSource: StorageRepositoryProtocol?, config:CfConfiguration?, target: CfTarget, defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()) {
-		self.token = token ?? ""
+	init(
+        
+        token: String?,
+        cluster: String?,
+        storageSource: StorageRepositoryProtocol?,
+        config:CfConfiguration?,
+        target: CfTarget,
+        defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()
+    ) {
+		
+        self.token = token ?? ""
+        self.cluster = cluster ?? ""
 		self.storageSource = storageSource ?? CfCache()
 		self.config = config ?? CfConfiguration.builder().build()
 		self.defaultAPIManager = defaultAPIManager
@@ -28,9 +40,17 @@ class FeatureRepository {
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
-		defaultAPIManager.getEvaluations(environmentUUID: self.config.environmentId, target: self.target.identifier, apiResponseQueue: .main) { [weak self] (result) in
+		defaultAPIManager.getEvaluations(
+            
+            environmentUUID: self.config.environmentId,
+            target: self.target.identifier,
+            cluster: cluster,
+            apiResponseQueue: .main
+        
+        ) { [weak self] (result) in
 			guard let self = self else {return}
-			let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
+			
+            let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 			switch result {
 				case .failure(_):
 					Logger.log("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
@@ -73,7 +93,15 @@ class FeatureRepository {
 		}
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
-		defaultAPIManager.getEvaluationByIdentifier(environmentUUID: self.config.environmentId, feature: evaluationId, target: target, apiResponseQueue: .main) { [weak self] (result) in
+		defaultAPIManager.getEvaluationByIdentifier(
+            
+            environmentUUID: self.config.environmentId,
+            feature: evaluationId,
+            target: target,
+            cluster: cluster,
+            apiResponseQueue: .main
+        
+        ) { [weak self] (result) in
 			guard let self = self else {return}
 			let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 			switch result {

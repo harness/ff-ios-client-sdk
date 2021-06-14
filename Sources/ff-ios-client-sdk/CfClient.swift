@@ -77,6 +77,7 @@ public class CfClient {
 	///		- `signature`
 	///separated by a `dot` (`.`)
 	private var token: String?
+    private var cluster: String?
 	private var timer: Timer?
 	
 	///Provides network state
@@ -98,7 +99,14 @@ public class CfClient {
 	
 	///Used for cloud communication
 	///Lazily instantiated during CfClient `initialize(clientID:config:cache:)` call, after it's dependencies are set.
-	lazy var featureRepository = FeatureRepository(token: self.token, storageSource: self.storageSource, config: self.configuration, target: self.target)
+	lazy var featureRepository = FeatureRepository(
+        
+        token: self.token,
+        cluster: self.cluster,
+        storageSource: self.storageSource,
+        config: self.configuration,
+        target: self.target
+    )
 	
 	//MARK: - Public properties -
 	
@@ -152,13 +160,17 @@ public class CfClient {
 		self.target = target
 		self.ready = true
 		OpenAPIClientAPI.configPath = configuration.configUrl
-		OpenAPIClientAPI.eventPath = configuration.eventUrl
 		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
-			switch response {
-				case .failure(let error):
+			
+            switch response {
+				
+                case .failure(let error):
 					onCompletion?(.failure(error))
-				case .success(_):
+			
+                case .success(_):
+                    
+                    OpenAPIClientAPI.eventPath = configuration.eventUrl
 					onCompletion?(.success(()))
 			}
 		}
@@ -188,8 +200,13 @@ public class CfClient {
 			print("Could not fetch from cache")
 		}
 		if self.configuration.streamEnabled {
-			let parameterConfig = ParameterConfig(authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
-															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey])
+			
+            let parameterConfig = ParameterConfig(
+                
+                authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
+															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey],
+                cluster: self.cluster!
+            )
 			self.eventSourceManager.configuration = self.configuration
 			self.eventSourceManager.parameterConfig = parameterConfig
 			
@@ -333,15 +350,18 @@ public class CfClient {
 			//Extract info from retrieved JWT
 			let dict = JWTDecoder().decode(jwtToken: response!.authToken)
 			let project = CfProject(dict:dict ?? [:])
-			self.isInitialized = true
+			
+            self.isInitialized = true
 			self.configuration.environmentId = project.environment
 			self.token = response!.authToken
+            self.cluster = project.clusterIdentifier
 			
 			//Assign retrieved values to lazily instantiated `featureRepository`
 			self.featureRepository.token = self.token!
 			self.featureRepository.storageSource = self.storageSource!
 			self.featureRepository.config = self.configuration
 			self.featureRepository.target = self.target
+            self.featureRepository.cluster = self.cluster!
 			
 			//Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
@@ -485,9 +505,13 @@ public class CfClient {
 		eventSourceManager.onComplete() {(statusCode, retry, error) in
 			self.setupFlowFor(.onlinePolling)
 			guard error == nil else {
-				onEvent(EventType.onComplete, error)
+				
+                NSLog("Api, eventSourceManager.onComplete: \(error!)")
+                onEvent(EventType.onComplete, error)
 				return
 			}
+            
+            NSLog("Api, eventSourceManager.onComplete: \(statusCode!)")
 			onEvent(EventType.onComplete, nil)
 		}
 		
