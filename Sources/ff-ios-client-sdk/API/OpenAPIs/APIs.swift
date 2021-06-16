@@ -28,7 +28,15 @@ open class RequestBuilder<T> {
     /// If you need to get the request's progress in older OS versions, please use Alamofire http client.
     public var onProgressReady: ((Progress) -> ())?
 
-    required public init(method: String, URLString: String, parameters: [String:Any]?, isBody: Bool, headers: [String:String] = [:]) {
+    required public init(
+        
+        method: String,
+        URLString: String,
+        parameters: [String:Any]?,
+        isBody: Bool,
+        headers: [String:String] = [:]
+    
+    ) {
         self.method = method
         self.URLString = URLString
         self.parameters = parameters
@@ -36,6 +44,13 @@ open class RequestBuilder<T> {
         self.headers = headers
 
         addHeaders(OpenAPIClientAPI.customHeaders)
+        headers["User-Agent"] = "ios " + Version.version
+        headers["Hostname"] = "localhost"
+        
+        for (header, value) in headers {
+            
+            NSLog("Header: \(header) -> \(value)")
+        }
     }
 
     open func addHeaders(_ aHeaders:[String:String]) {
