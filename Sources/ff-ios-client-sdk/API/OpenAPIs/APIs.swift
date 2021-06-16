@@ -44,8 +44,8 @@ open class RequestBuilder<T> {
         self.headers = headers
 
         addHeaders(OpenAPIClientAPI.customHeaders)
-        headers["User-Agent"] = "ios " + Version.version
-        headers["Hostname"] = "localhost"
+        let additionalHeaders = ["User-Agent": "ios " + Version.version, "Hostname": "localhost"]
+        addHeaders(additionalHeaders)
         
         for (header, value) in headers {
             
