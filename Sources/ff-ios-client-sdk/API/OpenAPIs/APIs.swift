@@ -47,7 +47,7 @@ open class RequestBuilder<T> {
         let additionalHeaders = ["User-Agent": "ios " + Version.version, "Hostname": "localhost"]
         addHeaders(additionalHeaders)
         
-        for (header, value) in headers {
+        for (header, value) in self.headers {
             
             NSLog("Header: \(header) -> \(value)")
         }
