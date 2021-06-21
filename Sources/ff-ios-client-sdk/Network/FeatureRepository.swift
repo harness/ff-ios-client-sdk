@@ -169,9 +169,9 @@ class FeatureRepository {
             }
             
             switch result {
-                case .failure(_):
-                    Logger.log("Failed getting ALL feature config  from CLOUD. Try CACHE/STORAGE")
-                    onCompletion(.failure(CFError.noDataError))
+                case .failure(let error):
+                    Logger.log("Failed getting ALL feature config from CLOUD: \(error)")
+                    onCompletion(.failure(error))
                 case .success(let evaluations):
                     Logger.log("SUCCESS: Got ALL feature config from CLOUD")
                     onCompletion(.success(evaluations))
