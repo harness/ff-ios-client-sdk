@@ -260,7 +260,7 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("GET getFeatureConfig: \(req.URLString)")
+        NSLog("API getFeatureConfig: \(req.URLString)")
         return req
     }
     
@@ -343,7 +343,7 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("GET getFeatureConfigByIdentifier: \(req.URLString)")
+        NSLog("API getFeatureConfigByIdentifier: \(req.URLString)")
         return req
     }
 }
