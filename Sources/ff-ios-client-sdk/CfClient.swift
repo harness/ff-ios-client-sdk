@@ -580,6 +580,28 @@ public class CfClient {
 							case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
 						}
 					})
+                    
+                    if (decoded.domain == "flag") {
+                        
+                        let identifier = decoded.identifier
+                        let version = decoded.version
+                        
+                        for _ in 0...2 {
+                           
+                            self.featureRepository.getFeatureConfigById(
+                                
+                                featureConfigId: identifier ?? "",
+                                onCompletion: { [weak self] (featureConfig) in
+                                        
+                                    guard self != nil else {
+                                        return
+                                    }
+                                    
+                                    Logger.log("Version: \(version!), \(featureConfig)")
+                                }
+                            )
+                        }
+                    }
 				} catch {
 					onEvent(EventType.onEventListener(nil), CFError.parsingError)
 				}
