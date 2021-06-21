@@ -610,11 +610,7 @@ public class CfClient {
 		}
 	}
     
-    private func initFeatureCache(
-    
-        environmentID: String,
-        cluster: String
-    ) {
+    private func initFeatureCache(environmentID: String, cluster: String) {
         
         self.featureRepository.getFeatureConfig(
         
