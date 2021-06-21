@@ -38,8 +38,12 @@ class FeatureRepository {
 	/// Use this method to get `[Evaluation]` for a  target specified in `CfConfiguration` during the call to initialize `CfClient`.
 	/// - Parameters:
 	///   - onCompletion: completion block containing `[Evaluation]?` or `CFError?` from appropriate lower level methods.
-	func getEvaluations(onCompletion:@escaping(Result<[Evaluation], CFError>)->()) {
-		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
+	func getEvaluations(
+        
+        onCompletion:@escaping(Result<[Evaluation], CFError>)->()
+    ) {
+		
+        OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
 		defaultAPIManager.getEvaluations(
@@ -82,8 +86,15 @@ class FeatureRepository {
 	/// - Parameters:
 	///   - feature: `Feature ID`
 	///   - onCompletion: completion block containing `Evaluation?` or `CFError?` from appropriate lower level methods.
-	func getEvaluationById(_ evaluationId: String, target: String, useCache: Bool = false, onCompletion:@escaping(Result<Evaluation, CFError>)->()) {
-		if useCache {
+	func getEvaluationById(
+        
+        _ evaluationId: String,
+        target: String,
+        useCache: Bool = false,
+        onCompletion:@escaping(Result<Evaluation, CFError>)->()
+    ) {
+		
+        if useCache {
 			do {
 				let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 				let evaluation: Evaluation? = try self.storageSource.getValue(forKey: key)
@@ -164,6 +175,43 @@ class FeatureRepository {
                 case .success(let evaluations):
                     Logger.log("SUCCESS: Got ALL feature config from CLOUD")
                     onCompletion(.success(evaluations))
+            }
+        }
+    }
+    
+    /// Use this method to get `FeatureConfig`for a  identifier..
+    /// - Parameters:
+    ///   - feature: `Feature config ID`
+    ///   - onCompletion: completion block containing `Evaluation?` or `CFError?` from appropriate lower level methods.
+    func getFeatureConfigById(
+        
+        featureConfigId: String,
+        onCompletion:@escaping(Result<FeatureConfig, CFError>)->()
+    ) {
+        
+        OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
+        Logger.log("Try to get FeatureConfig |\(featureConfigId)| from CLOUD")
+        defaultAPIManager.getFeatureConfigByIdentifier(
+            
+            environmentUUID: self.config.environmentId,
+            cluster: cluster,
+            identifier: featureConfigId,
+            apiResponseQueue: .main
+        
+        ) { [weak self] (result) in
+            
+            guard self != nil else {
+                
+                return
+            }
+            
+            switch result {
+                case .failure(_):
+                    Logger.log("Failed getting |\(featureConfigId)| from CLOUD.")
+                    onCompletion(.failure(CFError.noDataError))
+                case .success(let featureConfig):
+                    Logger.log("SUCCESS: Got |\(featureConfigId)| -> |\(featureConfig.version)| from CLOUD")
+                    onCompletion(.success(featureConfig))
             }
         }
     }
