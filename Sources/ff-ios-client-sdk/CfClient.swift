@@ -88,6 +88,8 @@ public class CfClient {
 	///Tracks the `ready` state of CfClient.
 	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
 	private var ready: Bool = false
+    
+    private let featureCache = CfCache()
 	
 	//MARK: - Internal properties -
 	
@@ -154,13 +156,21 @@ public class CfClient {
 	 - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
 	 - Tag: initialize
 	*/
-	public func initialize(apiKey: String, configuration: CfConfiguration, target: CfTarget, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
+	public func initialize(
+        
+        apiKey: String,
+        configuration: CfConfiguration,
+        target: CfTarget,
+        cache: StorageRepositoryProtocol = CfCache(),
+        _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil
+    
+    ) {
 		self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target
-		self.ready = true
 		OpenAPIClientAPI.configPath = configuration.configUrl
-		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
+		
+        let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
 			
             switch response {
@@ -171,6 +181,12 @@ public class CfClient {
                 case .success(_):
                     
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
+                    self.ready = true
+                    self.initFeatureCache(
+                        
+                        environmentID: self.configuration.environmentId,
+                        cluster: self.cluster ?? ""
+                    )
 					onCompletion?(.success(()))
 			}
 		}
@@ -308,7 +324,8 @@ public class CfClient {
 	*/
 	public func destroy() {
 		if self.configuration != nil {
-			self.pollingEnabled = false
+			
+            self.pollingEnabled = false
 			self.eventSourceManager.destroy()
 			self.setupFlowFor(.offline)
 			self.configuration.streamEnabled = false
@@ -318,8 +335,9 @@ public class CfClient {
 			self.featureRepository.defaultAPIManager = nil
 			self.ready = false
 			CfClient.sharedInstance.dispose()
-		} else {
-			Logger.log("destroy() already called. Please reinitialize the SDK.")
+        } else {
+			
+            Logger.log("destroy() already called. Please reinitialize the SDK.")
 		}
 	}
 	
@@ -591,4 +609,28 @@ public class CfClient {
 			}
 		}
 	}
+    
+    private func initFeatureCache(
+    
+        environmentID: String,
+        cluster: String
+    ) {
+        
+        self.featureRepository.getFeatureConfig(
+        
+            onCompletion: { [weak self] (result) in
+                
+                guard self != nil else {
+                    return
+                }
+                
+                switch result {
+                    case .success(let featureConfig):
+                        Logger.log("featureConfig: \(featureConfig)")
+                    case .failure(let error):
+                        Logger.log("Error: \(error)")
+                }
+            }
+        )
+    }
 }
