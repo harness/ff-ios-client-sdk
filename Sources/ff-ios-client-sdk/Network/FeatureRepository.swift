@@ -206,8 +206,8 @@ class FeatureRepository {
             }
             
             switch result {
-                case .failure(_):
-                    Logger.log("Failed getting |\(featureConfigId)| from CLOUD.")
+                case .failure(let error):
+                    Logger.log("Failed getting feature config |\(featureConfigId)| from CLOUD: \(error)")
                     onCompletion(.failure(CFError.noDataError))
                 case .success(let featureConfig):
                     Logger.log("SUCCESS: Got |\(featureConfigId)| -> |\(featureConfig.version)| from CLOUD")
