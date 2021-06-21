@@ -89,7 +89,7 @@ public class CfClient {
 	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
 	private var ready: Bool = false
     
-    private let featureCache = CfCache()
+    private var featureCache = [String : FeatureConfig]()
 	
 	//MARK: - Internal properties -
 	
@@ -637,7 +637,12 @@ public class CfClient {
                 
                 switch result {
                     case .success(let featureConfig):
-                        Logger.log("featureConfig: \(featureConfig)")
+                        featureConfig.forEach { fc in
+                            
+                            Logger.log("featureConfig: \(fc)")
+                            self?.featureCache[fc.feature] = fc
+                        }
+                        
                     case .failure(let error):
                         Logger.log("Error: \(error)")
                 }
