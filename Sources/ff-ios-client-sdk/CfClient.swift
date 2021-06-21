@@ -567,8 +567,12 @@ public class CfClient {
 					return
 				}
 				do {
-					let data = stringData.data(using: .utf8)
+					
+                    let data = stringData.data(using: .utf8)
 					let decoded = try JSONDecoder().decode(Message.self, from: data!)
+                    
+                    Logger.log("Message: \(decoded)")
+                    
 					self.lastEventId = decoded.event
 					self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
 						switch result {
