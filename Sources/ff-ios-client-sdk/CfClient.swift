@@ -183,12 +183,6 @@ public class CfClient {
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
                     self.ready = true
                     onCompletion?(.success(()))
-                    
-                    self.initFeatureCache(
-                        
-                        environmentID: self.configuration.environmentId,
-                        cluster: self.cluster ?? ""
-                    )
 			}
 		}
 	}
@@ -382,7 +376,13 @@ public class CfClient {
 			self.featureRepository.target = self.target
             self.featureRepository.cluster = self.cluster!
 			
-			//Initial getEvaluations to be stored in cache
+            self.initFeatureCache(
+                
+                environmentID: self.configuration.environmentId,
+                cluster: self.cluster ?? ""
+            )
+            
+			// Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
 				guard let self = self else {return}
 				let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
@@ -508,6 +508,13 @@ public class CfClient {
 		eventSourceManager.onOpen() {
 			Logger.log("SSE connection has been opened")
 			onEvent(EventType.onOpen, nil)
+            
+            self.initFeatureCache(
+                
+                environmentID: self.configuration.environmentId,
+                cluster: self.cluster ?? ""
+            )
+            
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
 				switch result {
 					case .success(let evaluations):
@@ -598,6 +605,13 @@ public class CfClient {
 					if self?.configuration.streamEnabled == true {
 						self?.setupFlowFor(.onlineStreaming)
 					}
+                    
+                    self?.initFeatureCache(
+                        
+                        environmentID: self?.configuration?.environmentId ?? "",
+                        cluster: self?.cluster ?? ""
+                    )
+                    
 					self?.featureRepository.getEvaluations() { (result) in
 						switch result {
 							case .failure(let error):
