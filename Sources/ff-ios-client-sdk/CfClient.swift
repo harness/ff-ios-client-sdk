@@ -182,12 +182,13 @@ public class CfClient {
                     
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
                     self.ready = true
+                    onCompletion?(.success(()))
+                    
                     self.initFeatureCache(
                         
                         environmentID: self.configuration.environmentId,
                         cluster: self.cluster ?? ""
                     )
-					onCompletion?(.success(()))
 			}
 		}
 	}
