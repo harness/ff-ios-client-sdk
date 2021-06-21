@@ -15,7 +15,8 @@ protocol DefaultAPIManagerProtocol {
         target: String,
         cluster: String,
         apiResponseQueue: DispatchQueue,
-        completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ()))
+        completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ())
+    )
 	
     func getEvaluationByIdentifier(
         
@@ -23,7 +24,17 @@ protocol DefaultAPIManagerProtocol {
         feature: String,
         target: String,
         cluster: String,
-        apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ()))
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ())
+    )
+    
+    func getFeatureConfig(
+        
+        environmentUUID: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((Swift.Result<[FeatureConfig], CFError>) -> ())
+    )
 }
 
 class DefaultAPIManager: DefaultAPIManagerProtocol {
@@ -56,7 +67,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
 			completion(.success(evaluations))
 		}
 	}
-	
+    
 	func getEvaluationByIdentifier(
         
         environmentUUID: String,
@@ -87,4 +98,32 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
 			completion(.success(evaluation))
 		}
 	}
+    
+    func getFeatureConfig(
+        
+        environmentUUID: String,
+        cluster: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping (Result<[FeatureConfig], CFError>) -> ()
+    
+    ) {
+        
+        DefaultAPI.getFeatureConfig(
+            
+            environmentUUID: environmentUUID,
+            cluster: cluster,
+            apiResponseQueue: apiResponseQueue
+        
+        ) { (featureConfig, error) in
+            guard error == nil else {
+                completion(.failure(CFError.serverError(error as! ErrorResponse)))
+                return
+            }
+            guard let featureConfig = featureConfig else {
+                completion(.failure(CFError.noDataError))
+                return
+            }
+            completion(.success(featureConfig))
+        }
+    }
 }

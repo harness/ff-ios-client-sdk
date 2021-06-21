@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 class FeatureRepository {
 	
     var token: String
