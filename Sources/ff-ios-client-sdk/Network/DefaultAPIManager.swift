@@ -35,6 +35,15 @@ protocol DefaultAPIManagerProtocol {
         apiResponseQueue: DispatchQueue,
         completion: @escaping ((Swift.Result<[FeatureConfig], CFError>) -> ())
     )
+    
+    func getFeatureConfigByIdentifier(
+        
+        environmentUUID: String,
+        cluster: String,
+        identifier: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((Swift.Result<FeatureConfig, CFError>) -> ())
+    )
 }
 
 class DefaultAPIManager: DefaultAPIManagerProtocol {
@@ -112,6 +121,36 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
             
             environmentUUID: environmentUUID,
             cluster: cluster,
+            apiResponseQueue: apiResponseQueue
+        
+        ) { (featureConfig, error) in
+            guard error == nil else {
+                completion(.failure(CFError.serverError(error as! ErrorResponse)))
+                return
+            }
+            guard let featureConfig = featureConfig else {
+                completion(.failure(CFError.noDataError))
+                return
+            }
+            completion(.success(featureConfig))
+        }
+    }
+    
+    func getFeatureConfigByIdentifier(
+        
+        environmentUUID: String,
+        cluster: String,
+        identifier: String,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping (Result<FeatureConfig, CFError>) -> ()
+    
+    ) {
+        
+        DefaultAPI.getFeatureConfigByIdentifier(
+            
+            environmentUUID: environmentUUID,
+            cluster: cluster,
+            identifier: identifier,
             apiResponseQueue: apiResponseQueue
         
         ) { (featureConfig, error) in

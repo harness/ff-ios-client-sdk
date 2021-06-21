@@ -263,4 +263,87 @@ open class DefaultAPI {
         NSLog("GET getFeatureConfig: \(req.URLString)")
         return req
     }
+    
+    /**
+     Get feature evaluations for target
+     
+     - parameter environmentUUID: (path) Unique identifier for the environment object in the API.
+     - parameter cluster: Cluster.
+     - parameter identifier: Feature config identifier.
+     - parameter apiResponseQueue: The queue on which api response is dispatched.
+     - parameter completion: completion handler to receive the data and the error objects
+     */
+    open class func getFeatureConfigByIdentifier(
+        
+        environmentUUID: String,
+        cluster: String,
+        identifier: String,
+        apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue,
+        completion: @escaping ((_ data: FeatureConfig?,_ error: Error?) -> Void)
+    
+    ) {
+        getFeatureConfigByIdentifierWithRequestBuilder(
+            
+            environmentUUID: environmentUUID,
+            cluster: cluster,
+            identifier: identifier
+            
+        ).execute(apiResponseQueue) { result -> Void in
+            switch result {
+            case let .success(response):
+                completion(response.body, nil)
+            case let .failure(error):
+                completion(nil, error)
+            }
+        }
+    }
+    
+    /**
+     Get feature config
+     - GET /client/env/{environmentUUID}/target/{target}/evaluations
+     - parameter environmentUUID: (path) Unique identifier for the environment object in the API.
+     - parameter cluster: Cluster.
+     - parameter identifier: Feature config identifier.
+     - returns: RequestBuilder<[FeatureConfig]>
+     */
+    open class func getFeatureConfigByIdentifierWithRequestBuilder(
+        
+        environmentUUID: String,
+        cluster: String,
+        identifier: String
+    
+    ) -> RequestBuilder<FeatureConfig> {
+        
+        var path = "/client/env/{environmentUUID}/target/feature-configs/{identifier}/?cluster=\(cluster)"
+        
+        let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
+        let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        
+        path = path.replacingOccurrences(
+            
+            of: "{environmentUUID}", with: environmentUUIDPostEscape, options: .literal, range: nil
+        )
+        
+        let identifierPreEscape = "\(APIHelper.mapValueToPathItem(identifier))"
+        let identifierPostEscape = identifierPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        
+        path = path.replacingOccurrences(
+            
+            of: "{identifier}", with: identifierPostEscape, options: .literal, range: nil
+        )
+        
+        let URLString = OpenAPIClientAPI.configPath + path
+        let parameters: [String:Any] = ["cluster": cluster]
+        
+        let url = URLComponents(string: URLString)
+
+        let requestBuilder: RequestBuilder<FeatureConfig>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
+
+        let req =  requestBuilder.init(
+            method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
+        )
+        
+        NSLog("GET getFeatureConfigByIdentifier: \(req.URLString)")
+        return req
+    }
 }
