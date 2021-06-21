@@ -11,10 +11,10 @@ class FeatureRepository {
 	
     var token: String
     var cluster: String
+    var target: CfTarget
+    var config: CfConfiguration
 	var storageSource: StorageRepositoryProtocol
-	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
-	var target: CfTarget
 	
 	init(
         
@@ -24,6 +24,7 @@ class FeatureRepository {
         config:CfConfiguration?,
         target: CfTarget,
         defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()
+        
     ) {
 		
         self.token = token ?? ""
@@ -131,6 +132,41 @@ class FeatureRepository {
 			}
 		}
 	}
+    
+    /// Use this method to get `[FeatureConfig]`.
+    /// - Parameters:
+    ///   - onCompletion: completion block containing `[FeatureConfig]?` or `CFError?` from appropriate lower level methods.
+    func getFeatureConfig(
+        
+        onCompletion:@escaping(Result<[FeatureConfig], CFError>)->()
+    ) {
+        
+        OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
+        
+        Logger.log("Try to get ALL feature config from CLOUD")
+        defaultAPIManager.getFeatureConfig(
+            
+            environmentUUID: self.config.environmentId,
+            cluster: cluster,
+            apiResponseQueue: .main
+        
+        ) { [weak self] (result) in
+            
+            guard self != nil else {
+                
+                return
+            }
+            
+            switch result {
+                case .failure(_):
+                    Logger.log("Failed getting ALL feature config  from CLOUD. Try CACHE/STORAGE")
+                    onCompletion(.failure(CFError.noDataError))
+                case .success(let evaluations):
+                    Logger.log("SUCCESS: Got ALL feature config from CLOUD")
+                    onCompletion(.success(evaluations))
+            }
+        }
+    }
 	
 	private func updateAll(_ eval: Evaluation) {
 		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
