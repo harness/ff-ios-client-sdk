@@ -314,7 +314,7 @@ open class DefaultAPI {
     
     ) -> RequestBuilder<FeatureConfig> {
         
-        var path = "/client/env/{environmentUUID}/feature-configs/{identifier}/?cluster=\(cluster)"
+        var path = "/client/env/{environmentUUID}/feature-configs/{identifier}?cluster=\(cluster)"
         
         let environmentUUIDPreEscape = "\(APIHelper.mapValueToPathItem(environmentUUID))"
         let environmentUUIDPostEscape = environmentUUIDPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
