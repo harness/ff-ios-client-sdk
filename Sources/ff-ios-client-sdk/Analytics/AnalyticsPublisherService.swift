@@ -30,4 +30,31 @@ class AnalyticsPublisherService {
         self.config = config
         self.cache = cache
     }
+    
+    func sendDataAndResetCache() {
+    
+        Logger.log("Reading from queue and building cache")
+        if (!cache.isEmpty) {
+            
+            let metrics = prepareSummaryMetricsBody()
+            if let metricsData = metrics.metricsData {
+                
+                if (!metricsData.isEmpty) {
+                    
+                    
+                }
+                
+                Logger.log("Successfully sent analytics data to the server")
+                cache.removeAll()
+            }
+        }
+    }
+    
+    private func prepareSummaryMetricsBody() -> Metrics {
+        
+        let metrics = Metrics()
+        
+        
+        return metrics
+    }
 }
