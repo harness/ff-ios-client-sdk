@@ -5,8 +5,7 @@ class AnalyticsPublisherService {
     private let cluster: String
     private let environmentID: String
     private let config: CfConfiguration
-    
-    // private let cache: String TODO !!!
+    private let cache: [Analytics:Int]
     
     init(
     
@@ -19,7 +18,6 @@ class AnalyticsPublisherService {
         self.cluster = cluster
         self.environmentID = environmentID
         self.config = config
-        
-        // TODO: Init cache
+        self.cache = [Analytics:Int]()
     }
 }

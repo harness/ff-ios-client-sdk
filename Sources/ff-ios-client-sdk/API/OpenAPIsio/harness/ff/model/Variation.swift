@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Variation : Codable {
+public struct Variation : Codable, Hashable {
     
     public var identifier: String
     public var value: String

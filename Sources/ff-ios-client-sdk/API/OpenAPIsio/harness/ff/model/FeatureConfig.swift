@@ -1,7 +1,7 @@
 
 import Foundation
 
-public struct  FeatureConfig : Codable {
+public struct  FeatureConfig : Codable, Hashable {
     
     public var project: String
     public var environment: String
