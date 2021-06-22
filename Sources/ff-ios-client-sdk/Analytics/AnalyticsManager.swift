@@ -6,9 +6,10 @@ class AnalyticsManager : Destroyable {
     private let cluster: String
     private let authToken: String
     private let config: CfConfiguration
-    private let cache: [Analytics:Int]
     private let timer: Timer
     // TODO: Ring buffer
+    
+    private var cache: [Analytics:Int]
     
     init (
     

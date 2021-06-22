@@ -5,7 +5,8 @@ class AnalyticsPublisherService {
     private let cluster: String
     private let environmentID: String
     private let config: CfConfiguration
-    private let cache: [Analytics:Int]
+    
+    private var cache: [Analytics:Int]
     
     private static let CLIENT: String = "client"
     private static let SDK_TYPE: String = "SDK_TYPE"
@@ -41,10 +42,27 @@ class AnalyticsPublisherService {
                 
                 if (!metricsData.isEmpty) {
                     
+                    MetricsAPI.postMetrics(
+                        
+                        environmentUUID: environmentID,
+                        cluster: cluster,
+                        metrics: metrics
+                        
+                    ) { (response, error) in
+                        
+                        guard error == nil else {
+                            
+                            Logger.log("Could not send analytics data to the server: \(error!)")
+                            return
+                        }
+                        
+                        Logger.log("Successfully sent analytics data to the server")
+                    }
+                } else {
                     
+                    Logger.log("No metrics data to send")
                 }
-                
-                Logger.log("Successfully sent analytics data to the server")
+            
                 cache.removeAll()
             }
         }
@@ -52,7 +70,8 @@ class AnalyticsPublisherService {
     
     private func prepareSummaryMetricsBody() -> Metrics {
         
-        let metrics = Metrics()
+        let data = [MetricsData]()
+        let metrics = Metrics(metricsData: data)
         
         
         return metrics
