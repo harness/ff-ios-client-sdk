@@ -15,6 +15,38 @@ protocol AnalyticsAPIManagerProtocol {
         cluster: String,
         metrics: Metrics,
         apiResponseQueue: DispatchQueue,
-        completion: @escaping ((Swift.Result<Void, CFError>) -> ())
+        completion: @escaping ((EmptyResponse?, CFError?) -> Void)
     )
+}
+
+class AnalyticsAPIManager: AnalyticsAPIManagerProtocol{
+    
+    func postMetrics(
+        
+        environmentUUID: String,
+        cluster: String,
+        metrics: Metrics,
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((EmptyResponse?, CFError?) -> Void)
+        
+    ) {
+        
+        MetricsAPI.postMetrics(
+        
+            environmentUUID: environmentUUID,
+            cluster: cluster,
+            metrics: metrics,
+            apiResponseQueue: .main
+            
+        ) { (response, error) in
+            
+            guard error == nil else {
+                
+                completion(nil, CFError.serverError(.error(-1, nil, error)))
+                return
+            }
+            
+            completion(response, nil)
+        }
+    }
 }
