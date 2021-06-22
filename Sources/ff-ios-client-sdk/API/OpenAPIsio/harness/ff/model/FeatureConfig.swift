@@ -8,7 +8,7 @@ public struct  FeatureConfig : Codable {
     public var feature: String
     public var state: String
     public var kind: String
-    public var version: Int64
+    public var version: Double
     
     init(
     
@@ -17,7 +17,7 @@ public struct  FeatureConfig : Codable {
         feature: String,
         state: String,
         kind: String,
-        version: Int64
+        version: Double
     
     ) {
         

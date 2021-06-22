@@ -591,13 +591,24 @@ public class CfClient {
                             self.featureRepository.getFeatureConfigById(
                                 
                                 featureConfigId: identifier ?? "",
-                                onCompletion: { [weak self] (featureConfig) in
+                                onCompletion: { [weak self] (result) in
                                         
                                     guard self != nil else {
                                         return
                                     }
                                     
-                                    Logger.log("Version: \(version!), \(featureConfig)")
+                                    switch result {
+                                        
+                                        case .failure(let error): Logger.log("Error: \(error)")
+                                        
+                                        case .success(let featureConfig):
+                                            if let v = version {
+                                                if (v == featureConfig.version) {
+                                                    
+                                                    self?.featureCache[featureConfig.feature] = featureConfig
+                                                }
+                                            }
+                                    }
                                 }
                             )
                         }
