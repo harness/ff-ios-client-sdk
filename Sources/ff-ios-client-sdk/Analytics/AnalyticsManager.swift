@@ -56,6 +56,8 @@ class AnalyticsManager : Destroyable {
             return
         }
         
+        Logger.log("Pushing metrics")
+        
         let analytics = Analytics(
         
             target: target,
@@ -78,6 +80,8 @@ class AnalyticsManager : Destroyable {
         
         if (self.timer == nil) {
             
+            Logger.log("Scheduling metrics timer")
+            
             self.timer = Timer.scheduledTimer(
                 
                 timeInterval: TimeInterval(config.analyticsFrequency),
@@ -86,6 +90,9 @@ class AnalyticsManager : Destroyable {
                 userInfo: nil,
                 repeats: true
             )
+        } else {
+            
+            Logger.log("Scheduling metrics timer SKIPPED")
         }
     }
     
