@@ -13,13 +13,15 @@ public class CfConfigurationBuilder {
 	private let minimumPollingInterval:TimeInterval = 60
 	
 	public init(){
-		self.config = CfConfiguration(configUrl: CfConstants.Server.configUrl,
-									  eventUrl: CfConstants.Server.eventUrl,
-									  streamEnabled: false,
-									  analyticsEnabled: true,
-                                      bufferSize: 1024,
-									  pollingInterval: minimumPollingInterval,
-									  environmentId: "")
+		self.config = CfConfiguration(
+            
+            configUrl: CfConstants.Server.configUrl,
+            eventUrl: CfConstants.Server.eventUrl,
+            streamEnabled: false,
+            analyticsEnabled: true,
+            pollingInterval: minimumPollingInterval,
+            environmentId: ""
+        )
 	}
 	/**
 	Adds `configUrl` to CfConfiguration
@@ -57,18 +59,6 @@ public class CfConfigurationBuilder {
 		config.analyticsEnabled = isEnabled
 		return self
 	}
-    
-    /**
-    Adds `bufferSize` parameter  to CfConfiguration
-    - Parameter size: `Int`
-    - Note: `build()` needs to be called as the final method in the chain
-    */
-    public func setBufferSize(_ size: Int) -> CfConfigurationBuilder {
-        
-        config.bufferSize = size
-        return self
-    }
-    
 	/**
 	Adds `pollingInterval`  to CfConfiguration
 	- Parameter interval: `TimeInterval`. Minimum 60 seconds.

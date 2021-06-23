@@ -6,10 +6,11 @@ class AnalyticsManager : Destroyable {
     private let cluster: String
     private let authToken: String
     private let config: CfConfiguration
-    private let timer: Timer
-    private let ringBuffer: RingBuffer<Analytics>
     
+    private var ready: Bool
+    private var timer: Timer?
     private var cache: [Analytics:Int]
+    private var analyticsPublisherService: AnalyticsPublisherService?
     
     init (
     
@@ -25,16 +26,22 @@ class AnalyticsManager : Destroyable {
         self.authToken = authToken
         self.config = config
         self.cache = [Analytics:Int]()
-        self.timer = Timer() // TODO: Timer scheduling
-        self.ringBuffer = RingBuffer<Analytics>(capacity: config.bufferSize)
         
-        let analyticsPublisherService = AnalyticsPublisherService(
+        analyticsPublisherService = AnalyticsPublisherService(
         
             cluster: cluster,
             environmentID: environmentID,
             config: config,
             cache: cache
         )
+        
+        ready = true
+    }
+    
+    @objc func send() {
+        
+        Logger.log("Sending metrics")
+        analyticsPublisherService?.sendDataAndResetCache()
     }
     
     func pushToQueue(
@@ -45,6 +52,10 @@ class AnalyticsManager : Destroyable {
     
     ) {
         
+        if (!ready) {
+            return
+        }
+        
         let analytics = Analytics(
         
             target: target,
@@ -53,11 +64,35 @@ class AnalyticsManager : Destroyable {
             featureConfig: featureConfig
         )
         
-        ringBuffer.
+        let count = cache[analytics]
+        if count == nil {
+            
+            cache[analytics] = 1
+        } else {
+            
+            if let c = count {
+                
+                cache[analytics] = c + 1
+            }
+        }
+        
+        if (self.timer == nil) {
+            
+            self.timer = Timer.scheduledTimer(
+                
+                timeInterval: TimeInterval(config.analyticsFrequency),
+                target: self,
+                selector: #selector(send),
+                userInfo: nil,
+                repeats: true
+            )
+        }
     }
     
     func destroy() {
         
-        self.timer.invalidate()
+        ready = false
+        self.timer?.invalidate()
+        self.timer = nil
     }
 }
