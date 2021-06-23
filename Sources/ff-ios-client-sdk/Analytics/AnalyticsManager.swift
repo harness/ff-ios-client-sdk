@@ -56,7 +56,7 @@ class AnalyticsManager : Destroyable {
             return
         }
         
-        Logger.log("Pushing metrics")
+        Logger.log("Metrics data appending")
         
         let analytics = Analytics(
         
@@ -70,11 +70,14 @@ class AnalyticsManager : Destroyable {
         if count == nil {
             
             cache[analytics] = 1
+            Logger.log("Metrics data appended, \(featureConfig.feature) has count of: 1")
         } else {
             
             if let c = count {
                 
-                cache[analytics] = c + 1
+                let nc = c + 1
+                cache[analytics] = nc
+                Logger.log("Metrics data appended, \(featureConfig.feature) has count of: \(nc)")
             }
         }
         
