@@ -91,10 +91,23 @@ class AnalyticsPublisherService {
             }
         }
         
+        for (key: key, value: value) in summaryMetricsData {
+            
+            let attributes = [KeyValue]()
+            
+            let metricsData = MetricsData(
+            
+                timestamp: currentDateTimeInMiliseconds(),
+                count: value,
+                metricsType: "FFMETRICS",
+                attributes: attributes
+            )
+        }
+        
         return metrics
     }
     
-    func prepareSummaryMetricsKey(key: Analytics) -> SummaryMetrics {
+    private func prepareSummaryMetricsKey(key: Analytics) -> SummaryMetrics {
         
         return SummaryMetrics(
         
@@ -102,5 +115,12 @@ class AnalyticsPublisherService {
             variationValue: key.variation.value,
             variationIdentifier: key.variation.identifier
         )
+    }
+    
+    private func currentDateTimeInMiliseconds() -> Int64 {
+          
+        let currentDate = Date()
+        let since1970 = currentDate.timeIntervalSince1970
+        return Int64(since1970 * 1000)
     }
 }
