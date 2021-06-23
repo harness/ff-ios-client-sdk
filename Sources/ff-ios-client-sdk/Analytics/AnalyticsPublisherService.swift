@@ -70,7 +70,7 @@ class AnalyticsPublisherService {
     
     private func prepareSummaryMetricsBody() -> Metrics {
         
-        var data = [MetricsData]()
+        let data = [MetricsData]()
         var metrics = Metrics(metricsData: data)
         var summaryMetricsData = [SummaryMetrics:Int]()
         
