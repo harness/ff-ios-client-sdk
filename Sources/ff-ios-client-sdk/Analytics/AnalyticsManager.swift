@@ -7,7 +7,7 @@ class AnalyticsManager : Destroyable {
     private let authToken: String
     private let config: CfConfiguration
     private let timer: Timer
-    // TODO: Ring buffer
+    private let ringBuffer: RingBuffer<Analytics>
     
     private var cache: [Analytics:Int]
     
@@ -26,6 +26,7 @@ class AnalyticsManager : Destroyable {
         self.config = config
         self.cache = [Analytics:Int]()
         self.timer = Timer() // TODO: Timer scheduling
+        self.ringBuffer = RingBuffer<Analytics>(capacity: 1000)
         
         let analyticsPublisherService = AnalyticsPublisherService(
         
