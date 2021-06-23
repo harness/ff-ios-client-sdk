@@ -44,7 +44,7 @@ class AnalyticsManager : Destroyable {
         analyticsPublisherService?.sendDataAndResetCache()
     }
     
-    func pushToQueue(
+    func push(
     
         target: CfTarget,
         featureConfig: FeatureConfig,

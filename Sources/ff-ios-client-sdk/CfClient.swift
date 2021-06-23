@@ -476,7 +476,7 @@ public class CfClient {
                         description: ""
                     )
                     
-                    manager.pushToQueue(
+                    manager.push(
                         
                         target: self.target,
                         featureConfig: fConfig,
