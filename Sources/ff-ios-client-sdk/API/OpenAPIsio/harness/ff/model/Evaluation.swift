@@ -7,7 +7,8 @@
 
 import Foundation
 public enum ValueType: Codable, Equatable {
-	public typealias Value = [String: ValueType]
+	
+    public typealias Value = [String: ValueType]
 	case bool(Bool)
 	case string(String)
 	case int(Int)
@@ -89,12 +90,17 @@ public enum ValueType: Codable, Equatable {
 			}
 		}
 }
+
 public struct Evaluation: Codable {
+    
     public var flag: String
+    public var identifier: String
     public var value: ValueType
 
-    public init(flag: String, value: ValueType) {
+    public init(flag: String, identifier: String, value: ValueType) {
+        
         self.flag = flag
+        self.identifier = identifier
         self.value = value
     }
 }

@@ -424,7 +424,7 @@ public class CfClient {
 				completion(nil)
 				return
 			}
-			completion(Evaluation(flag:evaluationId, value: defaultValue))
+			completion(Evaluation(flag: evaluationId, identifier: evaluationId, value: defaultValue))
 		}
 	}
 	
@@ -447,30 +447,47 @@ public class CfClient {
 						return
 					}
 					
-                    completion(Evaluation(flag:key, value: defaultValue))
-				case .success(let evaluation):
+                    let evaluation = Evaluation(flag:key, identifier: key, value: defaultValue)
+                    self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
+                    completion(evaluation)
+				
+            case .success(let evaluation):
 					
-                    let featureConfig = self.featureCache[key]
-                    if let fConfig = featureConfig {
-                    
-                        // TODO: Condition
-                        if (self.configuration.analyticsEnabled) {
-                            
-//                        let variation = Variation(
-//
-//                            name: key,
-//                            value: evaluation,
-//                            identifier: evaluation.
-//                        )
-                        
-                        }
-                    }
+                    self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
                     completion(evaluation)
 			}
 		}
 	}
+    
+    private func pushToAnalyticsQueue(key: String, evaluation: Evaluation) {
+        
+        let featureConfig = self.featureCache[key]
+        if let fConfig = featureConfig {
+            
+            if let manager = self.analyticsManager {
+                
+                if (self.configuration.analyticsEnabled && self.target.isValid()) {
+    
+                    let variation = Variation(
+
+                        identifier: evaluation.identifier,
+                        value: evaluation.value.stringValue ?? "",
+                        name: key,
+                        description: ""
+                    )
+                    
+                    manager.pushToQueue(
+                        
+                        target: self.target,
+                        featureConfig: fConfig,
+                        variation: variation
+                    )
+                }
+            }
+        }
+    }
 	
-	//Setup event observing flow based on `State`
+	// Setup event observing flow based on `State`
 	private func setupFlowFor(_ state: State) {
 		switch state {
 			case .offline:

@@ -24,4 +24,9 @@ public struct CfTarget: Codable, Hashable {
 		
         return CfTargetBuilder()
 	}
+    
+    func isValid() -> Bool {
+        
+        return !identifier.isEmpty
+    }
 }
