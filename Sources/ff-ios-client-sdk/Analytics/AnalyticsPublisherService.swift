@@ -70,8 +70,8 @@ class AnalyticsPublisherService {
     
     private func prepareSummaryMetricsBody() -> Metrics {
         
-        let data = [MetricsData]()
-        let metrics = Metrics(metricsData: data)
+        var data = [MetricsData]()
+        var metrics = Metrics(metricsData: data)
         var summaryMetricsData = [SummaryMetrics:Int]()
         
         for (key: key, value: value) in cache {
@@ -93,7 +93,56 @@ class AnalyticsPublisherService {
         
         for (key: key, value: value) in summaryMetricsData {
             
-            let attributes = [KeyValue]()
+            var attributes = [KeyValue]()
+            
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.FEATURE_NAME_ATTRIBUTE,
+                    value: key.featureName
+                )
+            )
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.VARIATION_IDENTIFIER_ATTRIBUTE,
+                    value: key.variationIdentifier
+                )
+            )
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.TARGET_ATTRIBUTE,
+                    value: AnalyticsPublisherService.GLOBAL_TARGET
+                )
+            )
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.SDK_TYPE,
+                    value: AnalyticsPublisherService.CLIENT
+                )
+            )
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.SDK_LANGUAGE,
+                    value: "iOS"
+                )
+            )
+            attributes.append(
+            
+                KeyValue(
+                    
+                    key: AnalyticsPublisherService.SDK_VERSION,
+                    value: Version.version
+                )
+            )
             
             let metricsData = MetricsData(
             
@@ -102,6 +151,8 @@ class AnalyticsPublisherService {
                 metricsType: "FFMETRICS",
                 attributes: attributes
             )
+            
+            metrics.metricsData?.append(metricsData)
         }
         
         return metrics
