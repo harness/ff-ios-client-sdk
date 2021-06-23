@@ -696,6 +696,8 @@ public class CfClient {
     
     private func getAnalyticsManager() -> AnalyticsManager {
         
+        analyticsManager?.destroy()
+        
         return AnalyticsManager(
         
             environmentID: self.configuration.environmentId,
