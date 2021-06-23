@@ -1,10 +1,3 @@
-//
-//  CfConfiguration.swift
-//  ff-ios-client-sdk
-//
-//  Created by Dusan Juranovic on 13.1.21..
-//
-
 import Foundation
 
 /// `CfConfiguration` is `required` in order to [intialize](x-source-tag://initialize) the SDK.
@@ -22,6 +15,7 @@ public struct CfConfiguration {
 	var analyticsEnabled: Bool
 	var pollingInterval: TimeInterval
 	var environmentId: String
+    var bufferSize: Int
 	
 	internal init(
         
@@ -29,6 +23,7 @@ public struct CfConfiguration {
         eventUrl: String,
         streamEnabled: Bool,
         analyticsEnabled: Bool,
+        bufferSize: Int,
         pollingInterval:TimeInterval,
         environmentId: String
         
@@ -38,6 +33,7 @@ public struct CfConfiguration {
 		self.eventUrl = eventUrl
 		self.streamEnabled = streamEnabled
 		self.analyticsEnabled = analyticsEnabled
+        self.bufferSize = bufferSize
 		self.pollingInterval = pollingInterval
 		self.environmentId = environmentId
 	}

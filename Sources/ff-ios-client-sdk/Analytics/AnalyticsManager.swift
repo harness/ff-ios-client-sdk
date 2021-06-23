@@ -26,7 +26,7 @@ class AnalyticsManager : Destroyable {
         self.config = config
         self.cache = [Analytics:Int]()
         self.timer = Timer() // TODO: Timer scheduling
-        self.ringBuffer = RingBuffer<Analytics>(capacity: 1000)
+        self.ringBuffer = RingBuffer<Analytics>(capacity: config.bufferSize)
         
         let analyticsPublisherService = AnalyticsPublisherService(
         
@@ -45,7 +45,15 @@ class AnalyticsManager : Destroyable {
     
     ) {
         
+        let analytics = Analytics(
         
+            target: target,
+            variation: variation,
+            eventType: "METRICS",
+            featureConfig: featureConfig
+        )
+        
+        ringBuffer.
     }
     
     func destroy() {
