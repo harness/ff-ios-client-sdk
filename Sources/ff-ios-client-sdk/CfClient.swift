@@ -185,7 +185,6 @@ public class CfClient {
                 case .success(_):
                     
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
-                    self.analyticsManager = self.getAnalyticsManager()
                     self.ready = true
                     onCompletion?(.success(()))
 			}
@@ -719,6 +718,9 @@ public class CfClient {
                 
                 switch result {
                     case .success(let featureConfig):
+                        
+                        self?.analyticsManager = self?.getAnalyticsManager()
+                        
                         featureConfig.forEach { fc in
                             
                             Logger.log("featureConfig: \(fc)")
