@@ -81,6 +81,8 @@ class AnalyticsManager : Destroyable {
             }
         }
         
+        Logger.log("Metrics data total count: \(cache.count)")
+        
         if (self.timer == nil) {
             
             Logger.log("Scheduling metrics timer")
