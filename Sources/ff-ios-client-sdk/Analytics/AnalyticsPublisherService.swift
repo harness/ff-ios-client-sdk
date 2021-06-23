@@ -72,8 +72,35 @@ class AnalyticsPublisherService {
         
         let data = [MetricsData]()
         let metrics = Metrics(metricsData: data)
+        var summaryMetricsData = [SummaryMetrics:Int]()
         
+        for (key: key, value: value) in cache {
+            
+            let summaryMetrics = prepareSummaryMetricsKey(key: key)
+            let summaryCount = summaryMetricsData[summaryMetrics]
+            
+            if (summaryCount == nil) {
+                
+                summaryMetricsData[summaryMetrics] = value
+            } else {
+                
+                if let count = summaryCount {
+                    
+                    summaryMetricsData[summaryMetrics] = count + value
+                }
+            }
+        }
         
         return metrics
+    }
+    
+    func prepareSummaryMetricsKey(key: Analytics) -> SummaryMetrics {
+        
+        return SummaryMetrics(
+        
+            featureName: key.featureConfig.feature,
+            variationValue: key.variation.value,
+            variationIdentifier: key.variation.identifier
+        )
     }
 }

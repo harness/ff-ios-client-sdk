@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SummaryMetrics : Codable {
+public struct SummaryMetrics : Codable, Hashable {
     
     public var featureName: String
     public var variationValue: String
