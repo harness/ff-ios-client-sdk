@@ -34,8 +34,10 @@ class AnalyticsPublisherService {
     
     func sendDataAndResetCache() {
     
-        Logger.log("Reading from queue and building cache")
-        if (!cache.isEmpty) {
+        if (cache.isEmpty) {
+          
+            Logger.log("Cache is empty")
+        } else {
             
             let metrics = prepareSummaryMetricsBody()
             if let metricsData = metrics.metricsData {
