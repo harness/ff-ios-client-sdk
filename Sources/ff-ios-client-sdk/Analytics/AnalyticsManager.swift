@@ -37,6 +37,17 @@ class AnalyticsManager : Destroyable {
         )
     }
     
+    func pushToQueue(
+    
+        target: CfTarget,
+        featureConfig: FeatureConfig,
+        variation: Variation
+    
+    ) {
+        
+        
+    }
+    
     func destroy() {
         
         self.timer.invalidate()

@@ -13,7 +13,8 @@ import Foundation
 /// - `case` onEventListener(`Evaluation?`)
 /// - `case` onPolling(`[Evaluation]?`)
 public enum EventType: Equatable {
-	///Returns only a `String` message that the SSE has been opened
+	
+    ///Returns only a `String` message that the SSE has been opened
 	case onOpen
 	///Returns  a `String` message that the SSE has beeen completed.
 	case onComplete
@@ -90,10 +91,11 @@ public class CfClient {
 	private var ready: Bool = false
     
     private var featureCache = [String : FeatureConfig]()
+    private var analyticsManager: AnalyticsManager?
 	
 	//MARK: - Internal properties -
 	
-	var configuration:CfConfiguration!
+	var configuration: CfConfiguration!
 	var target: CfTarget!
 	var authenticationManager: AuthenticationManagerProtocol!
 	var eventSourceManager: EventSourceManagerProtocol!
@@ -113,8 +115,10 @@ public class CfClient {
 	//MARK: - Public properties -
 	
 	struct Static {
-		fileprivate static var instance: CfClient?
+		
+        fileprivate static var instance: CfClient?
 	}
+    
 	public static var sharedInstance: CfClient {
 		if Static.instance == nil {
 			Static.instance = CfClient()
@@ -181,6 +185,7 @@ public class CfClient {
                 case .success(_):
                     
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
+                    self.analyticsManager = self.getAnalyticsManager()
                     self.ready = true
                     onCompletion?(.success(()))
 			}
@@ -328,6 +333,7 @@ public class CfClient {
 			self.lastEventId = nil
 			self.onPollingResultCallback = nil
 			self.featureRepository.defaultAPIManager = nil
+            self.analyticsManager?.destroy()
 			self.ready = false
 			CfClient.sharedInstance.dispose()
         } else {
@@ -424,17 +430,43 @@ public class CfClient {
 	}
 	
 	///Make sure to call [initialize](x-source-tag://initialize) prior to calling this method.
-	private func getEvaluationById(forKey key: String, target: String, defaultValue: ValueType? = nil, completion:@escaping(Evaluation?)->()) {
+	private func getEvaluationById(
+        
+        forKey key: String,
+        target: String,
+        defaultValue: ValueType? = nil,
+        completion:@escaping(Evaluation?)->()
+    
+    ) {
 		self.featureRepository.getEvaluationById(key, target: target, useCache: true) { (result) in
-			switch result {
+			
+            switch result {
 				case .failure(_):
 					guard let defaultValue = defaultValue else {
-						completion(nil)
+						
+                        completion(nil)
 						return
 					}
-					completion(Evaluation(flag:key, value: defaultValue))
+					
+                    completion(Evaluation(flag:key, value: defaultValue))
 				case .success(let evaluation):
-					completion(evaluation)
+					
+                    let featureConfig = self.featureCache[key]
+                    if let fConfig = featureConfig {
+                    
+                        // TODO: Condition
+                        if (self.configuration.analyticsEnabled) {
+                            
+//                        let variation = Variation(
+//
+//                            name: key,
+//                            value: evaluation,
+//                            identifier: evaluation.
+//                        )
+                        
+                        }
+                    }
+                    completion(evaluation)
 			}
 		}
 	}
@@ -661,6 +693,17 @@ public class CfClient {
 			}
 		}
 	}
+    
+    private func getAnalyticsManager() -> AnalyticsManager {
+        
+        return AnalyticsManager(
+        
+            environmentID: self.configuration.environmentId,
+            cluster: self.cluster  ?? "",
+            authToken: self.token ?? "",
+            config: self.configuration
+        )
+    }
     
     private func initFeatureCache(environmentID: String, cluster: String) {
         
