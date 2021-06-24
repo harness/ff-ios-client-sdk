@@ -10,7 +10,6 @@ class AnalyticsManager : Destroyable {
     private var ready: Bool
     private var timer: Timer?
     private var cache: [String:AnalyticsWrapper]
-    private var analyticsPublisherService: AnalyticsPublisherService?
     
     init (
     
@@ -27,22 +26,22 @@ class AnalyticsManager : Destroyable {
         self.authToken = authToken
         self.config = config
         self.cache = cache
-        
-        analyticsPublisherService = AnalyticsPublisherService(
-        
-            cluster: cluster,
-            environmentID: environmentID,
-            config: config,
-            cache: &cache
-        )
-        
-        ready = true
+        self.ready = true
     }
     
     @objc func send() {
         
         Logger.log("Sending metrics")
-        analyticsPublisherService?.sendDataAndResetCache()
+        
+        let analyticsPublisherService = AnalyticsPublisherService(
+        
+            cluster: self.cluster,
+            environmentID: self.environmentID,
+            config: self.config,
+            cache: &self.cache
+        )
+        
+        analyticsPublisherService.sendDataAndResetCache()
     }
     
     func push(
