@@ -34,6 +34,8 @@ class AnalyticsPublisherService {
     
     func sendDataAndResetCache() {
     
+        Logger.log("Metrics data cache size: \(cache.count)")
+        
         if (cache.isEmpty) {
         
             Logger.log("Metrics data cache is empty")
