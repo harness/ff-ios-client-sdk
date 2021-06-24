@@ -90,8 +90,9 @@ public class CfClient {
 	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
 	private var ready: Bool = false
     
-    private var featureCache = [String : FeatureConfig]()
     private var analyticsManager: AnalyticsManager?
+    private var featureCache = [String : FeatureConfig]()
+    private var analyticsCache = [String:AnalyticsWrapper]()
 	
 	//MARK: - Internal properties -
 	
@@ -719,7 +720,8 @@ public class CfClient {
             environmentID: self.configuration.environmentId,
             cluster: self.cluster  ?? "",
             authToken: self.token ?? "",
-            config: self.configuration
+            config: self.configuration,
+            cache: self.analyticsCache
         )
     }
     

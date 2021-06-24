@@ -17,7 +17,8 @@ class AnalyticsManager : Destroyable {
         environmentID: String,
         cluster: String,
         authToken: String,
-        config: CfConfiguration
+        config: CfConfiguration,
+        cache: [String:AnalyticsWrapper]
         
     ) {
         
@@ -25,7 +26,7 @@ class AnalyticsManager : Destroyable {
         self.cluster = cluster
         self.authToken = authToken
         self.config = config
-        self.cache = [String:AnalyticsWrapper]()
+        self.cache = cache
         
         analyticsPublisherService = AnalyticsPublisherService(
         
@@ -56,7 +57,7 @@ class AnalyticsManager : Destroyable {
             return
         }
         
-        Logger.log("Metrics data appending, manager: \(self)")
+        Logger.log("Metrics data appending, manager")
         
         let analyticsKey = getAnalyticsCacheKey(target: target, featureConfig: featureConfig)
         var wrapper = cache[analyticsKey]
