@@ -22,7 +22,7 @@ class AnalyticsPublisherService {
         cluster: String,
         environmentID: String,
         config: CfConfiguration,
-        cache: [String:AnalyticsWrapper]
+        cache: inout [String:AnalyticsWrapper]
     
     ) {
         

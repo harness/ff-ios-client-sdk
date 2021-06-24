@@ -721,7 +721,7 @@ public class CfClient {
             cluster: self.cluster  ?? "",
             authToken: self.token ?? "",
             config: self.configuration,
-            cache: self.analyticsCache
+            cache: &self.analyticsCache
         )
     }
     
