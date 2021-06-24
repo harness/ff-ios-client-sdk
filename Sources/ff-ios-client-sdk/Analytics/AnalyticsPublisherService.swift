@@ -35,8 +35,8 @@ class AnalyticsPublisherService {
     func sendDataAndResetCache() {
     
         if (cache.isEmpty) {
-          
-            Logger.log("Cache is empty")
+        
+            Logger.log("Metrics data cache is empty")
         } else {
             
             let metrics = prepareSummaryMetricsBody()
@@ -54,17 +54,18 @@ class AnalyticsPublisherService {
                         
                         guard error == nil else {
                             
-                            Logger.log("Could not send analytics data to the server: \(error!)")
+                            Logger.log("Metrics data: could not send analytics data to the server: \(error!)")
                             return
                         }
                         
-                        Logger.log("Successfully sent analytics data to the server")
+                        Logger.log("Metrics data: successfully sent analytics data to the server")
                     }
                 } else {
                     
-                    Logger.log("No metrics data to send")
+                    Logger.log("Metrics data: no metrics data to send")
                 }
             
+                Logger.log("Metrics data cache is cleaned up")
                 cache.removeAll()
             }
         }
