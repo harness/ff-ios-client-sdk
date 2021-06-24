@@ -57,7 +57,7 @@ class AnalyticsManager : Destroyable {
             return
         }
         
-        Logger.log("Metrics data appending")
+        Logger.log("Metrics data appending, \(self.getId(cache))")
         
         let analyticsKey = getAnalyticsCacheKey(target: target, featureConfig: featureConfig)
         var wrapper = cache[analyticsKey]
@@ -81,6 +81,8 @@ class AnalyticsManager : Destroyable {
             wrapper?.count += 1
             if let w = wrapper {
                 
+                Logger.log("Metrics data appended [2], \(featureConfig.feature) wrapper: \(self.getId(wrapper))")
+                Logger.log("Metrics data appended [2], \(featureConfig.feature) wrapper count: \(self.getId(w.count))")
                 Logger.log("Metrics data appended [2], \(featureConfig.feature) has count of: \(w.count)")
             } else {
                 
@@ -124,5 +126,10 @@ class AnalyticsManager : Destroyable {
         let key = "\(target.identifier)_\(featureConfig.project)_\(featureConfig.environment)_\(featureConfig.feature)"
         Logger.log("Analytics cache key: \(key)")
         return key
+    }
+    
+    private func getId(_ object: Any) -> String {
+         
+        return "\(Unmanaged<AnyObject>.passUnretained(object as AnyObject).toOpaque())"
     }
 }
