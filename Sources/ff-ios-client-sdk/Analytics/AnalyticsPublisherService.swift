@@ -6,7 +6,7 @@ class AnalyticsPublisherService {
     private let environmentID: String
     private let config: CfConfiguration
     
-    private var cache: [Analytics:Int]
+    private var cache: [String:AnalyticsWrapper]
     
     private static let CLIENT: String = "client"
     private static let SDK_TYPE: String = "SDK_TYPE"
@@ -22,7 +22,7 @@ class AnalyticsPublisherService {
         cluster: String,
         environmentID: String,
         config: CfConfiguration,
-        cache: [Analytics:Int]
+        cache: [String:AnalyticsWrapper]
     
     ) {
         
@@ -76,19 +76,19 @@ class AnalyticsPublisherService {
         var metrics = Metrics(metricsData: data)
         var summaryMetricsData = [SummaryMetrics:Int]()
         
-        for (key: key, value: value) in cache {
+        for (key: _, value: value) in cache {
             
-            let summaryMetrics = prepareSummaryMetricsKey(key: key)
+            let summaryMetrics = prepareSummaryMetricsKey(key: value.analytics)
             let summaryCount = summaryMetricsData[summaryMetrics]
             
             if (summaryCount == nil) {
                 
-                summaryMetricsData[summaryMetrics] = value
+                summaryMetricsData[summaryMetrics] = value.count
             } else {
                 
                 if let count = summaryCount {
                     
-                    summaryMetricsData[summaryMetrics] = count + value
+                    summaryMetricsData[summaryMetrics] = count + value.count
                 }
             }
         }

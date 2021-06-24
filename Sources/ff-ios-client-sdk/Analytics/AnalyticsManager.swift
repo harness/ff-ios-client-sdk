@@ -9,7 +9,7 @@ class AnalyticsManager : Destroyable {
     
     private var ready: Bool
     private var timer: Timer?
-    private var cache: [Analytics:Int]
+    private var cache: [String:AnalyticsWrapper]
     private var analyticsPublisherService: AnalyticsPublisherService?
     
     init (
@@ -25,7 +25,7 @@ class AnalyticsManager : Destroyable {
         self.cluster = cluster
         self.authToken = authToken
         self.config = config
-        self.cache = [Analytics:Int]()
+        self.cache = [String:AnalyticsWrapper]()
         
         analyticsPublisherService = AnalyticsPublisherService(
         
@@ -58,26 +58,30 @@ class AnalyticsManager : Destroyable {
         
         Logger.log("Metrics data appending")
         
-        let analytics = Analytics(
+        let analyticsKey = getAnalyticsKey(target: target, featureConfig: featureConfig)
+        var wrapper = cache[analyticsKey]
         
-            target: target,
-            variation: variation,
-            eventType: "METRICS",
-            featureConfig: featureConfig
-        )
-        
-        let count = cache[analytics]
-        if count == nil {
+        if wrapper == nil {
             
-            cache[analytics] = 1
+            let analytics = Analytics(
+            
+                target: target,
+                variation: variation,
+                eventType: "METRICS",
+                featureConfig: featureConfig
+            )
+            
+            wrapper = AnalyticsWrapper(analytics: analytics, count: 1)
+            cache[analyticsKey] = wrapper
+            
             Logger.log("Metrics data appended, \(featureConfig.feature) has count of: 1")
         } else {
             
-            if let c = count {
+            if let w = wrapper {
                 
-                let nc = c + 1
-                cache[analytics] = nc
-                Logger.log("Metrics data appended, \(featureConfig.feature) has count of: \(nc)")
+                let count = w.count
+                wrapper?.count = w.count + 1
+                Logger.log("Metrics data appended, \(featureConfig.feature) has count of: \(count)")
             }
         }
         
@@ -106,5 +110,14 @@ class AnalyticsManager : Destroyable {
         ready = false
         self.timer?.invalidate()
         self.timer = nil
+    }
+    
+    private func getAnalyticsKey(
+    
+        target: CfTarget,
+        featureConfig: FeatureConfig
+    ) -> String {
+        
+        return "\(target.identifier)_\(featureConfig.project)_\(featureConfig.environment)_\(featureConfig.feature)"
     }
 }
