@@ -56,7 +56,7 @@ class AnalyticsManager : Destroyable {
             return
         }
         
-        Logger.log("Metrics data appending")
+        Logger.log("Metrics data appending, manager: \(self)")
         
         let analyticsKey = getAnalyticsCacheKey(target: target, featureConfig: featureConfig)
         var wrapper = cache[analyticsKey]
