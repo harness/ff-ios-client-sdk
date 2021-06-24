@@ -58,7 +58,7 @@ class AnalyticsManager : Destroyable {
         
         Logger.log("Metrics data appending")
         
-        let analyticsKey = getAnalyticsKey(target: target, featureConfig: featureConfig)
+        let analyticsKey = getAnalyticsCacheKey(target: target, featureConfig: featureConfig)
         var wrapper = cache[analyticsKey]
         
         if wrapper == nil {
@@ -112,12 +112,14 @@ class AnalyticsManager : Destroyable {
         self.timer = nil
     }
     
-    private func getAnalyticsKey(
+    private func getAnalyticsCacheKey(
     
         target: CfTarget,
         featureConfig: FeatureConfig
     ) -> String {
         
-        return "\(target.identifier)_\(featureConfig.project)_\(featureConfig.environment)_\(featureConfig.feature)"
+        let key = "\(target.identifier)_\(featureConfig.project)_\(featureConfig.environment)_\(featureConfig.feature)"
+        Logger.log("Analytics cache key: \(key)")
+        return key
     }
 }
