@@ -1,7 +1,7 @@
 
 import Foundation
 
-public struct  FeatureConfig : Codable, Hashable {
+@objc public class  FeatureConfig : NSObject, Codable {
     
     public var project: String
     public var environment: String

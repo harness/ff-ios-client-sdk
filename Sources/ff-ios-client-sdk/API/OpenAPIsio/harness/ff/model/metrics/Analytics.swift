@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Analytics : Codable, Hashable {
+@objc public class Analytics : NSObject, Codable {
     
     public var target: CfTarget
     public var variation: Variation

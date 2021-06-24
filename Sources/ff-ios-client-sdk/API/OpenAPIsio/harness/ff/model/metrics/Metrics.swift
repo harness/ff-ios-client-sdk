@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Metrics : Codable {
+@objc public class Metrics : NSObject, Codable {
     
     public var metricsData: [MetricsData]?
     

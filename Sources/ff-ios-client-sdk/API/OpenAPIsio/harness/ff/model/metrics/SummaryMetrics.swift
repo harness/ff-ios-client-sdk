@@ -1,6 +1,6 @@
 import Foundation
 
-public struct SummaryMetrics : Codable, Hashable {
+@objc public class SummaryMetrics : NSObject, Codable {
     
     public var featureName: String
     public var variationValue: String

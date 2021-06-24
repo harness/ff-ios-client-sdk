@@ -1,13 +1,6 @@
-//
-//  CfProject.swift
-//  ff-ios-client-sdk
-//
-//  Created by Dusan Juranovic on 14.1.21..
-//
-
 import Foundation
 
-@objc public class CfProject:NSObject, Codable {
+@objc public class CfProject: NSObject, Codable {
 	
     public var projectIdentifier: String
 	public var organization: String

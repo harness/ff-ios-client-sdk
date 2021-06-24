@@ -1,6 +1,6 @@
 import Foundation
 
-public struct MetricsData : Codable {
+@objc public class MetricsData : NSObject, Codable {
     
     public var timestamp: Int64
     public var count: Int

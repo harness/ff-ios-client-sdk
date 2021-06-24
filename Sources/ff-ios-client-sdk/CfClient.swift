@@ -473,8 +473,7 @@ public class CfClient {
 
                         identifier: evaluation.identifier,
                         value: evaluation.value.stringValue ?? "",
-                        name: key,
-                        description: ""
+                        name: key
                     )
                     
                     manager.push(
