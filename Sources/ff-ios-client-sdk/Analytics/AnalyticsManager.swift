@@ -75,14 +75,16 @@ class AnalyticsManager : Destroyable {
             wrapper = AnalyticsWrapper(analytics: analytics, count: 1)
             cache[analyticsKey] = wrapper
             
-            Logger.log("Metrics data appended, \(featureConfig.feature) has count of: 1")
+            Logger.log("Metrics data appended [1], \(featureConfig.feature) has count of: 1")
         } else {
             
+            wrapper?.count += 1
             if let w = wrapper {
                 
-                let count = w.count
-                wrapper?.count = w.count + 1
-                Logger.log("Metrics data appended, \(featureConfig.feature) has count of: \(count)")
+                Logger.log("Metrics data appended [2], \(featureConfig.feature) has count of: \(w.count)")
+            } else {
+                
+                Logger.log("Metrics data appended [3], \(featureConfig.feature) has count of: ERROR")
             }
         }
         
