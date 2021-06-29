@@ -667,7 +667,10 @@ public class CfClient {
     
     private func getAnalyticsManager() -> AnalyticsManager {
         
-        analyticsManager?.destroy()
+        if let manager = analyticsManager {
+            
+            return manager
+        }
         
         let manager = AnalyticsManager(
         
