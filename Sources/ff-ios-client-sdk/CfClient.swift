@@ -467,23 +467,23 @@ public class CfClient {
             Logger.log("Evaluation will not be pushed to analytics queue, invalid: \(evaluation)")
             return
         }
-        if let manager = self.analyticsManager {
+        
+        let manager = self.getAnalyticsManager()
             
-            if (self.configuration.analyticsEnabled && self.target.isValid()) {
+        if (self.configuration.analyticsEnabled && self.target.isValid()) {
 
-                let variation = Variation(
+            let variation = Variation(
 
-                    identifier: evaluation.identifier,
-                    value: evaluation.value.stringValue ?? "",
-                    name: key
-                )
+                identifier: evaluation.identifier,
+                value: evaluation.value.stringValue ?? "",
+                name: key
+            )
+            
+            manager.push(
                 
-                manager.push(
-                    
-                    target: self.target,
-                    variation: variation
-                )
-            }
+                target: self.target,
+                variation: variation
+            )
         }
     }
 	
@@ -669,7 +669,7 @@ public class CfClient {
         
         analyticsManager?.destroy()
         
-        return AnalyticsManager(
+        let manager = AnalyticsManager(
         
             environmentID: self.configuration.environmentId,
             cluster: self.cluster  ?? "",
@@ -677,5 +677,8 @@ public class CfClient {
             config: self.configuration,
             cache: &self.analyticsCache
         )
+        
+        self.analyticsManager = manager
+        return manager
     }
 }
