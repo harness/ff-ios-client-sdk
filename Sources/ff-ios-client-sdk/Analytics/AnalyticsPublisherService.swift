@@ -167,7 +167,7 @@ class AnalyticsPublisherService {
         
         return SummaryMetrics(
         
-            featureName: key.featureConfig.feature,
+            featureName: key.variation.name,
             variationValue: key.variation.value,
             variationIdentifier: key.variation.identifier
         )

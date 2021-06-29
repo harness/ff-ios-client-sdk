@@ -47,7 +47,6 @@ class AnalyticsManager : Destroyable {
     func push(
     
         target: CfTarget,
-        featureConfig: FeatureConfig,
         variation: Variation
     
     ) {
@@ -58,7 +57,7 @@ class AnalyticsManager : Destroyable {
         
         Logger.log("Metrics data appending")
         
-        let analyticsKey = getAnalyticsCacheKey(target: target, featureConfig: featureConfig)
+        let analyticsKey = getAnalyticsCacheKey(target: target, identifier: variation.name)
         var wrapper = cache[analyticsKey]
         
         if wrapper == nil {
@@ -67,23 +66,22 @@ class AnalyticsManager : Destroyable {
             
                 target: target,
                 variation: variation,
-                eventType: "METRICS",
-                featureConfig: featureConfig
+                eventType: "METRICS"
             )
             
             wrapper = AnalyticsWrapper(analytics: analytics, count: 1)
             cache[analyticsKey] = wrapper
             
-            Logger.log("Metrics data appended [1], \(featureConfig.feature) has count of: 1")
+            Logger.log("Metrics data appended [1], \(variation.name) has count of: 1")
         } else {
             
             wrapper?.count += 1
             if let w = wrapper {
                 
-                Logger.log("Metrics data appended [2], \(featureConfig.feature) has count of: \(w.count)")
+                Logger.log("Metrics data appended [2], \(variation.name) has count of: \(w.count)")
             } else {
                 
-                Logger.log("Metrics data appended [3], \(featureConfig.feature) has count of: ERROR")
+                Logger.log("Metrics data appended [3], \(variation.name) has count of: ERROR")
             }
         }
         
@@ -117,10 +115,11 @@ class AnalyticsManager : Destroyable {
     private func getAnalyticsCacheKey(
     
         target: CfTarget,
-        featureConfig: FeatureConfig
+        identifier: String
+        
     ) -> String {
         
-        let key = "\(target.identifier)_\(featureConfig.project)_\(featureConfig.environment)_\(featureConfig.feature)"
+        let key = "\(target.identifier)_\(identifier)"
         Logger.log("Analytics cache key: \(key)")
         return key
     }

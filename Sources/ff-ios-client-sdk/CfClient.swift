@@ -91,7 +91,6 @@ public class CfClient {
 	private var ready: Bool = false
     
     private var analyticsManager: AnalyticsManager?
-    private var featureCache = [String : FeatureConfig]()
     private var analyticsCache = [String:AnalyticsWrapper]()
 	
 	//MARK: - Internal properties -
@@ -382,12 +381,6 @@ public class CfClient {
 			self.featureRepository.target = self.target
             self.featureRepository.cluster = self.cluster!
 			
-            self.initFeatureCache(
-                
-                environmentID: self.configuration.environmentId,
-                cluster: self.cluster ?? ""
-            )
-            
 			// Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
 				guard let self = self else {return}
@@ -409,8 +402,15 @@ public class CfClient {
 		}
 	}
 	
-	private func fetchIfReady(evaluationId: String, defaultValue:Any? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		var valueType: ValueType?
+	private func fetchIfReady(
+        
+        evaluationId: String,
+        defaultValue:Any? = nil,
+        _ completion:@escaping(_ result: Evaluation?)->()
+    
+    ) {
+		
+        var valueType: ValueType?
 		switch defaultValue {
 			case is String: valueType = ValueType.string(defaultValue as! String)
 			case is Bool: valueType = ValueType.bool(defaultValue as! Bool)
@@ -462,27 +462,27 @@ public class CfClient {
     
     private func pushToAnalyticsQueue(key: String, evaluation: Evaluation) {
         
-        let featureConfig = self.featureCache[key]
-        if let fConfig = featureConfig {
+        if (!evaluation.isValid()) {
             
-            if let manager = self.analyticsManager {
-                
-                if (self.configuration.analyticsEnabled && self.target.isValid()) {
-    
-                    let variation = Variation(
+            Logger.log("Evaluation will not be pushed to analytics queue, invalid: \(evaluation)")
+            return
+        }
+        if let manager = self.analyticsManager {
+            
+            if (self.configuration.analyticsEnabled && self.target.isValid()) {
 
-                        identifier: evaluation.identifier,
-                        value: evaluation.value.stringValue ?? "",
-                        name: key
-                    )
+                let variation = Variation(
+
+                    identifier: evaluation.identifier,
+                    value: evaluation.value.stringValue ?? "",
+                    name: key
+                )
+                
+                manager.push(
                     
-                    manager.push(
-                        
-                        target: self.target,
-                        featureConfig: fConfig,
-                        variation: variation
-                    )
-                }
+                    target: self.target,
+                    variation: variation
+                )
             }
         }
     }
@@ -557,12 +557,6 @@ public class CfClient {
 			Logger.log("SSE connection has been opened")
 			onEvent(EventType.onOpen, nil)
             
-            self.initFeatureCache(
-                
-                environmentID: self.configuration.environmentId,
-                cluster: self.cluster ?? ""
-            )
-            
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
 				switch result {
 					case .success(let evaluations):
@@ -628,39 +622,6 @@ public class CfClient {
 							case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
 						}
 					})
-                    
-                    if (decoded.domain == "flag") {
-                        
-                        let identifier = decoded.identifier
-                        let version = decoded.version
-                        
-                        for _ in 0...2 {
-                           
-                            self.featureRepository.getFeatureConfigById(
-                                
-                                featureConfigId: identifier ?? "",
-                                onCompletion: { [weak self] (result) in
-                                        
-                                    guard self != nil else {
-                                        return
-                                    }
-                                    
-                                    switch result {
-                                        
-                                        case .failure(let error): Logger.log("Error: \(error)")
-                                        
-                                        case .success(let featureConfig):
-                                            if let v = version {
-                                                if (v == featureConfig.version) {
-                                                    
-                                                    self?.featureCache[featureConfig.feature] = featureConfig
-                                                }
-                                            }
-                                    }
-                                }
-                            )
-                        }
-                    }
 				} catch {
 					onEvent(EventType.onEventListener(nil), CFError.parsingError)
 				}
@@ -691,12 +652,6 @@ public class CfClient {
 						self?.setupFlowFor(.onlineStreaming)
 					}
                     
-                    self?.initFeatureCache(
-                        
-                        environmentID: self?.configuration?.environmentId ?? "",
-                        cluster: self?.cluster ?? ""
-                    )
-                    
 					self?.featureRepository.getEvaluations() { (result) in
 						switch result {
 							case .failure(let error):
@@ -721,34 +676,6 @@ public class CfClient {
             authToken: self.token ?? "",
             config: self.configuration,
             cache: &self.analyticsCache
-        )
-    }
-    
-    private func initFeatureCache(environmentID: String, cluster: String) {
-        
-        self.featureRepository.getFeatureConfig(
-        
-            onCompletion: { [weak self] (result) in
-                
-                guard self != nil else {
-                    return
-                }
-                
-                switch result {
-                    case .success(let featureConfig):
-                        
-                        self?.analyticsManager = self?.getAnalyticsManager()
-                        
-                        featureConfig.forEach { fc in
-                            
-                            Logger.log("featureConfig: \(fc)")
-                            self?.featureCache[fc.feature] = fc
-                        }
-                        
-                    case .failure(let error):
-                        Logger.log("Error: \(error)")
-                }
-            }
         )
     }
 }

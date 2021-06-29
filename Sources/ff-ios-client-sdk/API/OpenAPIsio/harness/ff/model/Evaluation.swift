@@ -103,4 +103,9 @@ public struct Evaluation: Codable {
         self.identifier = identifier
         self.value = value
     }
+    
+    public func isValid() -> Bool {
+        
+        return !identifier.isEmpty
+    }
 }
