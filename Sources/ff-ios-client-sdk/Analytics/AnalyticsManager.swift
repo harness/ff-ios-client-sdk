@@ -37,11 +37,10 @@ class AnalyticsManager : Destroyable {
         
             cluster: self.cluster,
             environmentID: self.environmentID,
-            config: self.config,
-            cache: &self.cache
+            config: self.config
         )
         
-        analyticsPublisherService.sendDataAndResetCache()
+        analyticsPublisherService.sendDataAndResetCache(cache: &self.cache)
     }
     
     func push(

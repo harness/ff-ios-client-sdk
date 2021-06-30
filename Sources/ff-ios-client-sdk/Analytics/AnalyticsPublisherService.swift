@@ -6,8 +6,6 @@ class AnalyticsPublisherService {
     private let environmentID: String
     private let config: CfConfiguration
     
-    private var cache: [String:AnalyticsWrapper]
-    
     private static let CLIENT: String = "client"
     private static let SDK_TYPE: String = "SDK_TYPE"
     private static let SDK_VERSION: String = "SDK_VERSION"
@@ -21,18 +19,16 @@ class AnalyticsPublisherService {
     
         cluster: String,
         environmentID: String,
-        config: CfConfiguration,
-        cache: inout [String:AnalyticsWrapper]
-    
+        config: CfConfiguration
+        
     ) {
         
+        self.config = config
         self.cluster = cluster
         self.environmentID = environmentID
-        self.config = config
-        self.cache = cache
     }
     
-    func sendDataAndResetCache() {
+    func sendDataAndResetCache(cache: inout [String:AnalyticsWrapper]) {
     
         if (cache.isEmpty) {
         
@@ -41,7 +37,7 @@ class AnalyticsPublisherService {
             
             Logger.log("Metrics data cache size: \(cache.count)")
             
-            let metrics = prepareSummaryMetricsBody()
+            let metrics = prepareSummaryMetricsBody(cache: &cache)
             if let metricsData = metrics.metricsData {
                 
                 if (!metricsData.isEmpty) {
@@ -61,19 +57,19 @@ class AnalyticsPublisherService {
                     Logger.log("Metrics data: no metrics data to send")
                 }
             
-                self.cache.removeAll(keepingCapacity: true)
+                cache.removeAll(keepingCapacity: true)
                 Logger.log("Metrics data cache is cleaned up, size: \(cache.count)")
             }
         }
     }
     
-    private func prepareSummaryMetricsBody() -> Metrics {
+    private func prepareSummaryMetricsBody(cache: inout [String:AnalyticsWrapper]) -> Metrics {
         
         let data = [MetricsData]()
         let metrics = Metrics(metricsData: data)
         var summaryMetricsData = [SummaryMetrics:Int]()
         
-        for (key: _, value: value) in self.cache {
+        for (key: _, value: value) in cache {
             
             let summaryMetrics = prepareSummaryMetricsKey(key: value.analytics)
             let summaryCount = summaryMetricsData[summaryMetrics]
