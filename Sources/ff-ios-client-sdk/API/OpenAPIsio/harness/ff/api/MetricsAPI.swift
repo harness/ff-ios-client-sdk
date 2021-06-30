@@ -76,7 +76,7 @@ open class MetricsAPI {
             isBody: true
         )
         
-        NSLog("API postMetrics: \(req.URLString)")
+        NSLog("API postMetrics: URL=\(req.URLString), HEADERS=\(req.headers), METHOD=\(req.method)")
         return req
     }
 }
