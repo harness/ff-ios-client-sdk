@@ -60,7 +60,7 @@ open class MetricsAPI {
         
         path = path.replacingOccurrences(of: "{environment}", with: environmentUUIDPostEscape, options: .literal, range: nil)
         
-        let URLString = OpenAPIClientAPI.configPath + path
+        let URLString = OpenAPIClientAPI.eventPath + path
         
         let parameters = JSONEncodingHelper.encodingParameters(forEncodableObject: metrics)
 
