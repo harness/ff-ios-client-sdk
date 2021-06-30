@@ -80,7 +80,8 @@ public class CfConfigurationBuilder {
 	
 	# Defaults: #
 	- `configUrl`:  "https://config.ff.harness.io/api/1.0"
-	- `eventUrl`:  "https://config.ff.harness.io/api/1.0/stream"
+    - `eventUrl`: "https://events.ff.harness.io/api/1.0"
+	- `streamUrl`:  "https://config.ff.harness.io/api/1.0/stream"
 	- `streamEnabled`: `false`
 	- `analyticsEnabled`: `true`
 	- `pollingInterval`: `60` seconds

@@ -3,7 +3,8 @@ import Foundation
 /// `CfConfiguration` is `required` in order to [intialize](x-source-tag://initialize) the SDK.
 /// # Defaults: #
 /// - `configUrl`:  "https://config.ff.harness.io/api/1.0"
-/// - `eventUrl`:  "https://config.ff.harness.io/api/1.0/stream"
+/// - `streamUrl`:  "https://config.ff.harness.io/api/1.0/stream"
+/// - `eventUrl`:  "https://events.ff.harness.io/api/1.0"
 /// - `streamEnabled`: `false`
 /// - `analyticsEnabled`: `true`
 /// - `pollingInterval`: `60` seconds
