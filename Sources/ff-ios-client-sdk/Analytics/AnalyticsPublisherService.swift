@@ -73,7 +73,7 @@ class AnalyticsPublisherService {
         let metrics = Metrics(metricsData: data)
         var summaryMetricsData = [SummaryMetrics:Int]()
         
-        for (key: _, value: value) in cache {
+        for (key: _, value: value) in self.cache {
             
             let summaryMetrics = prepareSummaryMetricsKey(key: value.analytics)
             let summaryCount = summaryMetricsData[summaryMetrics]
