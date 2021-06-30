@@ -13,10 +13,12 @@ public class CfConfigurationBuilder {
 	private let minimumPollingInterval:TimeInterval = 60
 	
 	public init(){
-		self.config = CfConfiguration(
+		
+        self.config = CfConfiguration(
             
             configUrl: CfConstants.Server.configUrl,
-            eventUrl: CfConstants.Server.eventUrl,
+            streamUrl: CfConstants.Server.streamUrl,
+            eventUrl:  CfConstants.Server.eventUrl,
             streamEnabled: false,
             analyticsEnabled: true,
             pollingInterval: minimumPollingInterval,
@@ -38,7 +40,7 @@ public class CfConfigurationBuilder {
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
 	public func setEventUrl(_ eventUrl: String) -> CfConfigurationBuilder {
-		config.eventUrl = eventUrl
+		config.streamUrl = eventUrl
 		return self
 	}
 	/**

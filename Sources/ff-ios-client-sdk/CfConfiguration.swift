@@ -12,7 +12,8 @@ public struct CfConfiguration {
     static var MIN_ANALYTICS_FREQUENCY: Int = 60
 	
     var configUrl: String
-	var eventUrl: String
+	var streamUrl: String
+    var eventUrl: String
 	var streamEnabled: Bool
 	var analyticsEnabled: Bool
 	var pollingInterval: TimeInterval
@@ -22,6 +23,7 @@ public struct CfConfiguration {
 	internal init(
         
         configUrl: String,
+        streamUrl: String,
         eventUrl: String,
         streamEnabled: Bool,
         analyticsEnabled: Bool,
@@ -31,7 +33,8 @@ public struct CfConfiguration {
     ) {
 		
         self.configUrl = configUrl
-		self.eventUrl = eventUrl
+		self.streamUrl = streamUrl
+        self.eventUrl = eventUrl
 		self.streamEnabled = streamEnabled
 		self.analyticsEnabled = analyticsEnabled
 		self.pollingInterval = pollingInterval

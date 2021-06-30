@@ -184,7 +184,7 @@ public class CfClient {
 			
                 case .success(_):
                     
-                    OpenAPIClientAPI.eventPath = configuration.eventUrl
+                    OpenAPIClientAPI.streamPath = configuration.streamUrl
                     self.ready = true
                     onCompletion?(.success(()))
 			}

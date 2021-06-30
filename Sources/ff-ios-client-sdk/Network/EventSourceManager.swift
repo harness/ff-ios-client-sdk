@@ -44,7 +44,7 @@ class EventSourceManager: EventSourceManagerProtocol {
 			
             let config = self.configuration!
             let cluster = parameterConfig?.cluster ?? ""
-			let streamUrl = URL(string: "\(config.eventUrl)?cluster=\(cluster)")!
+			let streamUrl = URL(string: "\(config.streamUrl)?cluster=\(cluster)")!
             let headers = parameterConfig?.authHeader ?? [:]
 			    
             NSLog("Api, streamUrl: \(streamUrl)")
