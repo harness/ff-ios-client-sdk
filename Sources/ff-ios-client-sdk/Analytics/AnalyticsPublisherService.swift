@@ -34,12 +34,12 @@ class AnalyticsPublisherService {
     
     func sendDataAndResetCache() {
     
-        Logger.log("Metrics data cache size: \(cache.count)")
-        
         if (cache.isEmpty) {
         
-            Logger.log("Metrics data cache is empty")
+            Logger.log("Metrics data cache size: empty")
         } else {
+            
+            Logger.log("Metrics data cache size: \(cache.count)")
             
             let metrics = prepareSummaryMetricsBody()
             if let metricsData = metrics.metricsData {
