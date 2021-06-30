@@ -52,15 +52,9 @@ class AnalyticsPublisherService {
                         cluster: cluster,
                         metrics: metrics
                         
-                    ) { (response, error) in
+                    ) { (response, _) in
                         
-                        guard error == nil else {
-                            
-                            Logger.log("Metrics data: could not send analytics data to the server: \(error!)")
-                            return
-                        }
-                        
-                        Logger.log("Metrics data: successfully sent analytics data to the server")
+                        Logger.log("Metrics data: sending finished")
                     }
                 } else {
                     
