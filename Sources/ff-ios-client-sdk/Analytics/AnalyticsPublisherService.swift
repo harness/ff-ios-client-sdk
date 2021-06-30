@@ -61,8 +61,8 @@ class AnalyticsPublisherService {
                     Logger.log("Metrics data: no metrics data to send")
                 }
             
-                Logger.log("Metrics data cache is cleaned up")
-                cache.removeAll()
+                self.cache.removeAll(keepingCapacity: true)
+                Logger.log("Metrics data cache is cleaned up, size: \(cache.count)")
             }
         }
     }
