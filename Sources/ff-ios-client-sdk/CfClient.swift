@@ -13,7 +13,8 @@ import Foundation
 /// - `case` onEventListener(`Evaluation?`)
 /// - `case` onPolling(`[Evaluation]?`)
 public enum EventType: Equatable {
-	///Returns only a `String` message that the SSE has been opened
+	
+    ///Returns only a `String` message that the SSE has been opened
 	case onOpen
 	///Returns  a `String` message that the SSE has beeen completed.
 	case onComplete
@@ -88,10 +89,13 @@ public class CfClient {
 	///Tracks the `ready` state of CfClient.
 	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
 	private var ready: Bool = false
+    
+    private var analyticsManager: AnalyticsManager?
+    private var analyticsCache = [String:AnalyticsWrapper]()
 	
 	//MARK: - Internal properties -
 	
-	var configuration:CfConfiguration!
+	var configuration: CfConfiguration!
 	var target: CfTarget!
 	var authenticationManager: AuthenticationManagerProtocol!
 	var eventSourceManager: EventSourceManagerProtocol!
@@ -111,8 +115,10 @@ public class CfClient {
 	//MARK: - Public properties -
 	
 	struct Static {
-		fileprivate static var instance: CfClient?
+		
+        fileprivate static var instance: CfClient?
 	}
+    
 	public static var sharedInstance: CfClient {
 		if Static.instance == nil {
 			Static.instance = CfClient()
@@ -154,13 +160,21 @@ public class CfClient {
 	 - NOTE: In order to use your own cache, you need to wrap your caching solution into a wrapper, that adopts `StorageRepositoryProtocol`.
 	 - Tag: initialize
 	*/
-	public func initialize(apiKey: String, configuration: CfConfiguration, target: CfTarget, cache: StorageRepositoryProtocol = CfCache(), _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil) {
+	public func initialize(
+        
+        apiKey: String,
+        configuration: CfConfiguration,
+        target: CfTarget,
+        cache: StorageRepositoryProtocol = CfCache(),
+        _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil
+    
+    ) {
 		self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target
-		self.ready = true
 		OpenAPIClientAPI.configPath = configuration.configUrl
-		let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
+		
+        let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
 			
             switch response {
@@ -170,8 +184,9 @@ public class CfClient {
 			
                 case .success(_):
                     
-                    OpenAPIClientAPI.eventPath = configuration.eventUrl
-					onCompletion?(.success(()))
+                    OpenAPIClientAPI.streamPath = configuration.streamUrl
+                    self.ready = true
+                    onCompletion?(.success(()))
 			}
 		}
 	}
@@ -308,7 +323,8 @@ public class CfClient {
 	*/
 	public func destroy() {
 		if self.configuration != nil {
-			self.pollingEnabled = false
+			
+            self.pollingEnabled = false
 			self.eventSourceManager.destroy()
 			self.setupFlowFor(.offline)
 			self.configuration.streamEnabled = false
@@ -316,10 +332,12 @@ public class CfClient {
 			self.lastEventId = nil
 			self.onPollingResultCallback = nil
 			self.featureRepository.defaultAPIManager = nil
+            self.analyticsManager?.destroy()
 			self.ready = false
 			CfClient.sharedInstance.dispose()
-		} else {
-			Logger.log("destroy() already called. Please reinitialize the SDK.")
+        } else {
+			
+            Logger.log("destroy() already called. Please reinitialize the SDK.")
 		}
 	}
 	
@@ -363,7 +381,7 @@ public class CfClient {
 			self.featureRepository.target = self.target
             self.featureRepository.cluster = self.cluster!
 			
-			//Initial getEvaluations to be stored in cache
+			// Initial getEvaluations to be stored in cache
 			self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
 				guard let self = self else {return}
 				let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
@@ -384,8 +402,15 @@ public class CfClient {
 		}
 	}
 	
-	private func fetchIfReady(evaluationId: String, defaultValue:Any? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
-		var valueType: ValueType?
+	private func fetchIfReady(
+        
+        evaluationId: String,
+        defaultValue:Any? = nil,
+        _ completion:@escaping(_ result: Evaluation?)->()
+    
+    ) {
+		
+        var valueType: ValueType?
 		switch defaultValue {
 			case is String: valueType = ValueType.string(defaultValue as! String)
 			case is Bool: valueType = ValueType.bool(defaultValue as! Bool)
@@ -400,27 +425,69 @@ public class CfClient {
 				completion(nil)
 				return
 			}
-			completion(Evaluation(flag:evaluationId, value: defaultValue))
+			completion(Evaluation(flag: evaluationId, identifier: evaluationId, value: defaultValue))
 		}
 	}
 	
 	///Make sure to call [initialize](x-source-tag://initialize) prior to calling this method.
-	private func getEvaluationById(forKey key: String, target: String, defaultValue: ValueType? = nil, completion:@escaping(Evaluation?)->()) {
+	private func getEvaluationById(
+        
+        forKey key: String,
+        target: String,
+        defaultValue: ValueType? = nil,
+        completion:@escaping(Evaluation?)->()
+    
+    ) {
 		self.featureRepository.getEvaluationById(key, target: target, useCache: true) { (result) in
-			switch result {
+			
+            switch result {
 				case .failure(_):
 					guard let defaultValue = defaultValue else {
-						completion(nil)
+						
+                        completion(nil)
 						return
 					}
-					completion(Evaluation(flag:key, value: defaultValue))
-				case .success(let evaluation):
-					completion(evaluation)
+					
+                    let evaluation = Evaluation(flag:key, identifier: key, value: defaultValue)
+                    self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
+                    completion(evaluation)
+				
+            case .success(let evaluation):
+					
+                    self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
+                    completion(evaluation)
 			}
 		}
 	}
+    
+    private func pushToAnalyticsQueue(key: String, evaluation: Evaluation) {
+        
+        if (!evaluation.isValid()) {
+            
+            Logger.log("Evaluation will not be pushed to analytics queue, invalid: \(evaluation)")
+            return
+        }
+        
+        let manager = self.getAnalyticsManager()
+            
+        if (self.configuration.analyticsEnabled && self.target.isValid()) {
+
+            let variation = Variation(
+
+                identifier: evaluation.identifier,
+                value: evaluation.value.stringValue ?? "",
+                name: key
+            )
+            
+            manager.push(
+                
+                target: self.target,
+                variation: variation
+            )
+        }
+    }
 	
-	//Setup event observing flow based on `State`
+	// Setup event observing flow based on `State`
 	private func setupFlowFor(_ state: State) {
 		switch state {
 			case .offline:
@@ -489,6 +556,7 @@ public class CfClient {
 		eventSourceManager.onOpen() {
 			Logger.log("SSE connection has been opened")
 			onEvent(EventType.onOpen, nil)
+            
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
 				switch result {
 					case .success(let evaluations):
@@ -541,8 +609,12 @@ public class CfClient {
 					return
 				}
 				do {
-					let data = stringData.data(using: .utf8)
+					
+                    let data = stringData.data(using: .utf8)
 					let decoded = try JSONDecoder().decode(Message.self, from: data!)
+                    
+                    Logger.log("Message: \(decoded)")
+                    
 					self.lastEventId = decoded.event
 					self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
 						switch result {
@@ -579,6 +651,7 @@ public class CfClient {
 					if self?.configuration.streamEnabled == true {
 						self?.setupFlowFor(.onlineStreaming)
 					}
+                    
 					self?.featureRepository.getEvaluations() { (result) in
 						switch result {
 							case .failure(let error):
@@ -591,4 +664,24 @@ public class CfClient {
 			}
 		}
 	}
+    
+    private func getAnalyticsManager() -> AnalyticsManager {
+        
+        if let manager = analyticsManager {
+            
+            return manager
+        }
+        
+        let manager = AnalyticsManager(
+        
+            environmentID: self.configuration.environmentId,
+            cluster: self.cluster  ?? "",
+            authToken: self.token ?? "",
+            config: self.configuration,
+            cache: &self.analyticsCache
+        )
+        
+        self.analyticsManager = manager
+        return manager
+    }
 }

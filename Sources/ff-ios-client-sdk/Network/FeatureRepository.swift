@@ -6,14 +6,15 @@
 //
 
 import Foundation
+
 class FeatureRepository {
 	
     var token: String
     var cluster: String
+    var target: CfTarget
+    var config: CfConfiguration
 	var storageSource: StorageRepositoryProtocol
-	var config:CfConfiguration
 	var defaultAPIManager: DefaultAPIManagerProtocol!
-	var target: CfTarget
 	
 	init(
         
@@ -23,6 +24,7 @@ class FeatureRepository {
         config:CfConfiguration?,
         target: CfTarget,
         defaultAPIManager: DefaultAPIManagerProtocol = DefaultAPIManager()
+        
     ) {
 		
         self.token = token ?? ""
@@ -36,8 +38,12 @@ class FeatureRepository {
 	/// Use this method to get `[Evaluation]` for a  target specified in `CfConfiguration` during the call to initialize `CfClient`.
 	/// - Parameters:
 	///   - onCompletion: completion block containing `[Evaluation]?` or `CFError?` from appropriate lower level methods.
-	func getEvaluations(onCompletion:@escaping(Result<[Evaluation], CFError>)->()) {
-		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
+	func getEvaluations(
+        
+        onCompletion:@escaping(Result<[Evaluation], CFError>)->()
+    ) {
+		
+        OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
 		defaultAPIManager.getEvaluations(
@@ -80,8 +86,15 @@ class FeatureRepository {
 	/// - Parameters:
 	///   - feature: `Feature ID`
 	///   - onCompletion: completion block containing `Evaluation?` or `CFError?` from appropriate lower level methods.
-	func getEvaluationById(_ evaluationId: String, target: String, useCache: Bool = false, onCompletion:@escaping(Result<Evaluation, CFError>)->()) {
-		if useCache {
+	func getEvaluationById(
+        
+        _ evaluationId: String,
+        target: String,
+        useCache: Bool = false,
+        onCompletion:@escaping(Result<Evaluation, CFError>)->()
+    ) {
+		
+        if useCache {
 			do {
 				let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 				let evaluation: Evaluation? = try self.storageSource.getValue(forKey: key)
@@ -130,7 +143,7 @@ class FeatureRepository {
 			}
 		}
 	}
-	
+    
 	private func updateAll(_ eval: Evaluation) {
 		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 		do {

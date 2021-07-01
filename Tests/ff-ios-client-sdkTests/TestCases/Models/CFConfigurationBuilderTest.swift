@@ -40,9 +40,9 @@ class CfConfigurationBuilderTest: XCTestCase {
 	
 	func testAttachEventUrl() {
 		let mockEventUrl = "https://www.event-url"
-		sut = sut.setEventUrl(mockEventUrl)
+		sut = sut.setStreamUrl(mockEventUrl)
 		let config = sut.build()
-		XCTAssert(config.eventUrl.contains(mockEventUrl))
+		XCTAssert(config.streamUrl.contains(mockEventUrl))
 	}
     
 	func testStreamEnabledDefault() {

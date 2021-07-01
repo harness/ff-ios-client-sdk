@@ -13,13 +13,20 @@ import Foundation
 /// - `name`:  ""
 /// - `anonymous`: `false`
 /// - `attributes`: `[:]`
-public struct CfTarget: Codable {
-	public var identifier: String
+public struct CfTarget: Codable, Hashable {
+	
+    public var identifier: String
 	public var name: String
 	public var anonymous: Bool
 	public var attributes: [String:String]
 	
 	public static func builder() -> CfTargetBuilder {
-		return CfTargetBuilder()
+		
+        return CfTargetBuilder()
 	}
+    
+    func isValid() -> Bool {
+        
+        return !identifier.isEmpty
+    }
 }

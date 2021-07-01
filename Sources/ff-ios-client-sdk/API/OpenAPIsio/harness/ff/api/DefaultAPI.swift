@@ -15,14 +15,22 @@ open class DefaultAPI {
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
-    open class func authenticate(authenticationRequest: AuthenticationRequest? = nil, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((_ data: AuthenticationResponse?,_ error: Error?) -> Void)) {
-        authenticateWithRequestBuilder(authenticationRequest: authenticationRequest).execute(apiResponseQueue) { result -> Void in
-            switch result {
-            case let .success(response):
-                completion(response.body, nil)
-            case let .failure(error):
-                completion(nil, error)
-            }
+    open class func authenticate(
+        
+        authenticationRequest: AuthenticationRequest? = nil,
+        apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue,
+        completion: @escaping ((_ data: AuthenticationResponse?,_ error: Error?) -> Void)
+    
+    ) {
+        authenticateWithRequestBuilder(authenticationRequest: authenticationRequest)
+            .execute(apiResponseQueue) { result -> Void in
+            
+                switch result {
+                    case let .success(response):
+                        completion(response.body, nil)
+                    case let .failure(error):
+                        completion(nil, error)
+                }
         }
     }
 
@@ -50,6 +58,7 @@ open class DefaultAPI {
      
      - parameter environmentUUID: (path) Unique identifier for the environment object in the API.
      - parameter target: (path) Unique identifier for the target object in the API.
+     - parameter cluster: Cluster.
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
@@ -83,7 +92,8 @@ open class DefaultAPI {
      
      - parameter environmentUUID: (path) Unique identifier for the environment object in the API. 
      - parameter feature: (path) Unique identifier for the flag object in the API. 
-     - parameter target: (path) Unique identifier for the target object in the API. 
+     - parameter target: (path) Unique identifier for the target object in the API.
+     - parameter cluster: Cluster.
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
@@ -115,9 +125,11 @@ open class DefaultAPI {
     
     /**
      Get feature evaluations for target
+     
      - GET /client/env/{environmentUUID}/target/{target}/evaluations
      - parameter environmentUUID: (path) Unique identifier for the environment object in the API.
      - parameter target: (path) Unique identifier for the target object in the API.
+     - parameter cluster: Cluster.
      - returns: RequestBuilder<[Evaluation]>
      */
     open class func getEvaluationsWithRequestBuilder(
@@ -145,16 +157,18 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("GET getEvaluations: \(req.URLString)")
+        NSLog("API getEvaluations: \(req.URLString)")
         return req
     }
     
     /**
      Get feature evaluations for target
+     
      - GET /client/env/{environmentUUID}/target/{target}/evaluations/{feature}
      - parameter environmentUUID: (path) Unique identifier for the environment object in the API.
      - parameter feature: (path) Unique identifier for the flag object in the API.
      - parameter target: (path) Unique identifier for the target object in the API.
+     - parameter cluster: Cluster.
      - returns: RequestBuilder<Evaluation>
      */
     open class func getEvaluationByIdentifierWithRequestBuilder(
@@ -185,7 +199,7 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("GET getEvaluationByIdentifier: \(req.URLString)")
+        NSLog("API getEvaluationByIdentifier: \(req.URLString)")
         return req
     }
 }

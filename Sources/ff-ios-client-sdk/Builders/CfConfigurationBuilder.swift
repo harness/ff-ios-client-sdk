@@ -8,16 +8,22 @@
 import Foundation
 
 public class CfConfigurationBuilder {
-	var config : CfConfiguration!
+	
+    var config : CfConfiguration!
 	private let minimumPollingInterval:TimeInterval = 60
 	
 	public init(){
-		self.config = CfConfiguration(configUrl: CfConstants.Server.configUrl,
-									  eventUrl: CfConstants.Server.eventUrl,
-									  streamEnabled: false,
-									  analyticsEnabled: true,
-									  pollingInterval: minimumPollingInterval,
-									  environmentId: "")
+		
+        self.config = CfConfiguration(
+            
+            configUrl: CfConstants.Server.configUrl,
+            streamUrl: CfConstants.Server.streamUrl,
+            eventUrl:  CfConstants.Server.eventUrl,
+            streamEnabled: false,
+            analyticsEnabled: true,
+            pollingInterval: minimumPollingInterval,
+            environmentId: ""
+        )
 	}
 	/**
 	Adds `configUrl` to CfConfiguration
@@ -28,15 +34,29 @@ public class CfConfigurationBuilder {
 		config.configUrl = configUrl
 		return self
 	}
-	/**
-	Adds `eventUrl` to CfConfiguration
-	- Parameter eventUrl: `String`
+	
+    /**
+	Adds `streamUrl` to CfConfiguration
+	- Parameter streamUrl: `String`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
-	public func setEventUrl(_ eventUrl: String) -> CfConfigurationBuilder {
-		config.eventUrl = eventUrl
+	public func setStreamUrl(_ streamUrl: String) -> CfConfigurationBuilder {
+		
+        config.streamUrl = streamUrl
 		return self
 	}
+    
+    /**
+    Adds `eventUrl` to CfConfiguration
+    - Parameter eventUrl: `String`
+    - Note: `build()` needs to be called as the final method in the chain
+    */
+    public func setEventUrl(_ eventUrl: String) -> CfConfigurationBuilder {
+        
+        config.eventUrl = eventUrl
+        return self
+    }
+    
 	/**
 	Adds `streamEnabled` flag  to CfConfiguration
 	- Parameter isEnabled: `Bool`
@@ -74,7 +94,8 @@ public class CfConfigurationBuilder {
 	
 	# Defaults: #
 	- `configUrl`:  "https://config.ff.harness.io/api/1.0"
-	- `eventUrl`:  "https://config.ff.harness.io/api/1.0/stream"
+    - `eventUrl`: "https://events.ff.harness.io/api/1.0"
+	- `streamUrl`:  "https://config.ff.harness.io/api/1.0/stream"
 	- `streamEnabled`: `false`
 	- `analyticsEnabled`: `true`
 	- `pollingInterval`: `60` seconds

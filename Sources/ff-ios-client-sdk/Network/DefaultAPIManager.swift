@@ -15,7 +15,8 @@ protocol DefaultAPIManagerProtocol {
         target: String,
         cluster: String,
         apiResponseQueue: DispatchQueue,
-        completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ()))
+        completion: @escaping ((Swift.Result< [Evaluation], CFError>) -> ())
+    )
 	
     func getEvaluationByIdentifier(
         
@@ -23,7 +24,9 @@ protocol DefaultAPIManagerProtocol {
         feature: String,
         target: String,
         cluster: String,
-        apiResponseQueue: DispatchQueue, completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ()))
+        apiResponseQueue: DispatchQueue,
+        completion: @escaping ((Swift.Result<Evaluation, CFError>) -> ())
+    )
 }
 
 class DefaultAPIManager: DefaultAPIManagerProtocol {
@@ -56,7 +59,7 @@ class DefaultAPIManager: DefaultAPIManagerProtocol {
 			completion(.success(evaluations))
 		}
 	}
-	
+    
 	func getEvaluationByIdentifier(
         
         environmentUUID: String,
