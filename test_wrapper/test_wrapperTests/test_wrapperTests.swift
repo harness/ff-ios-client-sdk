@@ -6,6 +6,7 @@
 //
 
 import XCTest
+
 @testable import test_wrapper
 
 class test_wrapperTests: XCTestCase {
@@ -22,18 +23,8 @@ class test_wrapperTests: XCTestCase {
 
     func testExample() throws {
         
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let server = WrapperServer()
         XCTAssert(1 == 1)
         NSLog("Test completed")
     }
-
-    func testPerformanceExample() throws {
-        
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

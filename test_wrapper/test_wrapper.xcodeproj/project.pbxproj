@@ -10,6 +10,7 @@
 		F5B6BF0E26C52350006CE071 /* test_wrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5B6BF0426C52350006CE071 /* test_wrapper.framework */; };
 		F5B6BF1326C52351006CE071 /* test_wrapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B6BF1226C52351006CE071 /* test_wrapperTests.swift */; };
 		F5B6BF1526C52351006CE071 /* test_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B6BF0726C52350006CE071 /* test_wrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5B6BF1F26C524DD006CE071 /* WrapperServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B6BF1E26C524DD006CE071 /* WrapperServer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		F5B6BF0D26C52350006CE071 /* test_wrapperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test_wrapperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5B6BF1226C52351006CE071 /* test_wrapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test_wrapperTests.swift; sourceTree = "<group>"; };
 		F5B6BF1426C52351006CE071 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F5B6BF1E26C524DD006CE071 /* WrapperServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapperServer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 			children = (
 				F5B6BF0726C52350006CE071 /* test_wrapper.h */,
 				F5B6BF0826C52350006CE071 /* Info.plist */,
+				F5B6BF1E26C524DD006CE071 /* WrapperServer.swift */,
 			);
 			path = test_wrapper;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 				TargetAttributes = {
 					F5B6BF0326C52350006CE071 = {
 						CreatedOnToolsVersion = 12.5.1;
+						LastSwiftMigration = 1250;
 					};
 					F5B6BF0C26C52350006CE071 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -194,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5B6BF1F26C524DD006CE071 /* WrapperServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +346,7 @@
 		F5B6BF1926C52351006CE071 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 3JU5T2SY3C;
@@ -357,6 +363,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "harness.io.test-wrapper";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -365,6 +372,7 @@
 		F5B6BF1A26C52351006CE071 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 3JU5T2SY3C;
@@ -389,6 +397,7 @@
 		F5B6BF1C26C52351006CE071 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3JU5T2SY3C;
 				INFOPLIST_FILE = test_wrapperTests/Info.plist;
@@ -407,6 +416,7 @@
 		F5B6BF1D26C52351006CE071 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3JU5T2SY3C;
 				INFOPLIST_FILE = test_wrapperTests/Info.plist;
