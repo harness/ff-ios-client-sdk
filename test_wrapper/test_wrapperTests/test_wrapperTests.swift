@@ -8,6 +8,7 @@
 import XCTest
 
 @testable import test_wrapper
+@testable import ff_ios_client_sdk
 
 class test_wrapperTests: XCTestCase {
 
@@ -23,7 +24,14 @@ class test_wrapperTests: XCTestCase {
 
     func testExample() throws {
         
-        let server = WrapperServer()
+        let _ = WrapperServer(
+        
+            port: 0,
+            apiKey: "",
+            target: CfTarget(identifier: "", name: "", anonymous: false, attributes: [:]),
+            configuration: CfConfiguration(configUrl: "", streamUrl: "", eventUrl: "", streamEnabled: true, analyticsEnabled: true, pollingInterval: 60, environmentId: "")
+        )
+        
         XCTAssert(1 == 1)
         NSLog("Test completed")
     }

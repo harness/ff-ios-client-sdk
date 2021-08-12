@@ -3,3 +3,8 @@
 /Packages
 /*.xcodeproj
 xcuserdata/
+Package.resolved
+*.xcodeproj
+Package.pins
+Packages/
+
