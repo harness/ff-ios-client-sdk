@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F520F87526DD444800BC0EBA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F87426DD444800BC0EBA /* AppDelegate.swift */; };
+		F520F87726DD444800BC0EBA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F87626DD444800BC0EBA /* SceneDelegate.swift */; };
+		F520F87926DD444800BC0EBA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F87826DD444800BC0EBA /* ViewController.swift */; };
+		F520F87C26DD444800BC0EBA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F520F87A26DD444800BC0EBA /* Main.storyboard */; };
+		F520F87E26DD444F00BC0EBA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F520F87D26DD444F00BC0EBA /* Assets.xcassets */; };
+		F520F88126DD444F00BC0EBA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F520F87F26DD444F00BC0EBA /* LaunchScreen.storyboard */; };
+		F520F88A26DD449E00BC0EBA /* ff-ios-client-sdk in Frameworks */ = {isa = PBXBuildFile; productRef = F520F88926DD449E00BC0EBA /* ff-ios-client-sdk */; };
+		F520F88D26DD44B500BC0EBA /* Telegraph in Frameworks */ = {isa = PBXBuildFile; productRef = F520F88C26DD44B500BC0EBA /* Telegraph */; };
+		F520F88F26DD44DC00BC0EBA /* WrapperServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F88E26DD44DC00BC0EBA /* WrapperServer.swift */; };
+		F520F89126DD4B1A00BC0EBA /* FlagCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F89026DD4B1A00BC0EBA /* FlagCheck.swift */; };
+		F520F89326DD516700BC0EBA /* FlagCheckResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F520F89226DD516700BC0EBA /* FlagCheckResponse.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F520F87126DD444800BC0EBA /* test_wrapper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test_wrapper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F520F87426DD444800BC0EBA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F520F87626DD444800BC0EBA /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F520F87826DD444800BC0EBA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F520F87B26DD444800BC0EBA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F520F87D26DD444F00BC0EBA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F520F88026DD444F00BC0EBA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F520F88226DD444F00BC0EBA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F520F88E26DD44DC00BC0EBA /* WrapperServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperServer.swift; sourceTree = "<group>"; };
+		F520F89026DD4B1A00BC0EBA /* FlagCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagCheck.swift; sourceTree = "<group>"; };
+		F520F89226DD516700BC0EBA /* FlagCheckResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagCheckResponse.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F520F86E26DD444800BC0EBA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F520F88A26DD449E00BC0EBA /* ff-ios-client-sdk in Frameworks */,
+				F520F88D26DD44B500BC0EBA /* Telegraph in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F520F86826DD444800BC0EBA = {
+			isa = PBXGroup;
+			children = (
+				F520F87326DD444800BC0EBA /* test_wrapper */,
+				F520F87226DD444800BC0EBA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F520F87226DD444800BC0EBA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F520F87126DD444800BC0EBA /* test_wrapper.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F520F87326DD444800BC0EBA /* test_wrapper */ = {
+			isa = PBXGroup;
+			children = (
+				F520F88E26DD44DC00BC0EBA /* WrapperServer.swift */,
+				F520F87426DD444800BC0EBA /* AppDelegate.swift */,
+				F520F87626DD444800BC0EBA /* SceneDelegate.swift */,
+				F520F87826DD444800BC0EBA /* ViewController.swift */,
+				F520F87A26DD444800BC0EBA /* Main.storyboard */,
+				F520F87D26DD444F00BC0EBA /* Assets.xcassets */,
+				F520F87F26DD444F00BC0EBA /* LaunchScreen.storyboard */,
+				F520F88226DD444F00BC0EBA /* Info.plist */,
+				F520F89026DD4B1A00BC0EBA /* FlagCheck.swift */,
+				F520F89226DD516700BC0EBA /* FlagCheckResponse.swift */,
+			);
+			path = test_wrapper;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F520F87026DD444800BC0EBA /* test_wrapper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F520F88526DD444F00BC0EBA /* Build configuration list for PBXNativeTarget "test_wrapper" */;
+			buildPhases = (
+				F520F86D26DD444800BC0EBA /* Sources */,
+				F520F86E26DD444800BC0EBA /* Frameworks */,
+				F520F86F26DD444800BC0EBA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test_wrapper;
+			packageProductDependencies = (
+				F520F88926DD449E00BC0EBA /* ff-ios-client-sdk */,
+				F520F88C26DD44B500BC0EBA /* Telegraph */,
+			);
+			productName = test_wrapper;
+			productReference = F520F87126DD444800BC0EBA /* test_wrapper.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F520F86926DD444800BC0EBA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1250;
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					F520F87026DD444800BC0EBA = {
+						CreatedOnToolsVersion = 12.5.1;
+					};
+				};
+			};
+			buildConfigurationList = F520F86C26DD444800BC0EBA /* Build configuration list for PBXProject "test_wrapper" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F520F86826DD444800BC0EBA;
+			packageReferences = (
+				F520F88826DD449E00BC0EBA /* XCRemoteSwiftPackageReference "ff-ios-client-sdk" */,
+				F520F88B26DD44B500BC0EBA /* XCRemoteSwiftPackageReference "Telegraph" */,
+			);
+			productRefGroup = F520F87226DD444800BC0EBA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F520F87026DD444800BC0EBA /* test_wrapper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F520F86F26DD444800BC0EBA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F520F88126DD444F00BC0EBA /* LaunchScreen.storyboard in Resources */,
+				F520F87E26DD444F00BC0EBA /* Assets.xcassets in Resources */,
+				F520F87C26DD444800BC0EBA /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F520F86D26DD444800BC0EBA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F520F87926DD444800BC0EBA /* ViewController.swift in Sources */,
+				F520F87526DD444800BC0EBA /* AppDelegate.swift in Sources */,
+				F520F89126DD4B1A00BC0EBA /* FlagCheck.swift in Sources */,
+				F520F88F26DD44DC00BC0EBA /* WrapperServer.swift in Sources */,
+				F520F87726DD444800BC0EBA /* SceneDelegate.swift in Sources */,
+				F520F89326DD516700BC0EBA /* FlagCheckResponse.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F520F87A26DD444800BC0EBA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F520F87B26DD444800BC0EBA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F520F87F26DD444F00BC0EBA /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F520F88026DD444F00BC0EBA /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F520F88326DD444F00BC0EBA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F520F88426DD444F00BC0EBA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F520F88626DD444F00BC0EBA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3JU5T2SY3C;
+				INFOPLIST_FILE = test_wrapper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "harness.io.test-wrapper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F520F88726DD444F00BC0EBA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3JU5T2SY3C;
+				INFOPLIST_FILE = test_wrapper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "harness.io.test-wrapper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F520F86C26DD444800BC0EBA /* Build configuration list for PBXProject "test_wrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F520F88326DD444F00BC0EBA /* Debug */,
+				F520F88426DD444F00BC0EBA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F520F88526DD444F00BC0EBA /* Build configuration list for PBXNativeTarget "test_wrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F520F88626DD444F00BC0EBA /* Debug */,
+				F520F88726DD444F00BC0EBA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F520F88826DD449E00BC0EBA /* XCRemoteSwiftPackageReference "ff-ios-client-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/drone/ff-ios-client-sdk.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		F520F88B26DD44B500BC0EBA /* XCRemoteSwiftPackageReference "Telegraph" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Building42/Telegraph.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.29.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F520F88926DD449E00BC0EBA /* ff-ios-client-sdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F520F88826DD449E00BC0EBA /* XCRemoteSwiftPackageReference "ff-ios-client-sdk" */;
+			productName = "ff-ios-client-sdk";
+		};
+		F520F88C26DD44B500BC0EBA /* Telegraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F520F88B26DD44B500BC0EBA /* XCRemoteSwiftPackageReference "Telegraph" */;
+			productName = Telegraph;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F520F86926DD444800BC0EBA /* Project object */;
+}
