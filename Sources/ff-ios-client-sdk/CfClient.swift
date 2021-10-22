@@ -57,9 +57,13 @@ public class CfClient {
 		case offline
 	}
 	
-	private init(authenticationManager: AuthenticationManagerProtocol = AuthenticationManager(),
-				 networkInfoProvider: NetworkInfoProviderProtocol = NetworkInfoProvider()){
-		self.authenticationManager = authenticationManager
+	private init(
+        
+        authenticationManager: AuthenticationManagerProtocol = AuthenticationManager(),
+        networkInfoProvider: NetworkInfoProviderProtocol = NetworkInfoProvider()
+    ){
+		
+        self.authenticationManager = authenticationManager
 		self.eventSourceManager = EventSourceManager.shared()
 		self.networkInfoProvider = networkInfoProvider
 	}
@@ -120,14 +124,17 @@ public class CfClient {
 	}
     
 	public static var sharedInstance: CfClient {
-		if Static.instance == nil {
-			Static.instance = CfClient()
+		
+        if Static.instance == nil {
+			
+            Static.instance = CfClient()
 		}
 		return Static.instance!
 	}
 	
 	func dispose() {
-		CfClient.Static.instance = nil
+		
+        CfClient.Static.instance = nil
 	}
 	
 	///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
@@ -137,7 +144,8 @@ public class CfClient {
 	
 	///Connect to the SSE stream if the stream is ready OR continue with already connected stream.
 	func connectStream() {
-		guard let stream = eventSourceManager else { return }
+		
+        guard let stream = eventSourceManager else { return }
 		if !stream.streamReady {
 			stream.connect(lastEventId: self.lastEventId)
 		}
@@ -145,7 +153,8 @@ public class CfClient {
 	
 	///Disconnects the SSE stream.
 	func disconnectStream() {
-		guard let stream = eventSourceManager else { return }
+		
+        guard let stream = eventSourceManager else { return }
 		stream.disconnect()
 	}
 	
@@ -169,10 +178,12 @@ public class CfClient {
         _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil
     
     ) {
-		self.configuration = configuration
+		
+        self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target
-		OpenAPIClientAPI.configPath = configuration.configUrl
+		
+        OpenAPIClientAPI.configPath = configuration.configUrl
 		
         let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
