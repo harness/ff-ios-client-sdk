@@ -14,13 +14,13 @@ Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM), Coco
 ## <u>_Swift Package Manager (SPM)_</u>
 The [Swift Package Manager](https://swift.org/package-manager/) is a dependency manager integrated into the `swift` compiler and `Xcode`.
 
-To integrate `ff-ios-client-sdk` into an Xcode project, go to the project editor, and select `Swift Packages`. From here hit the `+` button and follow the prompts using  `https://github.com/drone/ff-ios-client-sdk.git` as the URL.
+To integrate `ff-ios-client-sdk` into an Xcode project, go to the project editor, and select `Swift Packages`. From here hit the `+` button and follow the prompts using  `https://github.com/harness/ff-ios-client-sdk.git` as the URL.
 
 To include `ff-ios-client-sdk` in a Swift package, simply add it to the dependencies section of your `Package.swift` file. And add the product `ff-ios-client-sdk` as a dependency for your targets.
 
 ```Swift
 dependencies: [
-	.package(url: "https://github.com/drone/ff-ios-client-sdk.git", .upToNextMinor(from: "1.0.2"))
+	.package(url: "https://github.com/harness/ff-ios-client-sdk.git", .upToNextMinor(from: "1.0.2"))
 ]
 ```
 &nbsp;
@@ -65,7 +65,8 @@ $ touch Cartfile
 ``` 
 in Terminal at your project's root folder. Once you open the `Cartfile`, you can copy/paste below line and save the changes.
 ```Swift
-github "drone/ff-ios-client-sdk"
+github "
+/ff-ios-client-sdk"
 ```
 
 Now, you need to run
