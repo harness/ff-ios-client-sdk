@@ -132,7 +132,7 @@ Use appropriate method to fetch the desired Evaluation of a certain type.
 
 ```Swift
 CfClient.sharedInstance.stringVariation("your_evaluation_id", defaultValue: String?) { (evaluation) in
-	//Make use of the fetched `String` Evaluation
+	// Make use of the fetched `String` Evaluation
 }
 ```
 
@@ -140,7 +140,7 @@ CfClient.sharedInstance.stringVariation("your_evaluation_id", defaultValue: Stri
 
 ```Swift
 CfClient.sharedInstance.boolVariation("your_evaluation_id", defaultValue: Bool?) { (evaluation) in
-	//Make use of the fetched `Bool` Evaluation
+	// Make use of the fetched `Bool` Evaluation
 }
 ```
 
@@ -148,7 +148,7 @@ CfClient.sharedInstance.boolVariation("your_evaluation_id", defaultValue: Bool?)
 
 ```Swift
 CfClient.sharedInstance.numberVariation("your_evaluation_id", defaultValue: Int?) { (evaluation) in
-	//Make use of the fetched `Int` Evaluation
+	// Make use of the fetched `Int` Evaluation
 }
 ```
 
@@ -156,7 +156,7 @@ CfClient.sharedInstance.numberVariation("your_evaluation_id", defaultValue: Int?
 
 ```Swift
 CfClient.sharedInstance.jsonVariation("your_evaluation_id", defaultValue: [String:ValueType]?) { (evaluation) in
-	//Make use of the fetched `[String:ValueType]` Evaluation
+	// Make use of the fetched `[String:ValueType]` Evaluation
 }
 ```
 
@@ -176,44 +176,6 @@ The `ValueType` can be one of the following:
 ## Setting up your Feature Flags
 
 [Feature Flags Getting Started](https://ngdocs.harness.io/article/0a2u2ppp8s-getting-started-with-feature-flags)
-
-## Variation types examples
-
-### Bool Variation
-
-```Swift
-CfClient.sharedInstance.boolVariation(evaluationId: "sample_bool_flag", { (eval) in
-
-    print("LOOP :: Boolean flag value: \(eval!)")
-})
-```
-
-### Number Variation
-
-```Swift
-CfClient.sharedInstance.numberVariation(evaluationId: "sample_number_flag", { (eval) in
-                                                                           
-    print("LOOP :: Number flag value: \(eval!)")
-})
-```
-
-### String Variation
-
-```Swift
-CfClient.sharedInstance.stringVariation(evaluationId: "sample_string_flag", { (eval) in
-
-    print("LOOP :: String flag value: \(eval!)")
-})
-```
-
-### JSON Variation
-
-```Swift
-CfClient.sharedInstance.jsonVariation(evaluationId: "sample_json_flag", { (eval) in
-
-    print("LOOP :: JSON flag value: \(eval!)")
-})
-```
 
 ## Cleanup
 
