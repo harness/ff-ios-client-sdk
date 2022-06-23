@@ -11,7 +11,6 @@ iOS SDK For Harness Feature Flags
 **[Quickstart](#Quickstart)**<br>
 **[Further Reading](FURTHER.md)**<br>
 
-
 ## Intro
 
 Use this README to get started with our Feature Flags (FF) SDK for iOS. This guide outlines the basics of getting started with the SDK and provides a full code sample for you to try out.
