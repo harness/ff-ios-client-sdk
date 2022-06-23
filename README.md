@@ -52,6 +52,7 @@ dependencies: [
 ```
 
 #### CocoaPods
+
 The [CocoaPods](https://cocoapods.org//) CocoaPods is a dependency manager for Swift and Objective-C Cocoa projects. It has over 81 thousand libraries and is used in over 3 million apps. CocoaPods can help you scale your projects elegantly.
 
 CocoaPods is built with Ruby and it will be installable with the default Ruby available on macOS. You can use a Ruby Version manager, however we recommend that you use the standard Ruby available on macOS unless you know what you're doing.
@@ -156,7 +157,7 @@ $ carthage update --use-xcframeworks --platform iOS
 
 And your embedded library will be updated.
 
-### Code Sample
+## Quickstart
 
 Here is a complete example that will connect to the feature flag service and report the flag value every 10 seconds.
 Any time a flag is toggled from the feature flag service you will receive the updated value.
