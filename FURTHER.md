@@ -31,13 +31,13 @@ CfClient.sharedInstance.initialize(
 }
 ```
 
-| Name            | Config Option                                        | Description                                                                                                                                      | default                              |
-|-----------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| baseUrl         | setConfigUrl("https://config.ff.harness.io/api/1.0") | the URL used to fetch feature flag evaluations. You should change this when using the Feature Flag proxy to http://localhost:7000                | https://config.ff.harness.io/api/1.0 |
-| eventsUrl       | setEventUrl("https://config.ff.harness.io/api/1.0"), | the URL used to post metrics data to the feature flag service. You should change this when using the Feature Flag proxy to http://localhost:7000 | https://events.ff.harness.io/api/1.0 |
-| pollInterval    | setPollingInterval(60)                               | when running in stream mode, the interval in seconds that we poll for changes.                                                                   | 60                                   |
-| enableStream    | setStreamEnabled(true)                               | Enable streaming mode.                                                                                                                           | true                                 |
-| enableAnalytics | setAnalyticsEnabled(true)                            | Enable analytics.  Metrics data is posted every 60s                                                                                              | true                   |
+| Name            | Config Option                                        | Description                                                                    | default                              |
+|-----------------|------------------------------------------------------|--------------------------------------------------------------------------------|--------------------------------------|
+| baseUrl         | setConfigUrl("https://config.ff.harness.io/api/1.0") | the URL used to fetch feature flag evaluations.                                | https://config.ff.harness.io/api/1.0 |
+| eventsUrl       | setEventUrl("https://event.ff.harness.io/api/1.0"),  | the URL used to post metrics data to the feature flag service.                 | https://events.ff.harness.io/api/1.0 |
+| pollInterval    | setPollingInterval(60)                               | when running in stream mode, the interval in seconds that we poll for changes. | 60                                   |
+| enableStream    | setStreamEnabled(true)                               | Enable streaming mode.                                                         | true                                 |
+| enableAnalytics | setAnalyticsEnabled(true)                            | Enable analytics.  Metrics data is posted every 60s                            | true                   |
 
 ## Initialization
 
