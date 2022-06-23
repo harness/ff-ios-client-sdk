@@ -122,7 +122,7 @@ CfClient.sharedInstance.registerEventsListener() { (result) in
 }
 ```
 
-## Fetching from cache methods
+## Variation methods
 
 The following methods can be used to fetch an Evaluation from cache, by it's known key. Completion handler delivers `Evaluation` result. If `defaultValue` is specified, it will be returned if key does not exist. If `defaultValue` is omitted, `nil` will be delivered in the completion block. Fetching is done for specified target identifier during initialize() call.
 
