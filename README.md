@@ -9,7 +9,7 @@ iOS SDK For Harness Feature Flags
 **[Intro](#Intro)**<br>
 **[Requirements](#Requirements)**<br>
 **[Quickstart](#Quickstart)**<br>
-**[Further Reading](#Further Reading)**<br>
+**[Further Reading](FURTHER.md)**<br>
 
 
 ## Intro
