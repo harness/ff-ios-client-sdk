@@ -8,3 +8,5 @@ Package.resolved
 Package.pins
 Packages/
 
+.idea
+.idea/*
