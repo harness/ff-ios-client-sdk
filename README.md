@@ -265,7 +265,7 @@ Make sure that you chose as the target device newer iOS device such as: iPhone 1
 Then chose: Product > Build for > Running.
 After building is completed click on the run button to start the emualtor and run the application.
 
-### Additional Reading
+## Further Reading
 
 Further examples and config options are in the further reading section:
 
