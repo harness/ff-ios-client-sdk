@@ -646,7 +646,7 @@ public class CfClient {
                             }
                         })
                     } else {
-                        // To existing behaviour - if its a patch event for a falg we should fetch the flag by ID
+                        // To existing behaviour - if its a patch event for a flag we should fetch the flag by ID
                         self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
                             switch result {
                                 case .failure(let error): onEvent(EventType.onEventListener(nil), error)
