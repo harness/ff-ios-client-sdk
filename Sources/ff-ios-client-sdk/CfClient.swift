@@ -628,7 +628,7 @@ public class CfClient {
                     
 					self.lastEventId = decoded.event
                     
-                    // Handle Target Segmetn Events
+                    // Handle Target Segment Events.  On an Event we need to fetch all evaluations
                     if decoded.event == "patch" && decoded.domain == "target-segment" {
                         self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
                             guard let self = self else {return}
