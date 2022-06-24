@@ -20,7 +20,7 @@ To include `ff-ios-client-sdk` in a Swift package, simply add it to the dependen
 
 ```Swift
 dependencies: [
-	.package(url: "https://github.com/harness/ff-ios-client-sdk.git", .upToNextMinor(from: "1.0.2"))
+	.package(url: "https://github.com/harness/ff-ios-client-sdk.git", .upToNextMinor(from: "1.0.3"))
 ]
 ```
 &nbsp;

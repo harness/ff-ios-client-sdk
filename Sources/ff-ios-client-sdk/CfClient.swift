@@ -627,12 +627,34 @@ public class CfClient {
                     Logger.log("Message: \(decoded)")
                     
 					self.lastEventId = decoded.event
-					self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
-						switch result {
-							case .failure(let error): onEvent(EventType.onEventListener(nil), error)
-							case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
-						}
-					})
+                    
+                    // Handle Target Segment Events.  On an Event we need to fetch all evaluations
+                    if  (decoded.event == "patch" || decoded.event == "delete") && decoded.domain == "target-segment" {
+                        self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
+                            guard let self = self else {return}
+                            let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
+                            switch result {
+                                case .success(let evaluations):
+                                    do {
+                                        try self.storageSource?.saveValue(evaluations, key: allKey)
+                                    } catch {
+                                        //If saving to cache fails, pass success for authorization and continue
+                                        print("Could not save to cache")
+                                    }
+                                case .failure(let error):
+                                    onEvent(EventType.onEventListener(nil), error)
+                            }
+                        })
+                    } else {
+                        // To existing behaviour - if its a patch event for a flag we should fetch the flag by ID
+                        self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
+                            switch result {
+                                case .failure(let error): onEvent(EventType.onEventListener(nil), error)
+                                case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
+                            }
+                        })
+                    }
+
 				} catch {
 					onEvent(EventType.onEventListener(nil), CFError.parsingError)
 				}
