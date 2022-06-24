@@ -629,7 +629,7 @@ public class CfClient {
 					self.lastEventId = decoded.event
                     
                     // Handle Target Segment Events.  On an Event we need to fetch all evaluations
-                    if decoded.event == "patch" && decoded.domain == "target-segment" {
+                    if  (decoded.event == "patch" || decoded.event == "delete") && decoded.domain == "target-segment" {
                         self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
                             guard let self = self else {return}
                             let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
