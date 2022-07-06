@@ -1,22 +1,35 @@
-# ff-ios-client-sdk overview
+# iOS SDK For Harness Feature Flags
 
 [![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-4BC51D.svg?style=flat)](https://swift.org/package-manager/)
 [![CocoaPods compatible](https://img.shields.io/badge/CocoaPods-compatible-4BC51D.svg?style=flat)](https://github.com/CocoaPods/CocoaPods)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 ---
-[Harness](https://www.harness.io/) is a feature management platform that helps teams to build better software and to test features quicker.
-&nbsp;
-# _Installing the `ff-ios-client-sdk`_
-Installing ff-ios-client-sdk is possible with `Swift Package Manager (SPM), CocoaPods and Carthage`
+Use this README to get started with our Feature Flags (FF) SDK for iOS. This guide outlines the basics of getting started with the SDK and provides a full code sample for your to try out.
 
-&nbsp;
+This sample doesn't include configuration options, for in depth steps and configuring the SDK, for example, disabling streaming or using our Relay Proxy, see the [iOS SDK Reference](https://ngdocs.harness.io/article/6qt2v8g92m-ios-sdk-reference).
+
+
+For a sample FF iOS SDK project, see [our test iOS project](https://github.com/drone/ff-ios-client-sample).
+
+## Requirements
+To use this SD, make sure you've:
+- Installed XCode to use the Swift Package Manager (SPM), CocoaPods, or Carthage
+
+To follow along with our test code sample, make sure you’ve:
+- [Created a Feature Flag](https://ngdocs.harness.io/article/1j7pdkqh7j-create-a-feature-flag) on the Harness Platform called `harnessappdemodarkmode`
+- Created a [server/client SDK key](https://ngdocs.harness.io/article/1j7pdkqh7j-create-a-feature-flag#step_3_create_an_sdk_key) and made a copy of it
+
+## Installing the SDK
+There are multiple methods to installing the iOS SDK:
 ## <u>_Swift Package Manager (SPM)_</u>
 The [Swift Package Manager](https://swift.org/package-manager/) is a dependency manager integrated into the `swift` compiler and `Xcode`.
 
-To integrate `ff-ios-client-sdk` into an Xcode project, go to the project editor, and select `Swift Packages`. From here hit the `+` button and follow the prompts using  `https://github.com/harness/ff-ios-client-sdk.git` as the URL.
+To integrate `ff-ios-client-sdk` into an Xcode project, go to the `File` drop down, and select `Add Packages`. From here, search the url `https://github.com/harness/ff-ios-client-sdk.git` in the search bar and click the `Add Package` button.
 
-To include `ff-ios-client-sdk` in a Swift package, simply add it to the dependencies section of your `Package.swift` file. And add the product `ff-ios-client-sdk` as a dependency for your targets.
+OR
+
+You can also add the `ff-ios-client-sdk` dependency locally by dragging the SDK folder into the root directory of the project and simply add it to the dependencies section of your `Package.swift` file.
 
 ```Swift
 dependencies: [
@@ -51,7 +64,7 @@ end
 
 Only thing left to do is to install your packages by running the next command.
 ```Swift
-$ pod install
+pod install
 ```
 NOTE: A new `.xcworkspace` will be created and you should use that, instead of your `.xcodeproj` from now on in order to utilize the imported Pods.
 
@@ -59,19 +72,18 @@ NOTE: A new `.xcworkspace` will be created and you should use that, instead of y
 Carthage is intended to be the simplest way to add frameworks to your Cocoa application.
 Carthage builds your dependencies and provides you with binary frameworks, but you retain full control over your project structure and setup. Carthage does not automatically modify your project files or your build settings.
 In order to integrate `ff-ios-client-sdk` into your app, there are a few steps to follow.
-Navigate to the root folder of your project and create a `Cartfile`. This is the file where you would input all of your dependencies that you plan to use with Carthage. You can create it by entering 
+Navigate to the root folder of your project and create a `Cartfile`. This is the file where you would input all of your dependencies that you plan to use with Carthage. You can create it by entering
 ```Swift
-$ touch Cartfile
-``` 
+touch Cartfile
+```
 in Terminal at your project's root folder. Once you open the `Cartfile`, you can copy/paste below line and save the changes.
 ```Swift
-github "
-/ff-ios-client-sdk"
+github "harness/ff-ios-client-sdk"
 ```
 
 Now, you need to run
 ```Swift
-$ carthage update --no-build
+carthage update --no-build
 ```
 This command will fetch the source for `ff-ios-client-sdk` from the repository specified in the `Cartfile`.
 
@@ -80,20 +92,20 @@ Within the `Carthage` folder, you will see another `Checkout` folder where the s
 Next, we need to create a project for `ff-ios-client-sdk` dependency. We can do this easily by entering the following in the termial.
 ```Swift
 //From your project's root folder
-$ cd Carthage/Checkouts/ff-ios-client-sdk
+cd Carthage/Checkouts/ff-ios-client-sdk
 ```
 followed by
 ```Swift
-$ swift package generate-xcodeproj
+swift package generate-xcodeproj
 ```
 ...or, you can enter it all on the same line.
 ```Swift
 //From your project's root folder
-$ cd Carthage/Checkouts/ff-ios-client-sdk && swift package generate-xcodeproj
+cd Carthage/Checkouts/ff-ios-client-sdk && swift package generate-xcodeproj
 ```
 Go back into your project's root folder and enter the next command:
 ```Swift
-$ carthage build --use-xcframeworks --platform iOS
+carthage build --use-xcframeworks --platform iOS
 ```
 This command will build the project and place it in the `Build` folder next to `Checkouts`.
 On your application targets’ `General` settings tab, in the `Frameworks, Libraries, and Embedded Content` section, drag and drop the `.xcframework` file from the `Carthage/Build` folder. In the `"Embed"` section, select `"Embed & Sign"`.
@@ -104,135 +116,77 @@ import ff_ios_client_sdk
 ```
 ...wherever you need to use `ff-ios-client-sdk`
 
-When a new version of `ff-ios-client-sdk` is available and you wish to update this dependency, run 
+When a new version of `ff-ios-client-sdk` is available and you wish to update this dependency, run
 ```Swift
 $ carthage update --use-xcframeworks --platform iOS
 ```
 And your embedded library will be updated.
 
-&nbsp;
-# _Using the `ff-ios-client-sdk`_
+## Code Sample
+The following is a complete code example that you can use to test the `harnessappdemodarkmode` Flag you created on the Harness Platform. When you run the code it will:
+1. Connect to the FF service.
+2. Report the value of the Flag every 10 seconds until the connection is closed. Every time the `harnessappdemodarkmode` Flag is toggled on or off on the Harness Platform, the updated value is reported.
+3. Close the SDK.
 
-In order to use `ff-ios-client-sdk` in your application, there are a few steps that you would need to take.
+To use this sample, copy it into your project and enter your SDK key into the `apiKey` field.
 
-## **_Initialization_**
-1. Setup your configuration by calling `CfConfiguration`'s static method `builder()` and pass-in your prefered configuration settings through possible chaining methods. The chaining needs to be ended with `build()` method. (See the `build()`'s description for possible chaining methods and their default values.)
-2. Setup your target by calling `CfTarget`'s static method `builder()` and pass-in your prefered target settings through possible chaining methods. The chaining needs to be ended with `build()` method. (See the `build()`'s description for possible chaining methods and their default values). Target's `identifier` is mandatory and represents the `Account` from which you wish to receive evaluations.
-
-2. Call `CfClient.sharedInstance.initialize(apiKey:configuration:target:cache:onCompletion:)` and pass in your Harness CF `apiKey`, previously created configuration object, target and an optional cache object adopting `StorageRepositoryProtocol`.
-	
-	If `cache` object is omitted, internal built-in cache will be used. You can also omitt `onCompletion` parameter if you don't need initialization/authorization information. 
-
-**Your `ff-ios-client-sdk` is now initialized. Congratulations!!!**
-
-&nbsp;
-Upon successful initialization and authorization, the completion block of `CfClient.sharedInstance.initialize(apiKey:configuration:target:cache:onCompletion:)` will deliver `Swift.Result<Void, CFError>` object. You can then switch through it's `.success(Void)` and `.failure(CFError)` cases and decide on further steps depending on a result.
-
-&nbsp;
-### <u>_initialize(apiKey:configuration:cache:onCompletion:)_</u>
-```Swift
-let configuration = CfConfiguration.builder().setStreamEnabled(true).build()
-let target = CfTarget.builder().setIdentifier("YOUR_ACCOUNT_IDENTIFIER").build()
-CfClient.sharedInstance.initialize(apiKey: "YOUR_API_KEY", configuration: configuration, target: target) { (result) in
-	switch result {
-		case .failure(let error):
-			//Do something to gracefully handle initialization/authorization failure
-		case .success:
-			//Continue to the next step after successful initialization/authorization  
-	}
+```
+import UIKit
+import ff_ios_client_sdk
+class ViewController: UIViewController {
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    NSLog("Start")
+    let config = CfConfiguration.builder()
+      .setStreamEnabled(true)
+      .build()
+    let target = CfTarget.builder().setIdentifier("Harness").build()
+    CfClient.sharedInstance.initialize(
+      apiKey: "apiKey",
+      configuration:config,
+      target: target
+    ) { [weak self] result in
+      switch result {
+        case .failure(let error):
+          NSLog("End: Error \(error)")
+        case .success():
+          NSLog("Init: Ok")
+          CfClient.sharedInstance.boolVariation(evaluationId: "EVALUATION_ID", { (eval) in
+            print("Value: \(eval!)")
+          })
+          CfClient.sharedInstance.registerEventsListener() { (result) in
+            switch result {
+              case .failure(let error):
+                print(error)
+              case .success(let eventType):
+                switch eventType {
+                  case .onPolling:
+                    print("Event: Received all evaluation flags")
+                  case .onEventListener(let evaluation):
+                    print("Event: Received an evaluation flag, \(evaluation!)")
+                  case .onComplete:
+                    print("Event: SSE stream has completed")
+                  case .onOpen:
+                    print("Event: SSE stream has been opened")
+                  case .onMessage(let messageObj):
+                    print(messageObj?.event ?? "Event: Message received")
+                }
+            }
+          }
+      }
+    }
+  }
+  override func viewWillDisappear(_ animated: Bool) {
+    CfClient.sharedInstance.destroy()
+    NSLog("End: Ok")
+    super.viewWillDisappear(animated)
+  }
 }
 ```
-&nbsp;
-## **_Implementation_**
-The Public API exposes few methods that you can utilize:
-Please note that all of the below methods are called on `CfClient.sharedInstance`
 
-* `public func initialize(apiKey:configuration:target:cache:onCompletion:)` -> Called first as described above in the **_initialization_** section. `(Mandatory)`
+## Additional Reading
+For further examples and config options:
+- See the [iOS SDK Reference](https://docs.harness.io/article/6qt2v8g92m-ios-sdk-reference)
+- [Further Reading](docs/further_reading.md)
 
-* `public func registerEventsListener(events:onCompletion:)` -> Called in the ViewController where you would like to receive the events. `(Mandatory)`
-
-* `public func destroy()`
-
-	### Fetching from cache methods
-	---
-* `public func stringVariation(evaluationId:defaultValue:completion:)`
-
-* `public func boolVariation(evaluationId:defaultValue:completion:)`
-
-* `public func numberVariation(evaluationId:defaultValue:completion:)`
-
-* `public func jsonVariation(evaluationId:defaultValue:completion:)`
-
-&nbsp;
-### <u>_registerEventsListener(events:onCompletion:)_</u>
-`events` is an array of events that you would like to subscribe to. It defaults to `*`, which means ALL events. 
-In order to be notified of the SSE events sent from the server, you need to call `CfClient.sharedInstance.registerEventsListener()` method 
-
-<u style="color:red">**NOTE**</u>: Registering to events is usually done in `viewDidLoad()` method when events are required in only one ViewController _OR_ `viewDidAppear()` if there are more than one registration calls throughout the app, so the events could be re-registered for the currently visible ViewController.
-
-The completion block of this method will deliver `Swift.Result<EventType, CFError>` object. You can use `switch` statement within it's `.success(EventType)` case to distinguish which event has been received and act accordingly as in the example below or handle the error gracefully from it's `.failure(CFError)` case.
-```Swift
-CfClient.sharedInstance.registerEventsListener() { (result) in
-	switch result {
-		case .failure(let error):
-			//Gracefully handle error
-		case .success(let eventType):
-			switch eventType {
-				case .onPolling(let evaluations):
-					//Received all evaluation flags -> [Evaluation]
-				case .onEventListener(let evaluation):
-					//Received an evaluation flag -> Evaluation
-				case .onComplete:
-					//Received a completion event, meaning that the 
-					//SSE has been disconnected
-				case .onOpen(_):
-					//SSE connection has been established and is active
-				case .onMessage(let messageObj):
-					//An empty Message object has been received
-			}
-		}
-	}
-}
-```
-## _Fetching from cache methods_
-The following methods can be used to fetch an Evaluation from cache, by it's known key. Completion handler delivers `Evaluation` result. If `defaultValue` is specified, it will be returned if key does not exist. If `defaultValue` is omitted, `nil` will be delivered in the completion block. Fetching is done for specified target identifier during initialize() call.
-
-Use appropriate method to fetch the desired Evaluation of a certain type.
-### <u>_stringVariation(forKey:defaultValue:completion:)_</u>
-```Swift
-CfClient.sharedInstance.stringVariation("your_evaluation_id", defaultValue: String?) { (evaluation) in
-	//Make use of the fetched `String` Evaluation
-}
-```
-### <u>_boolVariation(forKey:defaultValue:completion:)_</u>
-```Swift
-CfClient.sharedInstance.boolVariation("your_evaluation_id", defaultValue: Bool?) { (evaluation) in
-	//Make use of the fetched `Bool` Evaluation
-}
-```
-### <u>_numberVariation(forKey:defaultValue:completion:)_</u>
-```Swift
-CfClient.sharedInstance.numberVariation("your_evaluation_id", defaultValue: Int?) { (evaluation) in
-	//Make use of the fetched `Int` Evaluation
-}
-```
-### <u>_jsonVariation(forKey:defaultValue:completion:)_</u>
-```Swift
-CfClient.sharedInstance.jsonVariation("your_evaluation_id", defaultValue: [String:ValueType]?) { (evaluation) in
-	//Make use of the fetched `[String:ValueType]` Evaluation
-}
-```
-`ValueType` can be one of the following: 
-
-* `ValueType.bool(Bool)` 
-* `ValueType.string(String)`
-* `ValueType.int(Int)`
-* `ValueType.object([String:ValueType])`
-
-## _Shutting down the SDK_
-### <u>_destroy()_</u>
-To avoid potential memory leak, when SDK is no longer needed (when the app is closed, for example), a caller should call this method.
-Also, you need to call this method when changing accounts through `CfTarget` object, in order to re-initialize and fetch Evaluations for the right account.
-```Swift
-CfClient.sharedInstance.destroy() 
-```
+For more information about Feature Flags, see our [Feature Flags documentation](https://docs.harness.io/article/0a2u2ppp8s-getting-started-with-feature-flags).
