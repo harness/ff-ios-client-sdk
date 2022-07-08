@@ -13,7 +13,7 @@ This sample doesn't include configuration options, for in depth steps and config
 For a sample FF iOS SDK project, see [our test iOS project](https://github.com/drone/ff-ios-client-sample).
 
 ## Requirements
-To use this SD, make sure you've:
+To use this SDK, make sure you've:
 - Installed XCode to use the Swift Package Manager (SPM), CocoaPods, or Carthage
 
 To follow along with our test code sample, make sure you’ve:
