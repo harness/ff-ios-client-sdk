@@ -17,12 +17,16 @@ public class CfTargetBuilder {
 							   attributes: [:])
 	}
 	/**
-	Adds `identifier` to CfTarget
+	Adds `identifier` to CfTarget. Also adds `name` to CFTarget if not provided
 	- Parameter identifier: `String`
 	- Note: `build()` needs to be called as the final method in the chain
 	*/
 	public func setIdentifier(_ identifier: String) -> CfTargetBuilder {
 		target.identifier = identifier
+        // Clients should not send empty fields, so using identifier as sensible "default" for name
+        if target.name.isEmpty {
+            target.name = identifier
+        }
 		return self
 	}
 	/**
@@ -61,9 +65,9 @@ public class CfTargetBuilder {
 	
 	# Defaults: #
 	- `identifier`:  ""
-	- `name`:  `nil`
-	- `anonymous`: `nil`
-	- `attributes`:  `nil`
+	- `name`:  `""`
+	- `anonymous`: `false`
+	- `attributes`:  `[:]`
 	*/
 	public func build() -> CfTarget {
 		return target
