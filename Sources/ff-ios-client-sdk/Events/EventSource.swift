@@ -203,9 +203,10 @@ internal extension EventSource {
 
         additionalHeaders["Accept"] = "text/event-stream"
         additionalHeaders["Cache-Control"] = "no-cache"
+        additionalHeaders["User-Agent"] = "ios 1.0.3"
 
         let sessionConfiguration = URLSessionConfiguration.default
-        sessionConfiguration.timeoutIntervalForRequest = TimeInterval(INT_MAX)
+        sessionConfiguration.timeoutIntervalForRequest = TimeInterval(60)
         sessionConfiguration.timeoutIntervalForResource = TimeInterval(INT_MAX)
         sessionConfiguration.httpAdditionalHeaders = additionalHeaders
 
