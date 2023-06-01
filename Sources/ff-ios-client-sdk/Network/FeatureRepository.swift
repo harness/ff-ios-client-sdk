@@ -157,7 +157,7 @@ class FeatureRepository {
 			}
 			try storageSource.saveValue(evaluations, key: allKey)
 		} catch {
-			print("no can do")
+			print("updateAll failed")
 		}
 	}
 }
