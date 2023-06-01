@@ -14,7 +14,7 @@ class FeatureRepository {
     var target: CfTarget
     var config: CfConfiguration
 	var storageSource: StorageRepositoryProtocol
-	var defaultAPIManager: DefaultAPIManagerProtocol!
+	var defaultAPIManager: DefaultAPIManagerProtocol?
 	
 	init(
         
@@ -46,7 +46,7 @@ class FeatureRepository {
         OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		
 		Logger.log("Try to get ALL from CLOUD")
-		defaultAPIManager.getEvaluations(
+		defaultAPIManager?.getEvaluations(
             
             environmentUUID: self.config.environmentId,
             target: self.target.identifier,
@@ -106,7 +106,7 @@ class FeatureRepository {
 		}
 		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
 		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
-		defaultAPIManager.getEvaluationByIdentifier(
+		defaultAPIManager?.getEvaluationByIdentifier(
             
             environmentUUID: self.config.environmentId,
             feature: evaluationId,
