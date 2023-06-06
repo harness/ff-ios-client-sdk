@@ -275,8 +275,17 @@ public class CfClient {
 	public func stringVariation(evaluationId: String, defaultValue: String? = nil, _ completion:@escaping(_ result:Evaluation?)->()) {
 		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
-	
-	/**
+
+	public func stringVariation(evaluationId: String, defaultValue: String) -> String {
+		var result: String = defaultValue
+		self.stringVariation(evaluationId: evaluationId, defaultValue: defaultValue, { (eval) in
+			result = eval?.value.stringValue ?? defaultValue
+		})
+
+		return result;
+	}
+
+    /**
 	Fetch `Bool` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
 	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
@@ -292,6 +301,24 @@ public class CfClient {
 	}
 	
 	/**
+	Fetch a boolean flag from cache. This method returns a `Bool` value directly and does not require a closure.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
+	- Parameters:
+	   - evaluationId: ID of the `Evaluation` you want to fetch.
+	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+	   - result: `Bool`
+	*/
+	public func boolVariation(evaluationId: String, defaultValue: Bool) -> Bool {
+		var result: Bool = defaultValue
+		self.boolVariation(evaluationId: evaluationId, defaultValue: defaultValue, { (eval) in
+			result = eval?.value.boolValue ?? defaultValue
+		})
+
+		return result;
+	}
+
+	/**
 	Fetch `Number` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
 	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
@@ -306,6 +333,24 @@ public class CfClient {
 		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
 	
+	/**
+	Fetch a number flag from cache. This method returns a `Int` value directly and does not require a closure.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
+	- Parameters:
+	   - evaluationId: ID of the `Evaluation` you want to fetch.
+	   - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+	   - result: `Int`
+	*/
+	public func numberVariation(evaluationId: String, defaultValue: Int) -> Int {
+		var result: Int = defaultValue
+		self.numberVariation(evaluationId: evaluationId, defaultValue: defaultValue, { (eval) in
+			result = eval?.value.intValue ?? defaultValue
+		})
+
+		return result;
+	}
+
 	/**
 	Fetch `[String:ValueType]` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
@@ -326,7 +371,24 @@ public class CfClient {
 	public func jsonVariation(evaluationId: String, defaultValue:[String:ValueType]? = nil, _ completion:@escaping(_ result: Evaluation?)->()) {
 		self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
 	}
-	
+
+	/**
+	Fetch JSON flag from cache. This method returns a string value directly and does not require a closure. Also the JSON is returned as a string.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
+	 - Parameters:
+	     - evaluationId: ID of the `Evaluation` you want to fetch.
+	    - defaultValue: Default JSON string to be returned if no such `Evaluation` exists in the cache.
+	    - result: JSON string
+	*/
+	public func jsonVariation(evaluationId: String, defaultValue: String) -> String {
+	    var result: String = defaultValue
+	    self.jsonVariation(evaluationId: evaluationId, defaultValue: nil, { (eval) in
+	        result = eval?.value.stringValue ?? defaultValue
+	    })
+	    return result;
+	}
+
 	/**
 	 Clears the occupied resources and shuts down the sdk.
 	 After calling this method, the [intialize](x-source-tag://initialize) must be called again. It will also
