@@ -144,6 +144,27 @@ class FeatureRepository {
 		}
 	}
     
+    /// Use this method to save an `Evaluation`
+    /// - Parameters:
+    ///   - evaluation: the evaluation to save to storage
+    ///   - onCompletion: completion block containing `Evaluation?` or `CFError?` from appropriate lower level methods.
+    func saveEvaluation(
+        evaluation: Evaluation,
+        onCompletion:@escaping(Result<Evaluation, CFError>)->()
+    ) {
+        let key = CfConstants.Persistance.feature(self.config.environmentId, self.target.identifier, evaluation.flag).value
+        do {
+            try self.storageSource.saveValue(evaluation, key: key)
+            self.updateAll(evaluation)
+            Logger.log("SUCCESS: Saved |\(evaluation.flag)| -> |\(evaluation.value)| from SSE event")
+            onCompletion(.success(evaluation))
+        } catch {
+            Logger.log("Failed saving |\(evaluation.flag)| to cache")
+            onCompletion(.failure(CFError.storageError))
+        }
+        
+    }
+    
 	private func updateAll(_ eval: Evaluation) {
 		let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 		do {

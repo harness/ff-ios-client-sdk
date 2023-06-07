@@ -646,13 +646,23 @@ public class CfClient {
                             }
                         })
                     } else {
-                        // To existing behaviour - if its a patch event for a flag we should fetch the flag by ID
-                        self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
-                            switch result {
-                                case .failure(let error): onEvent(EventType.onEventListener(nil), error)
-                                case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
-                            }
-                        })
+                        // if evaluation is present in sse event save it directly, else fetch from server
+                        if self.isEvaluationValid(evaluation: decoded.evaluation) {
+                            self.featureRepository.saveEvaluation(evaluation: decoded.evaluation!, onCompletion: { (result) in
+                                switch result {
+                                    case .failure(let error): onEvent(EventType.onEventListener(nil), error)
+                                    case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
+                                }
+                            })
+                        } else {
+                            // To existing behaviour - if its a patch event for a flag we should fetch the flag by ID
+                            self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
+                                switch result {
+                                    case .failure(let error): onEvent(EventType.onEventListener(nil), error)
+                                    case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
+                                }
+                            })
+                        }
                     }
 
 				} catch {
@@ -661,6 +671,14 @@ public class CfClient {
 			}
 		}
 	}
+    
+    private func isEvaluationValid(evaluation: Evaluation?) -> Bool {
+        if (evaluation == nil || evaluation?.flag == "" || evaluation?.identifier == "" || evaluation?.value.stringValue == "") {
+            return false
+        }
+        
+        return true
+    }
 	
 	//MARK: STREAMING/POLLING SWITCH METHODS
 	private func startStreaming(_ events:[String]? = nil) {
