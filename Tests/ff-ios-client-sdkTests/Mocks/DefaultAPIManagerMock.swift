@@ -9,8 +9,9 @@ import Foundation
 @testable import ff_ios_client_sdk
 
 class DefaultAPIManagerMock: DefaultAPIManagerProtocol {
+    
 	var replacementEnabled = false
-	func getEvaluations(environmentUUID: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<[Evaluation], ff_ios_client_sdk.CFError>) -> ()) {
+	func getEvaluations(environmentUUID: String, target: String, cluster: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<[Evaluation], ff_ios_client_sdk.CFError>) -> ()) {
 		if target == "success" {
 			let evaluations = CacheMocks.createAllTypeFlagMocks()
 			completion(.success(evaluations))
@@ -19,7 +20,7 @@ class DefaultAPIManagerMock: DefaultAPIManagerProtocol {
 		}
 	}
 	
-	func getEvaluationByIdentifier(environmentUUID: String, feature: String, target: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<Evaluation, ff_ios_client_sdk.CFError>) -> ()) {
+	func getEvaluationByIdentifier(environmentUUID: String, feature: String, target: String, cluster: String, apiResponseQueue: DispatchQueue, completion: @escaping (Swift.Result<Evaluation, ff_ios_client_sdk.CFError>) -> ()) {
 		var found = false
  		if target == "cloud_failure_cache_failure" {
 			completion(.failure(CFError.storageError))
@@ -29,10 +30,10 @@ class DefaultAPIManagerMock: DefaultAPIManagerProtocol {
 				var modifiedEval: Evaluation?
 				let value = evaluation.value
 				switch value {
-					case .string(let string): modifiedEval = Evaluation(flag: evaluation.flag, value: .string(string + "_changed"))
-					case .bool(let bool):  modifiedEval = Evaluation(flag: evaluation.flag, value: .bool(!bool))
-					case .int(let int): modifiedEval = Evaluation(flag: evaluation.flag, value: .int(int + 5))
-					case .object(_): modifiedEval = Evaluation(flag: evaluation.flag, value: .object(["added":ValueType.bool(true)]))
+					case .string(let string): modifiedEval = Evaluation(flag: evaluation.flag, identifier: "test", value: .string(string + "_changed"))
+					case .bool(let bool):  modifiedEval = Evaluation(flag: evaluation.flag, identifier: "test",value: .bool(!bool))
+					case .int(let int): modifiedEval = Evaluation(flag: evaluation.flag, identifier: "test",value: .int(int + 5))
+					case .object(_): modifiedEval = Evaluation(flag: evaluation.flag, identifier: "test", value: .object(["added":ValueType.bool(true)]))
 				}
 				completion(.success(modifiedEval!))
 			} else {
