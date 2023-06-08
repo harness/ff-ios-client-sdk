@@ -23,7 +23,7 @@ class AuthenticationRequestTest: XCTestCase {
 		let config = CfConfiguration.builder().build()
 		let target = CfTarget.builder().build()
 		
-		let repository = FeatureRepository(token: "someToken", storageSource: mockCache, config: config, target: target, defaultAPIManager: mockAPIManager)
+        let repository = FeatureRepository(token: "someToken", cluster: "1", storageSource: mockCache, config: config, target: target, defaultAPIManager: mockAPIManager)
 		cfClient.featureRepository = repository
 	}
 	

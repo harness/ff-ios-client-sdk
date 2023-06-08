@@ -23,7 +23,7 @@ class RegisterForEventsTest: XCTestCase {
 		let target = CfTarget.builder().build()
 		
 		let defaultAPIManager = DefaultAPIManagerMock()
-		let repository = FeatureRepository(token: "someToken", storageSource: mockCache, config: config, target: target, defaultAPIManager: defaultAPIManager)
+        let repository = FeatureRepository(token: "someToken", cluster: "1", storageSource: mockCache, config: config, target: target, defaultAPIManager: defaultAPIManager)
 
 		cfClient.featureRepository = repository
 		cfClient.configuration = config
@@ -89,7 +89,7 @@ class RegisterForEventsTest: XCTestCase {
 		// Given
 		let exp = XCTestExpectation(description: #function)
 		var config = CfConfiguration.builder().setStreamEnabled(true).build()
-		let eval = Evaluation(flag: "testRegisterEventSuccessFlag", value: .bool(true))
+        let eval = Evaluation(flag: "testRegisterEventSuccessFlag", identifier: "test", value: .bool(true))
 		try? cfClient.featureRepository.storageSource.saveValue(eval, key: "SODOD")
 		config.environmentId = "successID"
 		cfClient.configuration = config

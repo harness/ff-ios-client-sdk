@@ -14,6 +14,7 @@ struct CfProjectMocks {
         dict["environmentIdentifier"]   = "environmentIdentifier_value"
         dict["environment"]             = "environment_value"
         dict["accountID"]               = "accountID_value"
+        dict["clusterIdentifier"]       = "clusterIdentifier_value"
         return dict
     }
 }

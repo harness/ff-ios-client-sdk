@@ -55,15 +55,15 @@ struct CacheMocks {
 		for _ in 0..<count  {
 			if let type = type {
 				switch type {
-					case .string(let stringVal): mocks.append(.init(flag: TestFlagValue(.string).key, value: ValueType.string(stringVal)))
-					case .bool(let boolVal): mocks.append(.init(flag: TestFlagValue(.bool).key, value: ValueType.bool(boolVal)))
-					case .int(let intVal): mocks.append(.init(flag: TestFlagValue(.int).key, value: ValueType.int(intVal)))
-					case .object(let objectVal): mocks.append(.init(flag: TestFlagValue(.object).key, value: ValueType.object(objectVal)))
+					case .string(let stringVal): mocks.append(.init(flag: TestFlagValue(.string).key, identifier: "test", value: ValueType.string(stringVal)))
+					case .bool(let boolVal): mocks.append(.init(flag: TestFlagValue(.bool).key, identifier: "test", value: ValueType.bool(boolVal)))
+					case .int(let intVal): mocks.append(.init(flag: TestFlagValue(.int).key, identifier: "test", value: ValueType.int(intVal)))
+					case .object(let objectVal): mocks.append(.init(flag: TestFlagValue(.object).key, identifier: "test", value: ValueType.object(objectVal)))
 				}
 			} else {
 				let random = Int(arc4random_uniform(UInt32(TestFlagValue.RawValue.allCases.count)))
 				let randomValueType = TestFlagValue(TestFlagValue.RawValue(rawValue: random)!)
-				mocks.append(.init(flag: randomValueType.key, value: randomValueType.value))
+                mocks.append(.init(flag: randomValueType.key, identifier: "test", value: randomValueType.value))
 			}
 		}
         return mocks
@@ -85,7 +85,7 @@ struct CacheMocks {
 			let random = Int(arc4random_uniform(UInt32(TestFlagValue.RawValue.allCases.count)))
 			let randomValueType = TestFlagValue(TestFlagValue.RawValue(rawValue: random)!)
 			if !mocks.contains(where: {$0.value == randomValueType.value}) {
-				mocks.append(.init(flag: randomValueType.key, value: randomValueType.value))
+                mocks.append(.init(flag: randomValueType.key, identifier: "test", value: randomValueType.value))
 			}
 		}
 		return mocks

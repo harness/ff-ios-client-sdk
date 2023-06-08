@@ -18,7 +18,7 @@ class FeatureRepositoryTest: XCTestCase {
 		var config = CfConfiguration.builder().build()
 		config.environmentId = "c34fb8b9-9479-4e13-b4cc-d43c8f6b1a5d"
 		let target = CfTarget.builder().build()
-		sut = FeatureRepository(token: nil, storageSource: mockCache, config: config, target: target)
+        sut = FeatureRepository(token: nil, cluster: "1", storageSource: mockCache, config: config, target: target)
 		sut!.defaultAPIManager = DefaultAPIManagerMock()
 		expectation = XCTestExpectation(description: #function)
     }
@@ -35,7 +35,7 @@ class FeatureRepositoryTest: XCTestCase {
 		let target = CfTarget.builder().setIdentifier("testID").build()
 		
 		// When
-		let defaultRepo = FeatureRepository(token: token, storageSource: mockCache, config: config, target: target)
+        let defaultRepo = FeatureRepository(token: token, cluster: "1", storageSource: mockCache, config: config, target: target)
 		
 		// Then
 		XCTAssertEqual(defaultRepo.token, token)
@@ -52,11 +52,11 @@ class FeatureRepositoryTest: XCTestCase {
 		sut?.target.identifier = "success"
 		
 		// When
-		let result = await(sut!.getEvaluations(onCompletion:))
-		
-		// Then
-		XCTAssertNotNil(result)
-		XCTAssertEqual(result?.count, 4, "Expected count == 4")
+        sut!.getEvaluations(onCompletion:) { result in
+            // Then
+            XCTAssertNotNil(result)
+            XCTAssertEqual(try? result.get().count, 4, "Expected count == 4")
+        }
     }
 	
 	func testGetEvaluationFailure() {
@@ -64,10 +64,15 @@ class FeatureRepositoryTest: XCTestCase {
 		sut?.target.identifier = "failure"
 		
 		// When
-		let result = await(sut!.getEvaluations(onCompletion:))
-		
-		// Then
-		XCTAssertNil(result)
+        sut!.getEvaluations(onCompletion:) { result in
+            // Then
+            switch result {
+            case .failure(let error):
+                XCTAssertTrue(error.errorData.title == "Storage Error")
+            case .success(_):
+                XCTFail("should not be success")
+            }
+        }
 	}
 	
 	func testGetEvaluationByIdSuccessReplaceSuccess() {

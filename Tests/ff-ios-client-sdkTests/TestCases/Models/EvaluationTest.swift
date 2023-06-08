@@ -26,7 +26,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.string("test-value")
         
 		// When
-        let evaluation = Evaluation(flag: flag, value: value)
+        let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
         
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
@@ -41,7 +41,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.string("30")
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
@@ -56,7 +56,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.string("true")
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
@@ -71,7 +71,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.string("false")
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
@@ -86,7 +86,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.string("{key:value}")
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.stringValue == value.stringValue)
@@ -102,7 +102,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.int(1)
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
@@ -117,7 +117,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.int(0)
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
@@ -132,7 +132,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.bool(true)
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.boolValue == value.boolValue)
@@ -147,7 +147,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.bool(false)
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.boolValue == value.boolValue)
@@ -162,7 +162,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.int(5)
 		
 		// When
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.intValue == value.intValue)
@@ -177,7 +177,7 @@ class EvaluationTest: XCTestCase {
 		let value = ValueType.object(ValueType.Value(dictionaryLiteral: ("testKey", .string("testValue"))))
 		
 		// Then
-		let evaluation = Evaluation(flag: flag, value: value)
+		let evaluation = Evaluation(flag: flag, identifier: "test", value: value)
 		
 		// Then
 		XCTAssertEqual(evaluation.flag == flag, evaluation.value.objectValue == value.objectValue)
