@@ -66,10 +66,13 @@ class FeatureRepositoryTest: XCTestCase {
 		// When
         sut!.getEvaluations(onCompletion:) { result in
             // Then
-            XCTAssertNil(result)
+            switch result {
+            case .failure(let error):
+                XCTAssertTrue(error.errorData.title == "Storage Error")
+            case .success(_):
+                XCTFail("should not be success")
+            }
         }
-		
-
 	}
 	
 	func testGetEvaluationByIdSuccessReplaceSuccess() {
