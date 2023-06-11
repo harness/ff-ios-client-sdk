@@ -91,6 +91,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     private var operationQueue: OperationQueue
     private var mainQueue = DispatchQueue.main
     private var urlSession: URLSession?
+    private var tlsDelegate: URLSessionTrustDelegate?
 
     public init(
         url: URL,
@@ -102,6 +103,10 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         readyState = EventSourceState.closed
         operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
+
+        if SdkTls.isTlsEnabled() {
+            self.tlsDelegate = URLSessionTrustDelegate()
+        }
 
         super.init()
     }
@@ -189,6 +194,10 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         var newRequest = request
         self.headers.forEach { newRequest.setValue($1, forHTTPHeaderField: $0) }
         completionHandler(newRequest)
+    }
+
+    open func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void) {
+        tlsDelegate?.urlSession(session, didReceive: challenge, completionHandler: completionHandler)
     }
 }
 

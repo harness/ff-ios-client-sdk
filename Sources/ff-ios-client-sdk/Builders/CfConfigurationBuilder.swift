@@ -22,7 +22,8 @@ public class CfConfigurationBuilder {
             streamEnabled: false,
             analyticsEnabled: true,
             pollingInterval: minimumPollingInterval,
-            environmentId: ""
+            environmentId: "",
+            tlsTrustedCAs: []
         )
 	}
 	/**
@@ -84,6 +85,16 @@ public class CfConfigurationBuilder {
 		config.pollingInterval = interval < minimumPollingInterval ? minimumPollingInterval : interval
 		return self
 	}
+    /**
+    Adds `TlsTrustedCAs`  to CfConfiguration
+    - Parameter tlsTrustedCAs: Array of trusted Certificate Authority X.509 certificates (in PEM format) that will be used when connecting to the config, stream and event endpoints, you should include any intermediate CAs.
+    - Note: `build()` needs to be called as the final method in the chain
+    */
+    public func setTlsTrustedCAs(_ tlsTrustedCAs:[String]) -> CfConfigurationBuilder {
+        config.tlsTrustedCAs = tlsTrustedCAs
+        return self
+    }
+    
 	/**
 	Builds CfConfiguration object by providing components or is set to default component/s.
 	- `setConfigUrl(_:)`

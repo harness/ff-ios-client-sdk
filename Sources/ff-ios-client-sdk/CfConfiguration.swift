@@ -20,6 +20,7 @@ public struct CfConfiguration {
 	var pollingInterval: TimeInterval
 	var environmentId: String
     var analyticsFrequency: Int
+    var tlsTrustedCAs: [String]
 	
 	internal init(
         
@@ -29,7 +30,8 @@ public struct CfConfiguration {
         streamEnabled: Bool,
         analyticsEnabled: Bool,
         pollingInterval:TimeInterval,
-        environmentId: String
+        environmentId: String,
+        tlsTrustedCAs: [String]
         
     ) {
 		
@@ -41,6 +43,7 @@ public struct CfConfiguration {
 		self.pollingInterval = pollingInterval
 		self.environmentId = environmentId
         self.analyticsFrequency = CfConfiguration.MIN_ANALYTICS_FREQUENCY
+        self.tlsTrustedCAs = tlsTrustedCAs
 	}
 	
 	public static func builder() -> CfConfigurationBuilder {
