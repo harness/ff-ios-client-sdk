@@ -720,33 +720,47 @@ public class CfClient {
                     // Handle Target Segment Events.  On an Event we need to fetch all evaluations
                     if  decoded.domain == "target-segment" {
                         if decoded.event == "create" || decoded.event == "patch" || decoded.event == "delete" {
-                            self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
-                                guard let self = self else {return}
-                                let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
-                                switch result {
-                                    case .success(let evaluations):
-                                        do {
-                                            try self.storageSource?.saveValue(evaluations, key: allKey)
-                                            self.lastPollTime = Date()
-                                        } catch {
-                                            //If saving to cache fails, pass success for authorization and continue
-                                            print("Could not save to cache")
+                            // if evaluations present in sse event save it directly, else fetch from server
+                            if self.areEvaluationsValid(evaluations: decoded.evaluations) {
+                                for evaluation in decoded.evaluations! {
+                                    self.featureRepository.saveEvaluation(evaluation: evaluation, onCompletion: { (result) in
+                                        switch result {
+                                            case .failure(let error): onEvent(EventType.onEventListener(nil), error)
+                                            case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
                                         }
-                                    case .failure(let error):
-                                        onEvent(EventType.onEventListener(nil), error)
+                                    })
                                 }
-                            })
+                            } else {
+                                self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
+                                    guard let self = self else {return}
+                                    let allKey = CfConstants.Persistance.features(self.configuration.environmentId, self.target.identifier).value
+                                    switch result {
+                                        case .success(let evaluations):
+                                            do {
+                                                try self.storageSource?.saveValue(evaluations, key: allKey)
+                                                self.lastPollTime = Date()
+                                            } catch {
+                                                //If saving to cache fails, pass success for authorization and continue
+                                                print("Could not save to cache")
+                                            }
+                                        case .failure(let error):
+                                            onEvent(EventType.onEventListener(nil), error)
+                                    }
+                                })
+                            }
                         }
                     } else if decoded.domain == "flag" {
                         if decoded.event == "create" || decoded.event == "patch" {
-                            // if evaluation is present in sse event save it directly, else fetch from server
-                            if self.isEvaluationValid(evaluation: decoded.evaluation) {
-                                self.featureRepository.saveEvaluation(evaluation: decoded.evaluation!, onCompletion: { (result) in
-                                    switch result {
-                                        case .failure(let error): onEvent(EventType.onEventListener(nil), error)
-                                        case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
-                                    }
-                                })
+                            // if evaluations present in sse event save it directly, else fetch from server
+                            if self.areEvaluationsValid(evaluations: decoded.evaluations) {
+                                for evaluation in decoded.evaluations! {
+                                    self.featureRepository.saveEvaluation(evaluation: evaluation, onCompletion: { (result) in
+                                        switch result {
+                                            case .failure(let error): onEvent(EventType.onEventListener(nil), error)
+                                            case .success(let evaluation): onEvent(EventType.onEventListener(evaluation), nil)
+                                        }
+                                    })
+                                }
                             } else {
                                 // To existing behaviour - if its a patch event for a flag we should fetch the flag by ID
                                 self.featureRepository.getEvaluationById(decoded.identifier ?? "", target: self.target.identifier, useCache: false, onCompletion: { (result) in
@@ -771,6 +785,20 @@ public class CfClient {
     private func isEvaluationValid(evaluation: Evaluation?) -> Bool {
         if (evaluation == nil || evaluation?.flag == "" || evaluation?.identifier == "" || evaluation?.value.stringValue == "") {
             return false
+        }
+        
+        return true
+    }
+    
+    private func areEvaluationsValid(evaluations: [Evaluation]?) -> Bool {
+        if (evaluations == nil || evaluations?.count == 0) {
+            return false
+        }
+        
+        for evaluation in evaluations! {
+            if !isEvaluationValid(evaluation: evaluation) {
+                return false
+            }
         }
         
         return true
