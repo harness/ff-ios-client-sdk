@@ -740,7 +740,6 @@ public class CfClient {
                                                 try self.storageSource?.saveValue(evaluations, key: allKey)
                                                 self.lastPollTime = Date()
                                                 onEvent(EventType.onPolling(evaluations), nil)
-                                                self.lastPollTime = Date()
                                             } catch {
                                                 //If saving to cache fails, pass success for authorization and continue
                                                 print("Could not save to cache")
