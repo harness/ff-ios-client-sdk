@@ -12,6 +12,6 @@ public struct Message: Codable {
 	public var domain: String?
 	public var identifier: String?
 	public var version: Double?
-	public var evaluations: [Evaluation]?
+	public var evaluation: Evaluation?
 }
 
