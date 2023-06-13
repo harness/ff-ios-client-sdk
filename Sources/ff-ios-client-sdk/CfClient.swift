@@ -96,7 +96,9 @@ public class CfClient {
     
     private var analyticsManager: AnalyticsManager?
     private var analyticsCache = [String:AnalyticsWrapper]()
-	
+    private var lastPollTime: Date?
+    private var minimumRefreshIntervalSecs = 60.0
+
 	//MARK: - Internal properties -
 	
 	var configuration: CfConfiguration!
@@ -389,6 +391,30 @@ public class CfClient {
 	    return result;
 	}
 
+    /**
+    Ask the SDK to refresh all flags. This should only be used to prompt the SDK to refresh its cache when an app comes to the foreground
+    (via UIApplication.willEnterForegroundNotification) and SSE events may have been missed while suspended.
+    NOTE: It should not be used to manually poll the Harness Feature Flag servers and will only call out to the servers if enough time has elapsed.
+    */
+    public func refreshCache() {
+        Logger.log("Refreshing flags")
+        let now = Date()
+        let intervalSinceLastRefresh = now.timeIntervalSince(self.lastPollTime ?? Date.distantPast)
+        if (intervalSinceLastRefresh > minimumRefreshIntervalSecs) {
+            self.featureRepository.getEvaluations() { (result) in
+                switch result {
+                case .failure(let error):
+                    Logger.log("RefreshFlags failed: \(error)")
+                case .success(let evaluations):
+                    Logger.log("RefreshFlags succeeded. \(evaluations.count) evaluations loaded")
+                    self.lastPollTime = Date()
+                }
+            }
+        } else {
+            Logger.log("RefreshFlags skipped. Flags refreshed \(intervalSinceLastRefresh) seconds ago")
+        }
+    }
+
 	/**
 	 Clears the occupied resources and shuts down the sdk.
 	 After calling this method, the [intialize](x-source-tag://initialize) must be called again. It will also
@@ -462,6 +488,7 @@ public class CfClient {
 					case .success(let evaluations):
 						do {
 							try self.storageSource?.saveValue(evaluations, key: allKey)
+							self.lastPollTime = Date()
 							onCompletion(.success(()))
 						} catch {
 							//If saving to cache fails, pass success for authorization and continue
@@ -585,7 +612,7 @@ public class CfClient {
 				self.startStreaming()
 		}
 	}
-	
+
 	//Setup network condition observing
 	private func registerForNetworkConditionNotifications() {
 		if self.networkInfoProvider?.isReachable == true {
@@ -711,6 +738,7 @@ public class CfClient {
                                         case .success(let evaluations):
                                             do {
                                                 try self.storageSource?.saveValue(evaluations, key: allKey)
+                                                self.lastPollTime = Date()
                                                 onEvent(EventType.onPolling(evaluations), nil)
                                             } catch {
                                                 //If saving to cache fails, pass success for authorization and continue
@@ -805,6 +833,7 @@ public class CfClient {
 							case .failure(let error):
 								onCompletion(.failure(error))
 							case .success(let evaluations):
+								self?.lastPollTime = Date()
 								onCompletion(.success(EventType.onPolling(evaluations)))
 						}
 					}
