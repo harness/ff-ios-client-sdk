@@ -89,6 +89,9 @@ public class CfClient {
 	var networkInfoProvider: NetworkInfoProviderProtocol?
 	private var pollingEnabled: Bool = true
 	private var apiKey: String = ""
+	private var environmentId: String = ""
+	private var accountId: String = ""
+	private var sdkInfo: String = "iOS \(Version.version) Client"
 	
 	///Tracks the `ready` state of CfClient.
 	///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
@@ -198,6 +201,7 @@ public class CfClient {
                 case .success(_):
                     
                     OpenAPIClientAPI.streamPath = configuration.streamUrl
+                    OpenAPIClientAPI.eventPath = configuration.eventUrl
                     self.ready = true
                     onCompletion?(.success(()))
 			}
@@ -227,12 +231,16 @@ public class CfClient {
 		} catch {
 			print("Could not fetch from cache")
 		}
-		if self.configuration.streamEnabled {
+		if self.configuration.streamEnabled, let token = self.token {
 			
             let parameterConfig = ParameterConfig(
                 
-                authHeader: [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token ?? "")",
-															   CFHTTPHeaderField.apiKey.rawValue:self.apiKey],
+                headers: [CFHTTPHeaderField.authorization.rawValue: "Bearer \(token)",
+                             CFHTTPHeaderField.apiKey.rawValue: self.apiKey,
+                             "Harness-SDK-Info": self.sdkInfo,
+                             "Harness-EnvironmentID": self.environmentId,
+                             "Harness-AccountID": self.accountId
+                         ],
                 cluster: self.cluster!
             )
 			self.eventSourceManager.configuration = self.configuration
@@ -459,8 +467,9 @@ public class CfClient {
 				Logger.log("AUTHENTICATION FAILURE")
 				return
 			}
-			Logger.log("AUTHENTICATION SUCCESS")
-			
+
+            Logger.log("AUTHENTICATION SUCCESS")
+
 			//Set storage to provided cache or CfCache by default
 			self.storageSource = cache
 			
@@ -468,11 +477,27 @@ public class CfClient {
 			let dict = JWTDecoder().decode(jwtToken: response!.authToken)
 			let project = CfProject(dict:dict ?? [:])
 			
-            self.isInitialized = true
+			self.isInitialized = true
 			self.configuration.environmentId = project.environment
 			self.token = response!.authToken
-            self.cluster = project.clusterIdentifier
-			
+			self.cluster = project.clusterIdentifier
+			self.accountId = project.accountID
+			self.environmentId = project.environmentIdentifier
+
+			guard let token = self.token else {
+			    onCompletion(.failure(error!))
+			    self.isInitialized = false
+			    Logger.log("AUTHENTICATION FAILURE - missing token")
+			    return
+			}
+
+			OpenAPIClientAPI.customHeaders = [
+			    CFHTTPHeaderField.authorization.rawValue:"Bearer \(token)",
+			    "Harness-EnvironmentID": self.environmentId,
+			    "Harness-AccountID": self.accountId,
+			    "Harness-SDK-Info": self.sdkInfo
+			]
+
 			//Assign retrieved values to lazily instantiated `featureRepository`
 			self.featureRepository.token = self.token!
 			self.featureRepository.storageSource = self.storageSource!
