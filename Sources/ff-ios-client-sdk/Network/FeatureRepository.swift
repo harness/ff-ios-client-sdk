@@ -42,9 +42,6 @@ class FeatureRepository {
         
         onCompletion:@escaping(Result<[Evaluation], CFError>)->()
     ) {
-		
-        OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
-		
 		Logger.log("Try to get ALL from CLOUD")
 		defaultAPIManager?.getEvaluations(
             
@@ -104,7 +101,7 @@ class FeatureRepository {
 			}
 			return
 		}
-		OpenAPIClientAPI.customHeaders = [CFHTTPHeaderField.authorization.rawValue:"Bearer \(self.token)"]
+
 		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
 		defaultAPIManager?.getEvaluationByIdentifier(
             
