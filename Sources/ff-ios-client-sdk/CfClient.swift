@@ -188,7 +188,13 @@ public class CfClient {
 		self.apiKey = apiKey
 		self.target = target
 		
+        if (!configuration.tlsTrustedCAs.isEmpty) {
+            SdkTls.setPems(pems: configuration.tlsTrustedCAs)
+            OpenAPIClientAPI.requestBuilderFactory = TlsURLSessionRequestBuilderFactory()
+        }
+
         OpenAPIClientAPI.configPath = configuration.configUrl
+        OpenAPIClientAPI.eventPath = configuration.eventUrl
 		
         let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
 		self.authenticate(authRequest, cache: cache) { (response) in
