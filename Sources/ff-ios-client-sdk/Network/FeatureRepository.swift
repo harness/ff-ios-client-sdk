@@ -9,6 +9,8 @@ import Foundation
 
 class FeatureRepository {
 	
+    private static let logger = SdkLog.get("io.harness.ff.sdk.ios.FeatureRepository")
+    
     var token: String
     var cluster: String
     var target: CfTarget
@@ -42,7 +44,8 @@ class FeatureRepository {
         
         onCompletion:@escaping(Result<[Evaluation], CFError>)->()
     ) {
-		Logger.log("Try to get ALL from CLOUD")
+        FeatureRepository.logger.debug("Try to get ALL from CLOUD")
+
 		defaultAPIManager?.getEvaluations(
             
             environmentUUID: self.config.environmentId,
@@ -56,17 +59,17 @@ class FeatureRepository {
             let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier).value
 			switch result {
 				case .failure(_):
-					Logger.log("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
+                    FeatureRepository.logger.warn("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
 					do {
 						let evals: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
 						onCompletion(.success(evals ?? []))
-						Logger.log("SUCCESS: Got ALL from CACHE/STORAGE")
+                        FeatureRepository.logger.debug("SUCCESS: Got ALL from CACHE/STORAGE")
 					} catch {
-						Logger.log("FAILURE: Unable to get ALL from CACHE/STORAGE")
+                        FeatureRepository.logger.warn("FAILURE: Unable to get ALL from CACHE/STORAGE")
 						onCompletion(.failure(CFError.storageError))
 					}
 				case .success(let evaluations):
-					Logger.log("SUCCESS: Got ALL from CLOUD")
+                    FeatureRepository.logger.debug("SUCCESS: Got ALL from CLOUD")
 					
 					for eval in evaluations {
 						let key = CfConstants.Persistance.feature(self.config.environmentId, self.target.identifier, eval.flag).value
@@ -97,14 +100,15 @@ class FeatureRepository {
 				let evaluation: Evaluation? = try self.storageSource.getValue(forKey: key)
 				onCompletion(.success(evaluation!))
 			} catch {
+                FeatureRepository.logger.warn("ERROR: \(error)")
 				onCompletion(.failure(CFError.noDataError))
 			}
 			return
 		}
 
-		Logger.log("Try to get Evaluation |\(evaluationId)| from CLOUD")
+        FeatureRepository.logger.debug("Try to get Evaluation |\(evaluationId)| from CLOUD")
+
 		defaultAPIManager?.getEvaluationByIdentifier(
-            
             environmentUUID: self.config.environmentId,
             feature: evaluationId,
             target: target,
@@ -116,20 +120,20 @@ class FeatureRepository {
 			let key = CfConstants.Persistance.feature(self.config.environmentId, target, evaluationId).value
 			switch result {
 				case .failure(_):
-					Logger.log("Failed getting |\(evaluationId)| from CLOUD. Try CACHE/STORAGE")
+                    FeatureRepository.logger.warn("Failed getting |\(evaluationId)| from CLOUD. Try CACHE/STORAGE")
 					do {
 						if let storedFeature: Evaluation? = try self.storageSource.getValue(forKey: key) {
 							onCompletion(.success(storedFeature!))
-							Logger.log("SUCCESS: Got |\(evaluationId)| -> |\(storedFeature!.value)| from CACHE/STORAGE")
+                            FeatureRepository.logger.debug("SUCCESS: Got |\(evaluationId)| -> |\(storedFeature!.value)| from CACHE/STORAGE")
 						} else {
-							Logger.log("FAILURE: Unable to get |\(evaluationId)| from CACHE/STORAGE")
+                            FeatureRepository.logger.warn("FAILURE: Unable to get |\(evaluationId)| from CACHE/STORAGE")
 							onCompletion(.failure(CFError.noDataError))
 						}
 					} catch {
 						onCompletion(.failure(CFError.noDataError))
 					}
 				case .success(let evaluation):
-					Logger.log("SUCCESS: Got |\(evaluationId)| -> |\(evaluation.value)| from CLOUD")
+                    FeatureRepository.logger.debug("SUCCESS: Got |\(evaluationId)| -> |\(evaluation.value)| from CLOUD")
 					do {
 						try self.storageSource.saveValue(evaluation, key: key)
 						self.updateAll(evaluation)
@@ -153,10 +157,10 @@ class FeatureRepository {
         do {
             try self.storageSource.saveValue(evaluation, key: key)
             self.updateAll(evaluation)
-            Logger.log("SUCCESS: Saved |\(evaluation.flag)| -> |\(evaluation.value)| from SSE event")
+            FeatureRepository.logger.debug("SUCCESS: Saved |\(evaluation.flag)| -> |\(evaluation.value)| from SSE event")
             onCompletion(.success(evaluation))
         } catch {
-            Logger.log("Failed saving |\(evaluation.flag)| to cache")
+            FeatureRepository.logger.warn("Failed saving |\(evaluation.flag)| to cache")
             onCompletion(.failure(CFError.storageError))
         }
         
@@ -175,7 +179,7 @@ class FeatureRepository {
 			}
 			try storageSource.saveValue(evaluations, key: allKey)
 		} catch {
-			print("updateAll failed")
+            FeatureRepository.logger.warn("updateAll failed")
 		}
 	}
 }

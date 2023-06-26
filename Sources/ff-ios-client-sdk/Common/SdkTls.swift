@@ -76,6 +76,8 @@ class URLSessionTrustDelegate: NSObject, URLSessionDelegate {
     // https://developer.apple.com/library/archive/technotes/tn2232/_index.html
     // https://opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-55050.9/lib/Trust.cpp.auto.html
 
+    let log = SdkLog.get("io.harness.ff.sdk.ios.URLSessionTrustDelegate")
+    
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void) {
         if (challenge.protectionSpace.authenticationMethod != NSURLAuthenticationMethodServerTrust) {
             completionHandler(.cancelAuthenticationChallenge, nil)
@@ -108,39 +110,59 @@ class URLSessionTrustDelegate: NSObject, URLSessionDelegate {
             status = SecTrustEvaluate(trust, &secResult)
             if (errSecSuccess != status) {
                 logTlsError(status, "Failed to evaluate trust", challenge)
+                SdkCodes.warn_sdk_invalid_tls_cert()
+                logTrustResult(trust: trust)
                 return
             }
 
             if [.proceed, .unspecified].contains(secResult) {
-                print("TLS: Endpoint is trusted")
+                log.debug("TLS: Endpoint is trusted")
                 completionHandler(.useCredential, URLCredential(trust: trust))
                 return
             } else {
                 logTlsError(secResult, "Failed to evaluate trust", challenge)
-                if let resultDict = SecTrustCopyResult(trust) {
-                    print("TLS: results=\(resultDict)")
-                }
+                logTrustResult(trust: trust)
             }
             logTlsError(serverCert: serverCert)
         }
 
         completionHandler(.cancelAuthenticationChallenge, nil)
     }
+    
+    fileprivate func logTrustResult(trust:SecTrust) {
+        if let dict = SecTrustCopyResult(trust) as? [String: AnyObject] {
+            if let trd = dict["TrustResultDetails"]?.firstObject as? [String: Any] {
+                if let value = trd["AnchorTrusted"], (value as? Int) == 0 {
+                    SdkCodes.warn_sdk_invalid_tls_cert()
+                }
+                
+                if let value = trd["MissingIntermediate"], (value as? Int) == 0 {
+                    SdkCodes.warn_sdk_invalid_tls_cert()
+                }
+                
+                if let value = trd["SSLHostname"], (value as? Int) == 0 {
+                    SdkCodes.warn_sdk_invalid_tls_cert_hostname()
+                }
+            }
+            
+            log.info("TLS: trust results --> \(dict) <--")
+        }
+    }
 
     fileprivate func logTlsError(_ status: OSStatus, _ msg:String, _ challenge:URLAuthenticationChallenge) {
-        print("TLS: \(msg) Status=\(status) Host=\(challenge.protectionSpace.host) Port=\(challenge.protectionSpace.port)")
+        log.warn("TLS: \(msg) Status=\(status) Host=\(challenge.protectionSpace.host) Port=\(challenge.protectionSpace.port)")
     }
 
     fileprivate func logTlsError(_ status: SecTrustResultType, _ msg:String, _ challenge:URLAuthenticationChallenge) {
-        print("TLS: \(msg) Status=\(status) Host=\(challenge.protectionSpace.host) Port=\(challenge.protectionSpace.port)")
+        log.warn("TLS: \(msg) Status=\(status) Host=\(challenge.protectionSpace.host) Port=\(challenge.protectionSpace.port)")
     }
 
     fileprivate func logTlsError(serverCert:SecCertificate) {
         if let serverCertSummary = SecCertificateCopySubjectSummary(serverCert) {
-            print("TLS: Server cert '\(serverCertSummary)' did not match any of the following trusted CAs")
+            log.warn("TLS: Server cert '\(serverCertSummary)' did not match any of the following CAs in the SDK's trust store")
             for trustedCert in SdkTls.trustedCerts {
                 if let trustedSummary = SecCertificateCopySubjectSummary(trustedCert) {
-                    print("TLS: Trusted=\(trustedSummary)")
+                    log.warn("TLS: Trusted=\(trustedSummary)")
                 }
             }
         }

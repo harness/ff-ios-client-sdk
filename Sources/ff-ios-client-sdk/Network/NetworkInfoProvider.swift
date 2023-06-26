@@ -14,6 +14,8 @@ protocol NetworkInfoProviderProtocol {
 	var isReachable: Bool {get}
 }
 class NetworkInfoProvider: NetworkInfoProviderProtocol {
+    static let log = SdkLog.get("io.harness.ff.sdk.ios.NetworkInfoProvider")
+    
 	private var reachability = try! Reachability()
 	
 	var isReachable: Bool {
@@ -31,8 +33,8 @@ class NetworkInfoProvider: NetworkInfoProviderProtocol {
 		
 		do {
 			try reachability.startNotifier()
-		} catch {
-			print("Unable to start notifier")
+		} catch (let err) {
+            NetworkInfoProvider.log.warn("Unable to start notifier \(err)")
 		}		
 	}
 	func startNotifier() {/*Only used in tests*/}

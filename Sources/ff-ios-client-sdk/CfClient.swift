@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 ///An enum with associated values,  representing possible event types.
 /// - `case` onOpen(`String`)
 /// - `case` onComplete
@@ -51,6 +52,8 @@ public enum EventType: Equatable {
 public class CfClient {
 	//MARK: - Private properties -
 	
+    private static let log = SdkLog.get("io.harness.ff.sdk.ios.CfClient")
+    
 	private enum State {
 		case onlineStreaming
 		case onlinePolling
@@ -205,14 +208,15 @@ public class CfClient {
 					onCompletion?(.failure(error))
 			
                 case .success(_):
-                    
                     OpenAPIClientAPI.streamPath = configuration.streamUrl
                     OpenAPIClientAPI.eventPath = configuration.eventUrl
                     self.ready = true
+                    SdkCodes.info_sdk_init_ok()
                     onCompletion?(.success(()))
 			}
 		}
 	}
+    
 	/**
 	Completion block of this method will be called on each SSE response event.
 	This method needs to be called in order to get SSE events. Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
@@ -235,7 +239,7 @@ public class CfClient {
 			let initialEvaluations: [Evaluation]? = try self.featureRepository.storageSource.getValue(forKey: allKey)
 			onCompletion(.success(EventType.onPolling(initialEvaluations)))
 		} catch {
-			print("Could not fetch from cache")
+            CfClient.log.warn("Could not fetch from cache")
 		}
 		if self.configuration.streamEnabled, let token = self.token {
 			
@@ -410,22 +414,22 @@ public class CfClient {
     (via UIApplication.willEnterForegroundNotification) and SSE events may have been missed while suspended.
     NOTE: It should not be used to manually poll the Harness Feature Flag servers and will only call out to the servers if enough time has elapsed.
     */
-    public func refreshCache() {
-        Logger.log("Refreshing flags")
+    public func refreshEvaluations() {
+        CfCache.log.debug("Refreshing flags")
         let now = Date()
         let intervalSinceLastRefresh = now.timeIntervalSince(self.lastPollTime ?? Date.distantPast)
         if (intervalSinceLastRefresh > minimumRefreshIntervalSecs) {
             self.featureRepository.getEvaluations() { (result) in
                 switch result {
                 case .failure(let error):
-                    Logger.log("RefreshFlags failed: \(error)")
+                    CfCache.log.warn("RefreshFlags failed: \(error)")
                 case .success(let evaluations):
-                    Logger.log("RefreshFlags succeeded. \(evaluations.count) evaluations loaded")
+                    CfCache.log.debug("RefreshFlags succeeded. \(evaluations.count) evaluations loaded")
                     self.lastPollTime = Date()
                 }
             }
         } else {
-            Logger.log("RefreshFlags skipped. Flags refreshed \(intervalSinceLastRefresh) seconds ago")
+            CfCache.log.debug("RefreshFlags skipped. Flags refreshed \(intervalSinceLastRefresh) seconds ago")
         }
     }
 
@@ -450,7 +454,7 @@ public class CfClient {
 			CfClient.sharedInstance.dispose()
         } else {
 			
-            Logger.log("destroy() already called. Please reinitialize the SDK.")
+            CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
 		}
 	}
 	
@@ -470,12 +474,12 @@ public class CfClient {
 			guard error == nil else {
 				onCompletion(.failure(error!))
 				self.isInitialized = false
-				Logger.log("AUTHENTICATION FAILURE")
+                SdkCodes.warn_auth_failed()
 				return
 			}
 
-            Logger.log("AUTHENTICATION SUCCESS")
-
+            SdkCodes.info_sdk_auth_ok()
+			
 			//Set storage to provided cache or CfCache by default
 			self.storageSource = cache
 			
@@ -493,7 +497,7 @@ public class CfClient {
 			guard let token = self.token else {
 			    onCompletion(.failure(error!))
 			    self.isInitialized = false
-			    Logger.log("AUTHENTICATION FAILURE - missing token")
+                SdkCodes.warn_auth_failed_missing_token()
 			    return
 			}
 
@@ -524,7 +528,7 @@ public class CfClient {
 						} catch {
 							//If saving to cache fails, pass success for authorization and continue
 							onCompletion(.success(()))
-							print("Could not save to cache")
+                            CfClient.log.warn("Could not save to cache")
 						}
 					case .failure(let error):
 						onCompletion(.failure(error))
@@ -572,7 +576,8 @@ public class CfClient {
 		self.featureRepository.getEvaluationById(key, target: target, useCache: true) { (result) in
 			
             switch result {
-				case .failure(_):
+				case .failure(let f):
+                    CfClient.log.warn("getEvaluationById failed \(f)")
 					guard let defaultValue = defaultValue else {
 						
                         completion(nil)
@@ -595,7 +600,7 @@ public class CfClient {
         
         if (!evaluation.isValid()) {
             
-            Logger.log("Evaluation will not be pushed to analytics queue, invalid: \(evaluation)")
+            CfClient.log.warn("Evaluation will not be pushed to analytics queue, invalid: \(evaluation)")
             return
         }
         
@@ -636,7 +641,7 @@ public class CfClient {
 						}
 					}
 				} else {
-					Logger.log("POLLING disabled due to destroy() call")
+                    CfClient.log.warn("POLLING disabled due to destroy() call")
 				}
 			case .onlineStreaming:
 				self.stopPolling()
@@ -658,10 +663,10 @@ public class CfClient {
 				if self.configuration.streamEnabled {
 					self.setupFlowFor(.onlineStreaming)
 				}
-				Logger.log("Polling ENABLED due to NETWORK AVAILABLE")
+                CfClient.log.info("Polling ENABLED due to NETWORK AVAILABLE")
 			} else {
 				self.setupFlowFor(.offline)
-				Logger.log("Polling/Streaming DISABLED due to NO NETWORK")
+                CfClient.log.info("Polling/Streaming DISABLED due to NO NETWORK")
 			}
 		}
 	}
@@ -685,8 +690,10 @@ public class CfClient {
 	private func registerStreamCallbacks(environmentId: String, events:[String], onEvent:@escaping(EventType, CFError?)->()) {
 		//ON OPEN
 		eventSourceManager.onOpen() {
-			Logger.log("SSE connection has been opened")
-			onEvent(EventType.onOpen, nil)
+            CfClient.log.info("SSE connection has been opened")
+            SdkCodes.info_stream_connected()
+            
+            onEvent(EventType.onOpen, nil)
             
 			self.featureRepository.getEvaluations(onCompletion: { (result) in
 				switch result {
@@ -716,7 +723,7 @@ public class CfClient {
 		
 		//ON MESSAGE
 		eventSourceManager.onMessage() {(id, event, data) in
-			print("Got message with empty data \(Date())")
+            CfClient.log.info("Got server heart beat \(Date())")
 			guard let stringData = data else {
 				onEvent(EventType.onMessage(Message(event: "message", domain: "", identifier: "", version: 0)), nil)
 				return
@@ -725,7 +732,8 @@ public class CfClient {
 				let data = stringData.data(using: .utf8)
 				let decoded = try JSONDecoder().decode(Message.self, from: data!)
 				onEvent(EventType.onMessage(decoded), nil)
-			} catch {
+			} catch (let err) {
+                CfClient.log.warn("SSE stream parse error: \(err)")
 				onEvent(EventType.onMessage(nil), CFError.parsingError)
 			}
 		}
@@ -734,17 +742,19 @@ public class CfClient {
 			//ON EVENT
 			eventSourceManager.addEventListener(event) { [weak self] (id, event, data) in
 				guard let self = self else {return}
-				Logger.log("An Event has been received")
+                CfClient.log.debug("An Event has been received")
 				guard let stringData = data else {
 					onEvent(EventType.onEventListener(nil), CFError.noDataError)
 					return
 				}
-				do {
-					
-                    let data = stringData.data(using: .utf8)
-					let decoded = try JSONDecoder().decode(Message.self, from: data!)
+                do {
                     
-                    Logger.log("Message: \(decoded)")
+                    let data = stringData.data(using: .utf8)
+                    let decoded = try JSONDecoder().decode(Message.self, from: data!)
+                    
+                    if let event = decoded.event {
+                        SdkCodes.info_stream_event_received(event)
+                    }
                     
 					self.lastEventId = decoded.event
                     
@@ -773,9 +783,10 @@ public class CfClient {
                                                 onEvent(EventType.onPolling(evaluations), nil)
                                             } catch {
                                                 //If saving to cache fails, pass success for authorization and continue
-                                                print("Could not save to cache")
+                                                CfClient.log.warn("Could not save to cache")
                                             }
                                         case .failure(let error):
+                                            CfClient.log.warn("Exception while saving cache")
                                             onEvent(EventType.onEventListener(nil), error)
                                     }
                                 })
@@ -838,7 +849,7 @@ public class CfClient {
 	
 	//MARK: STREAMING/POLLING SWITCH METHODS
 	private func startStreaming(_ events:[String]? = nil) {
-		Logger.log("POLLING stopped / STREAM starting")
+        CfClient.log.info("POLLING stopped / STREAM starting")
 		self.connectStream()
 	}
 	
@@ -847,12 +858,14 @@ public class CfClient {
 			self.timer!.invalidate()
 			self.timer = nil
 		}
+        SdkCodes.info_polling_stopped()
 	}
 	
 	//Initiate polling sequence and retry SSE connection if SSE is enabled, every `pollingInterval`
 	private func startPolling(onCompletion:@escaping(Swift.Result<EventType, CFError>)->()) {
-		Logger.log("Try reconnecting to STREAM with retry interval of \(self.configuration.pollingInterval) seconds")
+        CfClient.log.info("Try reconnecting to STREAM with retry interval of \(self.configuration.pollingInterval) seconds")
 		if timer == nil {
+            SdkCodes.info_poll_started(Int(self.configuration.pollingInterval))
 			DispatchQueue.main.async {
 				self.timer = Timer.scheduledTimer(withTimeInterval: self.configuration.pollingInterval, repeats: true) {[weak self] _ in
 					if self?.configuration.streamEnabled == true {

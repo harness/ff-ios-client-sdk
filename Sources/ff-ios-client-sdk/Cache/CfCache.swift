@@ -18,6 +18,8 @@ public protocol StorageRepositoryProtocol {
 }
 
 public final class CfCache: StorageRepositoryProtocol {
+    static let log = SdkLog.get("io.harness.ff.sdk.ios.CfCache")
+    
 	///In-memory cache
 	var cache = [String:Any]()
 	public init(){
@@ -27,27 +29,29 @@ public final class CfCache: StorageRepositoryProtocol {
 	
 	public func saveValue<Value:Codable>(_ value: Value, key: String) throws {
 		cache[key] = value
-		Logger.log("Saved to CACHE at key: \(key)", spaceBelow: 0, enabled: false)
+        CfCache.log.trace("Saved to CACHE at key: \(key)")
 		do {
 			try saveToDisk(value, withName: key)
 		} catch {
+            CfCache.log.warn("ERROR: Failed to save value for key \(key): \(error)")
 			throw error
 		}
-		Logger.log("Saved to DISK at key: \(key)", enabled: false)
+        CfCache.log.trace("Saved to DISK at key: \(key)")
 	}
 	
 	public func getValue<Value:Codable>(forKey key: String) throws -> Value? {
 		guard let entry = cache[key] else {
 			do {
 				let val:Value? = try readFromDisk(key)
-				Logger.log("Fetched from DISK & updated CACHE for key: \(key)")
+                CfCache.log.trace("Fetched from DISK & updated CACHE for key: \(key)")
 				cache[key] = val
 				return val
 			} catch {
+                CfCache.log.trace("ERROR: Failed to get value for key \(key): \(error)")
 				throw error
 			}
 		}
-		Logger.log("Fetched from CACHE for key: \(key)")
+		//Logger.log("Fetched from CACHE for key: \(key)")
 		return entry as? Value
 	}
 	
@@ -79,6 +83,7 @@ public final class CfCache: StorageRepositoryProtocol {
 			throw CFError.cacheError(.invalidDirectory)
 		}
 		guard fileManager.fileExists(atPath: url.path) else {
+            CfCache.log.warn("ERROR: Failed to read from disk path: \(url.path)")
 			throw CFError.cacheError(.fileDoesNotExist)
 		}
 		do {

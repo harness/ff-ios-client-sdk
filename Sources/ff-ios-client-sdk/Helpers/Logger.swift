@@ -1,35 +1,60 @@
-//
-//  Logger.swift
-//  ff-ios-client-sdk
-//
-//  Created by Dusan Juranovic on 11.2.21..
-//
 
-import Foundation
+import os.log
 
-struct Logger {
-	static var logsEnabled = true
-	static func log(_ string:String, spaceBelow:Int? = 1, enabled:Bool? = true) {
-		if logsEnabled {
-			if enabled! {
-				let date = "\(Date.time()) -> "
-				let dash = String(repeating: "-", count: string.count + date.count)
-				let lowerSpace = String(repeating: "\n", count: spaceBelow!)
-				print ("""
-			       \(dash)
-			       \(date)\(string)
-			       \(dash)\(lowerSpace)
-			       """)
-			}
-		}
-	}
+protocol SdkLogger {
+    func trace(_ msg:String)
+    func debug(_ msg:String)
+    func info(_ msg:String)
+    func warn(_ msg:String)
+    func error(_ msg:String)
 }
 
-fileprivate extension Date {
-	static func time() -> String {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = "HH:mm:ss"
-		let date = dateFormatter.string(from: Date())
-		return date
-	}
+protocol SdkLoggerFactory {
+    func createSdkLogger(_ label:String) -> SdkLogger
 }
+
+internal class DefaultSdkLogger : SdkLogger {
+    private let label : String
+    
+    init(_ label:String) {
+        self.label = label
+    }
+    
+    func trace(_ msg:String) {
+        os_log("TRACE: %@ %@", type: .debug, label, msg)
+    }
+    
+    func debug(_ msg:String) {
+        os_log("DEBUG: %@ %@", type: .debug, label, msg)
+    }
+    
+    func info(_ msg:String) {
+        os_log("INFO: %@ %@", type: .info, label, msg)
+    }
+    
+    func warn(_ msg:String) {
+        os_log("WARN: %@ %@", type: .error, label, msg)
+    }
+    
+    func error(_ msg:String) {
+        os_log("ERROR: %@ %@", type: .error, label, msg)
+    }
+
+}
+
+internal class DefaultSdkLoggerFactory : SdkLoggerFactory {
+    func createSdkLogger(_ label:String) -> SdkLogger {
+        return DefaultSdkLogger(label)
+    }
+}
+
+internal class SdkLog {
+    
+    internal static var logger = DefaultSdkLoggerFactory()
+    
+    static internal func get(_ label:String) -> SdkLogger {
+        return logger.createSdkLogger(label)
+    }
+}
+
+
