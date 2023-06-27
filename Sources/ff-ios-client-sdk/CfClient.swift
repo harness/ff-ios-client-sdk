@@ -753,11 +753,9 @@ public class CfClient {
                     
                     let data = stringData.data(using: .utf8)
                     let decoded = try JSONDecoder().decode(Message.self, from: data!)
-                    
-                    if let event = decoded.event {
-                        SdkCodes.info_stream_event_received(event)
-                    }
-                    
+
+                    SdkCodes.info_stream_event_received(stringData.trimmingCharacters(in: .whitespacesAndNewlines))
+
 					self.lastEventId = decoded.event
                     
                     // Handle Target Segment Events.  On an Event we need to fetch all evaluations
