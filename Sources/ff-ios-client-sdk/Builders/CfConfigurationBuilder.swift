@@ -24,7 +24,8 @@ public class CfConfigurationBuilder {
             pollingInterval: minimumPollingInterval,
             environmentId: "",
             tlsTrustedCAs: [],
-            loggerFactory: DefaultSdkLoggerFactory()
+            loggerFactory: nil,
+            debug: false
         )
 	}
 	/**
@@ -105,7 +106,16 @@ public class CfConfigurationBuilder {
         config.loggerFactory = factory
         return self
     }
-
+    /**
+    Enable debug/trace diagnostic messages on the internal default logger.
+     - Parameter debug: true to enable additional logging. Set to `false` by default.
+     - Note: Only applies to the default internal logger and has no effect if you've configured a customer logger with `setSdkLoggerFactory`.
+     */
+    public func setDebug(_ debug:Bool) -> CfConfigurationBuilder {
+        config.debug = debug
+        return self
+    }
+    
 	/**
 	Builds CfConfiguration object by providing components or is set to default component/s.
 	- `setConfigUrl(_:)`

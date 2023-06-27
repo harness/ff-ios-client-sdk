@@ -185,8 +185,13 @@ public class CfClient {
         cache: StorageRepositoryProtocol = CfCache(),
         _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil
     
-    ) {
-        SdkLog.setLoggerFactory(configuration.loggerFactory)
+    ) {       
+        if let factory = configuration.loggerFactory {
+            SdkLog.setLoggerFactory(factory)
+        } else if (configuration.debug) {
+            DefaultSdkLogger.setLogLevel(SdkLogLevel.Trace)
+        }
+        
         self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target

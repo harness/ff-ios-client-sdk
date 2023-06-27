@@ -19,10 +19,14 @@ internal enum SdkLogLevel: Int {
 
 internal class DefaultSdkLogger : SdkLogger {
     private let label : String
-    private static let logLevel : SdkLogLevel = SdkLogLevel.Info
+    private static var logLevel : SdkLogLevel = SdkLogLevel.Info
     
     init(_ label:String) {
         self.label = label
+    }
+    
+    static func setLogLevel(_ logLevel:SdkLogLevel) {
+        DefaultSdkLogger.logLevel = logLevel
     }
     
     func trace(_ msg:String) {
