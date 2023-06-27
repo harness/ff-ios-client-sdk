@@ -1,35 +1,82 @@
-//
-//  Logger.swift
-//  ff-ios-client-sdk
-//
-//  Created by Dusan Juranovic on 11.2.21..
-//
 
-import Foundation
+import os.log
 
-struct Logger {
-	static var logsEnabled = true
-	static func log(_ string:String, spaceBelow:Int? = 1, enabled:Bool? = true) {
-		if logsEnabled {
-			if enabled! {
-				let date = "\(Date.time()) -> "
-				let dash = String(repeating: "-", count: string.count + date.count)
-				let lowerSpace = String(repeating: "\n", count: spaceBelow!)
-				print ("""
-			       \(dash)
-			       \(date)\(string)
-			       \(dash)\(lowerSpace)
-			       """)
-			}
-		}
-	}
+public protocol SdkLogger {
+    func trace(_ msg:String)
+    func debug(_ msg:String)
+    func info(_ msg:String)
+    func warn(_ msg:String)
+    func error(_ msg:String)
 }
 
-fileprivate extension Date {
-	static func time() -> String {
-		let dateFormatter = DateFormatter()
-		dateFormatter.dateFormat = "HH:mm:ss"
-		let date = dateFormatter.string(from: Date())
-		return date
-	}
+public protocol SdkLoggerFactory {
+    func createSdkLogger(_ label:String) -> SdkLogger
 }
+
+internal enum SdkLogLevel: Int {
+    case Trace = 1, Debug = 2, Info = 3, Warn = 4, Error = 5
+}
+
+internal class DefaultSdkLogger : SdkLogger {
+    private let label : String
+    private static var logLevel : SdkLogLevel = SdkLogLevel.Info
+    
+    init(_ label:String) {
+        self.label = label
+    }
+    
+    static func setLogLevel(_ logLevel:SdkLogLevel) {
+        DefaultSdkLogger.logLevel = logLevel
+    }
+    
+    func trace(_ msg:String) {
+        if (SdkLogLevel.Trace.rawValue >= DefaultSdkLogger.logLevel.rawValue) {
+            os_log("TRACE: %@ %@", type: .debug, label, msg)
+        }
+    }
+
+    func debug(_ msg:String) {
+        if (SdkLogLevel.Debug.rawValue >= DefaultSdkLogger.logLevel.rawValue) {
+            os_log("DEBUG: %@ %@", type: .debug, label, msg)
+        }
+    }
+    
+    func info(_ msg:String) {
+        if (SdkLogLevel.Info.rawValue >= DefaultSdkLogger.logLevel.rawValue) {
+            os_log("INFO: %@ %@", type: .info, label, msg)
+        }
+    }
+    
+    func warn(_ msg:String) {
+        if (SdkLogLevel.Warn.rawValue >= DefaultSdkLogger.logLevel.rawValue) {
+            os_log("WARN: %@ %@", type: .error, label, msg)
+        }
+    }
+    
+    func error(_ msg:String) {
+        if (SdkLogLevel.Error.rawValue >= DefaultSdkLogger.logLevel.rawValue) {
+            os_log("ERROR: %@ %@", type: .error, label, msg)
+        }
+    }
+}
+
+internal class DefaultSdkLoggerFactory : SdkLoggerFactory {
+    func createSdkLogger(_ label:String) -> SdkLogger {
+        return DefaultSdkLogger(label)
+    }
+}
+
+internal class SdkLog {
+    
+    internal static var loggerFactory:SdkLoggerFactory = DefaultSdkLoggerFactory()
+    
+    static internal func get(_ label:String) -> SdkLogger {
+        return loggerFactory.createSdkLogger(label)
+    }
+    
+    static internal func setLoggerFactory(_ factory:SdkLoggerFactory) {
+        SdkLog.loggerFactory = factory
+    }
+}
+
+

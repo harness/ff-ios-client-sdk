@@ -1,6 +1,7 @@
 import Foundation
 
 class AnalyticsPublisherService {
+    private static let log = SdkLog.get("io.harness.ff.sdk.ios.AnalyticsPublisherService")
     
     private let cluster: String
     private let environmentID: String
@@ -32,10 +33,10 @@ class AnalyticsPublisherService {
     
         if (cache.isEmpty) {
         
-            Logger.log("Metrics data cache size: empty")
+            AnalyticsPublisherService.log.trace("Metrics data cache size: empty")
         } else {
             
-            Logger.log("Metrics data cache size: \(cache.count)")
+            AnalyticsPublisherService.log.trace("Metrics data cache size: \(cache.count)")
             
             let metrics = prepareSummaryMetricsBody(cache: &cache)
             if let metricsData = metrics.metricsData {
@@ -48,17 +49,33 @@ class AnalyticsPublisherService {
                         cluster: cluster,
                         metrics: metrics
                         
-                    ) { (response, _) in
-                        
-                        Logger.log("Metrics data: sending finished")
+                    ) { (response, error) in
+
+                        var success = true
+
+                        if let errResp = error as? ErrorResponse {
+                            switch (errResp) {
+                            case .error(let statusCode, let data, let error):
+                                if (statusCode != 200) {
+                                    let dataStr = data?.description ?? ""
+                                    let errorStr = error?.localizedDescription ?? ""
+                                    SdkCodes.warn_post_metrics_failed("HTTP status=\(statusCode) data=\(dataStr) error=\(errorStr)")
+                                    success = false
+                                }
+                            }
+                        }
+
+                        if (success) {
+                            AnalyticsPublisherService.log.trace("Metrics data: sending finished")
+                        }
                     }
                 } else {
                     
-                    Logger.log("Metrics data: no metrics data to send")
+                    AnalyticsPublisherService.log.trace("Metrics data: no metrics data to send")
                 }
             
                 cache.removeAll(keepingCapacity: true)
-                Logger.log("Metrics data cache is cleaned up, size: \(cache.count)")
+                AnalyticsPublisherService.log.debug("Metrics data cache is cleaned up, size: \(cache.count)")
             }
         }
     }

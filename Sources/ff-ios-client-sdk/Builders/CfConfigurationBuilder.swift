@@ -23,7 +23,9 @@ public class CfConfigurationBuilder {
             analyticsEnabled: true,
             pollingInterval: minimumPollingInterval,
             environmentId: "",
-            tlsTrustedCAs: []
+            tlsTrustedCAs: [],
+            loggerFactory: nil,
+            debug: false
         )
 	}
 	/**
@@ -92,6 +94,25 @@ public class CfConfigurationBuilder {
     */
     public func setTlsTrustedCAs(_ tlsTrustedCAs:[String]) -> CfConfigurationBuilder {
         config.tlsTrustedCAs = tlsTrustedCAs
+        return self
+    }
+    
+    /**
+    Redirect SDK logs to a custom logging framework.
+     - Parameter factory: `SdkLoggerFactory`. A factory implementation that returns custom SdkLogger instances (which in turn implement trace(), debug(), info(), warn() and so on methods)
+     - Note: Currently OpenAPI REST and HTTP log messages are not reported via this mechanism.
+     */
+    public func setSdkLoggerFactory(_ factory:SdkLoggerFactory) -> CfConfigurationBuilder {
+        config.loggerFactory = factory
+        return self
+    }
+    /**
+    Enable debug/trace diagnostic messages on the internal default logger.
+     - Parameter debug: true to enable additional logging. Set to `false` by default.
+     - Note: Only applies to the default internal logger and has no effect if you've configured a customer logger with `setSdkLoggerFactory`.
+     */
+    public func setDebug(_ debug:Bool) -> CfConfigurationBuilder {
+        config.debug = debug
         return self
     }
     

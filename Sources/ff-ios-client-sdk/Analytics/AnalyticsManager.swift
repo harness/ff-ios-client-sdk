@@ -2,6 +2,8 @@ import Foundation
 
 class AnalyticsManager : Destroyable {
     
+    private static let log = SdkLog.get("io.harness.ff.sdk.ios.AnalyticsManager")
+    
     private let environmentID: String
     private let cluster: String
     private let authToken: String
@@ -27,11 +29,13 @@ class AnalyticsManager : Destroyable {
         self.config = config
         self.cache = cache
         self.ready = true
+        
+        SdkCodes.info_metrics_thread_started()
     }
     
     @objc func send() {
         
-        Logger.log("Sending metrics")
+        AnalyticsManager.log.info("Sending metrics")
         
         let analyticsPublisherService = AnalyticsPublisherService(
         
@@ -54,7 +58,7 @@ class AnalyticsManager : Destroyable {
             return
         }
         
-        Logger.log("Metrics data appending")
+        AnalyticsManager.log.trace("Metrics data appending")
         
         let analyticsKey = getAnalyticsCacheKey(target: target, identifier: variation.name)
         var wrapper = cache[analyticsKey]
@@ -71,24 +75,22 @@ class AnalyticsManager : Destroyable {
             wrapper = AnalyticsWrapper(analytics: analytics, count: 1)
             cache[analyticsKey] = wrapper
             
-            Logger.log("Metrics data appended [1], \(variation.name) has count of: 1")
+            AnalyticsManager.log.trace("Metrics data appended [1], \(variation.name) has count of: 1")
         } else {
             
             wrapper?.count += 1
             if let w = wrapper {
                 
-                Logger.log("Metrics data appended [2], \(variation.name) has count of: \(w.count)")
+                AnalyticsManager.log.trace("Metrics data appended [2], \(variation.name) has count of: \(w.count)")
             } else {
                 
-                Logger.log("Metrics data appended [3], \(variation.name) has count of: ERROR")
+                AnalyticsManager.log.trace("Metrics data appended [3], \(variation.name) has count of: ERROR")
             }
         }
-        
-        Logger.log("Metrics data total count: \(cache.count)")
-        
+                
         if (self.timer == nil) {
             
-            Logger.log("Scheduling metrics timer")
+            AnalyticsManager.log.debug("Scheduling metrics timer")
             
             self.timer = Timer.scheduledTimer(
                 
@@ -100,11 +102,13 @@ class AnalyticsManager : Destroyable {
             )
         } else {
             
-            Logger.log("Scheduling metrics timer SKIPPED")
+            AnalyticsManager.log.trace("Scheduling metrics timer SKIPPED")
         }
     }
     
     func destroy() {
+        
+        SdkCodes.info_metrics_thread_exited()
         
         ready = false
         self.timer?.invalidate()
@@ -119,7 +123,7 @@ class AnalyticsManager : Destroyable {
     ) -> String {
         
         let key = "\(target.identifier)_\(identifier)"
-        Logger.log("Analytics cache key: \(key)")
+        AnalyticsManager.log.trace("Analytics cache key: \(key)")
         return key
     }
 }

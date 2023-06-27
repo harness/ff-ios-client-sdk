@@ -27,6 +27,8 @@ protocol EventSourceManagerProtocol {
 
 class EventSourceManager: EventSourceManagerProtocol {
 	
+    private static let logger = SdkLog.get("io.harness.ff.sdk.ios.EventSourceManager")
+    
     //MARK: - Internal properties -
 	var streamReady: Bool {
 		switch eventSource?.readyState {
@@ -46,8 +48,8 @@ class EventSourceManager: EventSourceManagerProtocol {
             let cluster = parameterConfig?.cluster ?? ""
 			let streamUrl = URL(string: "\(config.streamUrl)?cluster=\(cluster)")!
             let headers = parameterConfig?.headers ?? [:]
-			    
-            NSLog("Api, streamUrl: \(streamUrl)")
+
+            EventSourceManager.logger.debug("Stream URL: \(streamUrl)")
             
             if eventSource == nil {
 				//Create new instance if instance is nil
@@ -123,4 +125,5 @@ struct ParameterConfig {
 	
     let headers: [String:String]
     let cluster: String
+    
 }
