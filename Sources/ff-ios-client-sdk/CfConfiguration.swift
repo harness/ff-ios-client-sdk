@@ -21,6 +21,7 @@ public struct CfConfiguration {
 	var environmentId: String
     var analyticsFrequency: Int
     var tlsTrustedCAs: [String]
+    var loggerFactory: SdkLoggerFactory
 	
 	internal init(
         
@@ -31,7 +32,8 @@ public struct CfConfiguration {
         analyticsEnabled: Bool,
         pollingInterval:TimeInterval,
         environmentId: String,
-        tlsTrustedCAs: [String]
+        tlsTrustedCAs: [String],
+        loggerFactory: SdkLoggerFactory
         
     ) {
 		
@@ -44,6 +46,7 @@ public struct CfConfiguration {
 		self.environmentId = environmentId
         self.analyticsFrequency = CfConfiguration.MIN_ANALYTICS_FREQUENCY
         self.tlsTrustedCAs = tlsTrustedCAs
+        self.loggerFactory = loggerFactory
 	}
 	
 	public static func builder() -> CfConfigurationBuilder {

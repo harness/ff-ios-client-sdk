@@ -186,7 +186,7 @@ public class CfClient {
         _ onCompletion:((Swift.Result<Void, CFError>)->())? = nil
     
     ) {
-		
+        SdkLog.setLoggerFactory(configuration.loggerFactory)
         self.configuration = configuration
 		self.apiKey = apiKey
 		self.target = target
@@ -560,6 +560,7 @@ public class CfClient {
 				completion(nil)
 				return
 			}
+            SdkCodes.warn_default_variation_served(evaluationId, target.identifier, "\(defaultValue)")
 			completion(Evaluation(flag: evaluationId, identifier: evaluationId, value: defaultValue))
 		}
 	}
@@ -583,7 +584,7 @@ public class CfClient {
                         completion(nil)
 						return
 					}
-					
+                    SdkCodes.warn_default_variation_served(key, target, "\(defaultValue)")
                     let evaluation = Evaluation(flag:key, identifier: key, value: defaultValue)
                     self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
                     completion(evaluation)
@@ -699,7 +700,8 @@ public class CfClient {
 				switch result {
 					case .success(let evaluations):
 						onEvent(EventType.onPolling(evaluations), nil)
-					case .failure(_):
+					case .failure(let err):
+                        CfClient.log.warn("Failed to get evaluations: \(err)")
 						//If error occurs while fetching evaluations, we just ignore this failure and continue with SSE.
 						break
 				}

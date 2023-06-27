@@ -23,7 +23,8 @@ public class CfConfigurationBuilder {
             analyticsEnabled: true,
             pollingInterval: minimumPollingInterval,
             environmentId: "",
-            tlsTrustedCAs: []
+            tlsTrustedCAs: [],
+            loggerFactory: DefaultSdkLoggerFactory()
         )
 	}
 	/**

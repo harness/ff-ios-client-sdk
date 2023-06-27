@@ -47,11 +47,10 @@ public final class CfCache: StorageRepositoryProtocol {
 				cache[key] = val
 				return val
 			} catch {
-                CfCache.log.trace("ERROR: Failed to get value for key \(key): \(error)")
+                CfCache.log.warn("ERROR: Failed to get value for key \(key): \(error)")
 				throw error
 			}
 		}
-		//Logger.log("Fetched from CACHE for key: \(key)")
 		return entry as? Value
 	}
 	

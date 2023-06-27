@@ -101,10 +101,10 @@ class SdkCodes {
   // MARK: SDK_EVAL_6xxx
 
   static func warn_default_variation_served(
-    identifier: String, target: CfTarget, defaultValue: String
+    _ identifier: String, _ targetIdentifier: String, _ defaultValue: String
   ) {
     logger.warn(
-      "\(prefix(6001)): Default variation was served, identifier=\(identifier), target=\(target.identifier), default=\(defaultValue)"
+      "\(prefix(6001)): Default variation was served, identifier=\(identifier), target=\(targetIdentifier), default=\(defaultValue)"
     )
   }
 

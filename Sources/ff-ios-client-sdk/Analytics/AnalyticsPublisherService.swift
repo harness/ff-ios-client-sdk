@@ -49,9 +49,13 @@ class AnalyticsPublisherService {
                         cluster: cluster,
                         metrics: metrics
                         
-                    ) { (response, _) in
+                    ) { (response, error) in
                         
-                        AnalyticsPublisherService.log.trace("Metrics data: sending finished")
+                        if let err = error {
+                            SdkCodes.warn_post_metrics_failed("\(err)")
+                        } else {
+                            AnalyticsPublisherService.log.trace("Metrics data: sending finished")
+                        }
                     }
                 } else {
                     

@@ -30,6 +30,6 @@ class SdkCodesTest: XCTestCase {
         SdkCodes.info_metrics_thread_started()
         SdkCodes.info_metrics_thread_exited()
         SdkCodes.warn_post_metrics_failed("dummy")
-        SdkCodes.warn_default_variation_served(identifier: "id", target: target, defaultValue: "defVal")
+        SdkCodes.warn_default_variation_served("id", target.identifier, "defVal")
     }
 }

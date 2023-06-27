@@ -29,6 +29,8 @@ class AnalyticsManager : Destroyable {
         self.config = config
         self.cache = cache
         self.ready = true
+        
+        SdkCodes.info_metrics_thread_started()
     }
     
     @objc func send() {
@@ -105,6 +107,8 @@ class AnalyticsManager : Destroyable {
     }
     
     func destroy() {
+        
+        SdkCodes.info_metrics_thread_exited()
         
         ready = false
         self.timer?.invalidate()
