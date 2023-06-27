@@ -1,7 +1,7 @@
 
 import os.log
 
-protocol SdkLogger {
+public protocol SdkLogger {
     func trace(_ msg:String)
     func debug(_ msg:String)
     func info(_ msg:String)
@@ -9,9 +9,7 @@ protocol SdkLogger {
     func error(_ msg:String)
 }
 
-
-
-protocol SdkLoggerFactory {
+public protocol SdkLoggerFactory {
     func createSdkLogger(_ label:String) -> SdkLogger
 }
 
@@ -19,7 +17,7 @@ internal enum SdkLogLevel: Int {
     case Trace = 1, Debug = 2, Info = 3, Warn = 4, Error = 5
 }
 
-public class DefaultSdkLogger : SdkLogger {
+internal class DefaultSdkLogger : SdkLogger {
     private let label : String
     private static let logLevel : SdkLogLevel = SdkLogLevel.Info
     
@@ -58,7 +56,7 @@ public class DefaultSdkLogger : SdkLogger {
     }
 }
 
-public class DefaultSdkLoggerFactory : SdkLoggerFactory {
+internal class DefaultSdkLoggerFactory : SdkLoggerFactory {
     func createSdkLogger(_ label:String) -> SdkLogger {
         return DefaultSdkLogger(label)
     }

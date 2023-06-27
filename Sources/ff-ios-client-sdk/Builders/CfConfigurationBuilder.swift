@@ -96,6 +96,16 @@ public class CfConfigurationBuilder {
         return self
     }
     
+    /**
+    Redirect SDK logs to a custom logging framework.
+     - Parameter factory: `SdkLoggerFactory`. A factory implementation that returns custom SdkLogger instances (which in turn implement trace(), debug(), info(), warn() and so on methods)
+     - Note: Currently OpenAPI REST and HTTP log messages are not reported via this mechanism.
+     */
+    public func setSdkLoggerFactory(_ factory:SdkLoggerFactory) -> CfConfigurationBuilder {
+        config.loggerFactory = factory
+        return self
+    }
+
 	/**
 	Builds CfConfiguration object by providing components or is set to default component/s.
 	- `setConfigUrl(_:)`
