@@ -50,10 +50,22 @@ class AnalyticsPublisherService {
                         metrics: metrics
                         
                     ) { (response, error) in
-                        
-                        if let err = error {
-                            SdkCodes.warn_post_metrics_failed("\(err)")
-                        } else {
+
+                        var success = true
+
+                        if let errResp = error as? ErrorResponse {
+                            switch (errResp) {
+                            case .error(let statusCode, let data, let error):
+                                if (statusCode != 200) {
+                                    let dataStr = data?.description ?? ""
+                                    let errorStr = error?.localizedDescription ?? ""
+                                    SdkCodes.warn_post_metrics_failed("HTTP status=\(statusCode) data=\(dataStr) error=\(errorStr)")
+                                    success = false
+                                }
+                            }
+                        }
+
+                        if (success) {
                             AnalyticsPublisherService.log.trace("Metrics data: sending finished")
                         }
                     }
