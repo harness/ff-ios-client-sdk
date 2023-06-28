@@ -9,52 +9,51 @@ import Foundation
 /// - `analyticsEnabled`: `true`
 /// - `pollingInterval`: `60` seconds
 public struct CfConfiguration {
-    
-    static var MIN_ANALYTICS_FREQUENCY: Int = 60
-	
-    var configUrl: String
-	var streamUrl: String
-    var eventUrl: String
-	var streamEnabled: Bool
-	var analyticsEnabled: Bool
-	var pollingInterval: TimeInterval
-	var environmentId: String
-    var analyticsFrequency: Int
-    var tlsTrustedCAs: [String]
-    var loggerFactory: SdkLoggerFactory?
-    var debug: Bool
-    
-	internal init(
-        
-        configUrl: String,
-        streamUrl: String,
-        eventUrl: String,
-        streamEnabled: Bool,
-        analyticsEnabled: Bool,
-        pollingInterval:TimeInterval,
-        environmentId: String,
-        tlsTrustedCAs: [String],
-        loggerFactory: SdkLoggerFactory?,
-        debug: Bool
-        
-    ) {
-		
-        self.configUrl = configUrl
-		self.streamUrl = streamUrl
-        self.eventUrl = eventUrl
-		self.streamEnabled = streamEnabled
-		self.analyticsEnabled = analyticsEnabled
-		self.pollingInterval = pollingInterval
-		self.environmentId = environmentId
-        self.analyticsFrequency = CfConfiguration.MIN_ANALYTICS_FREQUENCY
-        self.tlsTrustedCAs = tlsTrustedCAs
-        self.loggerFactory = loggerFactory
-        self.debug = debug
-	}
-	
-	public static func builder() -> CfConfigurationBuilder {
-		
-        return CfConfigurationBuilder()
-	}
-}
 
+  static var MIN_ANALYTICS_FREQUENCY: Int = 60
+
+  var configUrl: String
+  var streamUrl: String
+  var eventUrl: String
+  var streamEnabled: Bool
+  var analyticsEnabled: Bool
+  var pollingInterval: TimeInterval
+  var environmentId: String
+  var analyticsFrequency: Int
+  var tlsTrustedCAs: [String]
+  var loggerFactory: SdkLoggerFactory?
+  var debug: Bool
+
+  internal init(
+
+    configUrl: String,
+    streamUrl: String,
+    eventUrl: String,
+    streamEnabled: Bool,
+    analyticsEnabled: Bool,
+    pollingInterval: TimeInterval,
+    environmentId: String,
+    tlsTrustedCAs: [String],
+    loggerFactory: SdkLoggerFactory?,
+    debug: Bool
+
+  ) {
+
+    self.configUrl = configUrl
+    self.streamUrl = streamUrl
+    self.eventUrl = eventUrl
+    self.streamEnabled = streamEnabled
+    self.analyticsEnabled = analyticsEnabled
+    self.pollingInterval = pollingInterval
+    self.environmentId = environmentId
+    self.analyticsFrequency = CfConfiguration.MIN_ANALYTICS_FREQUENCY
+    self.tlsTrustedCAs = tlsTrustedCAs
+    self.loggerFactory = loggerFactory
+    self.debug = debug
+  }
+
+  public static func builder() -> CfConfigurationBuilder {
+
+    return CfConfigurationBuilder()
+  }
+}
