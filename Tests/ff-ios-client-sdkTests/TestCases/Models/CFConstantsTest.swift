@@ -6,39 +6,40 @@
 //
 
 import XCTest
+
 @testable import ff_ios_client_sdk
 
 class CfConstantsTest: XCTestCase {
-    var sut: CfConstants.Persistance!
-    
-    override func setUp() {
-        super.setUp()
+  var sut: CfConstants.Persistance!
 
-    }
-    override func tearDown() {
-        super.tearDown()
-    }
-    
-    func testFeatureKey() {
-		// Given
-		var feature = sut
-		
-		// When
-        feature = .feature("envID", "target", "feature")
-		
-		// Then
-		XCTAssertEqual(feature!.value, "envID_target_feature")
-    }
-	
-	func testFeaturesKey() {
-		// Given
-		var features = sut
-		
-		// When
-		features = .features("envID", "target")
-		
-		// Then
-		XCTAssertEqual(features!.value, "envID_target_features")
-	}
-    
+  override func setUp() {
+    super.setUp()
+
+  }
+  override func tearDown() {
+    super.tearDown()
+  }
+
+  func testFeatureKey() {
+    // Given
+    var feature = sut
+
+    // When
+    feature = .feature("envID", "target", "feature")
+
+    // Then
+    XCTAssertEqual(feature!.value, "envID_target_feature")
+  }
+
+  func testFeaturesKey() {
+    // Given
+    var features = sut
+
+    // When
+    features = .features("envID", "target")
+
+    // Then
+    XCTAssertEqual(features!.value, "envID_target_features")
+  }
+
 }

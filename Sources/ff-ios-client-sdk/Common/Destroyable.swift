@@ -1,6 +1,6 @@
 import Foundation
 
 public protocol Destroyable {
-    
-    func destroy()
+
+  func destroy()
 }
