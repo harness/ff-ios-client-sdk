@@ -6,25 +6,23 @@
 //
 
 import XCTest
+
 @testable import ff_ios_client_sdk
 
 class CfProjectTest: XCTestCase {
-    
-    var sut: CfProject!
-    
-    override func setUp() {
-        super.setUp()
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
-    
-    func testInit() {
-        sut = .init(dict: CfProjectMocks.projectInitDict)
-        XCTAssertNotNil(sut)
-    }
+
+  var sut: CfProject!
+
+  override func setUp() {
+    super.setUp()
+  }
+
+  override func tearDown() {
+    super.tearDown()
+  }
+
+  func testInit() {
+    sut = .init(dict: CfProjectMocks.projectInitDict)
+    XCTAssertNotNil(sut)
+  }
 }
-
-
-
