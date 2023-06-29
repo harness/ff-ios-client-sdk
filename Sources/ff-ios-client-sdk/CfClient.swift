@@ -243,7 +243,7 @@ public class CfClient {
 
   /**
 	Completion block of this method will be called on each SSE response event.
-	This method needs to be called in order to get SSE events. Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
 	- Parameters:
 		- events: An optional `[String]?`, representing the Events we want to subscribe to. Defaults to `[*]`, which subscribes to all events.
 		- onCompletion: Completion block containing `Swift.Result<EventType, CFError>`
