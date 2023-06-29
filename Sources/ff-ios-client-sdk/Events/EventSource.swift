@@ -158,6 +158,13 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     return Array(eventListeners.keys)
   }
 
+  func clearEventCallbacks() {
+    self.onOpenCallback = nil
+    self.onComplete = nil
+    self.onMessageCallback = nil
+    eventListeners.removeAll()
+  }
+  
   open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
     if readyState != .open {
@@ -214,7 +221,11 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     _ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void
   ) {
-    tlsDelegate?.urlSession(session, didReceive: challenge, completionHandler: completionHandler)
+    if let delegate = tlsDelegate {
+      delegate.urlSession(session, didReceive: challenge, completionHandler: completionHandler)
+    } else {
+      completionHandler(URLSession.AuthChallengeDisposition.rejectProtectionSpace, nil)
+    }
   }
 }
 

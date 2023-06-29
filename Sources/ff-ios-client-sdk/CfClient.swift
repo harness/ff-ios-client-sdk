@@ -104,6 +104,7 @@ public class CfClient {
   private var analyticsCache = [String: AnalyticsWrapper]()
   private var lastPollTime: Date?
   private var minimumRefreshIntervalSecs = 60.0
+  private var currentState = State.offline
 
   //MARK: - Internal properties -
 
@@ -215,16 +216,34 @@ public class CfClient {
       case .success(_):
         OpenAPIClientAPI.streamPath = configuration.streamUrl
         OpenAPIClientAPI.eventPath = configuration.eventUrl
-        self.ready = true
-        SdkCodes.info_sdk_init_ok()
-        onCompletion?(.success(()))
+
+        var success = false
+        var err:CFError = CFError.authError(ErrorResponse.error(0, nil, nil))
+
+        self.registerEventsListener() { (result) in
+          switch (result) {
+          case .failure(let error):
+            success = false
+            err = error
+          case .success(_):
+            success = true
+          }
+        }
+
+        if (success) {
+          self.ready = true
+          SdkCodes.info_sdk_init_ok()
+          onCompletion?(.success(()))
+        } else {
+          onCompletion?(.failure(err))
+        }
       }
     }
   }
 
   /**
 	Completion block of this method will be called on each SSE response event.
-	This method needs to be called in order to get SSE events. Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
 	- Parameters:
 		- events: An optional `[String]?`, representing the Events we want to subscribe to. Defaults to `[*]`, which subscribes to all events.
 		- onCompletion: Completion block containing `Swift.Result<EventType, CFError>`
@@ -242,6 +261,7 @@ public class CfClient {
     onCompletion: @escaping (_ result: Swift.Result<EventType, CFError>) -> Void
   ) {
     guard isInitialized else { return }
+    self.clearEventsListener()
     let allKey = CfConstants.Persistance.features(
       self.configuration.environmentId, self.target.identifier
     ).value
@@ -293,6 +313,10 @@ public class CfClient {
     self.registerForNetworkConditionNotifications()
   }
 
+  func clearEventsListener() {
+    eventSourceManager?.clearEventCallbacks()
+  }
+  
   /**
 	Fetch `String` `Evaluation` from cache.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
@@ -667,6 +691,10 @@ public class CfClient {
 
   // Setup event observing flow based on `State`
   private func setupFlowFor(_ state: State) {
+    if (currentState == state) {
+      return
+    }
+
     switch state {
     case .offline:
       self.stopPolling()
@@ -689,6 +717,7 @@ public class CfClient {
       self.stopPolling()
       self.startStreaming()
     }
+    self.currentState = state;
   }
 
   //Setup network condition observing

@@ -9,6 +9,8 @@ import Foundation
 @testable import ff_ios_client_sdk
 
 class EventSourceManagerMock: EventSourceManagerProtocol {
+
+  
 	var forceDisconnected: Bool
 	var configuration: CfConfiguration?
 	var parameterConfig: ParameterConfig?
@@ -57,4 +59,7 @@ class EventSourceManagerMock: EventSourceManagerProtocol {
 	func destroy() {
 		self.streamReady = false
 	}
+  
+  func clearEventCallbacks() {
+  }
 }

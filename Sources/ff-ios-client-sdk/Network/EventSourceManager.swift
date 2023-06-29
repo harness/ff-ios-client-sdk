@@ -23,6 +23,7 @@ protocol EventSourceManagerProtocol {
   func connect(lastEventId: String?)
   func disconnect()
   func destroy()
+  func clearEventCallbacks()
 }
 
 class EventSourceManager: EventSourceManagerProtocol {
@@ -76,6 +77,11 @@ class EventSourceManager: EventSourceManagerProtocol {
   }
 
   //MARK: - Internal methods -
+  
+  func clearEventCallbacks() {
+    eventSource?.clearEventCallbacks()
+  }
+
   func onOpen(_ completion: @escaping () -> Void) {
     eventSource?.onOpen {
       completion()
