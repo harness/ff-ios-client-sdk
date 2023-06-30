@@ -66,15 +66,29 @@ class TlsURLSessionRequestBuilder<T>: URLSessionRequestBuilder<T> {
     configuration.httpAdditionalHeaders = buildHeaders()
     return URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: nil)
   }
+  
+  required public init(method: String, URLString: String, parameters: [String : Any]?, isBody: Bool, headers: [String : String] = [:]) {
+    super.init(method: method, URLString: URLString, parameters: parameters, isBody: isBody, headers: headers)
+    let handler = RetryHandler(URLString)
+    super.taskCompletionShouldRetry = handler.taskCompletionShouldRetry
+  }
+  
 }
 
 class TlsURLSessionDecodableRequestBuilder<T: Decodable>: URLSessionDecodableRequestBuilder<T> {
 
   fileprivate let sessionDelegate = URLSessionTrustDelegate()
+
   override func createURLSession() -> URLSession {
     let configuration = URLSessionConfiguration.default
     configuration.httpAdditionalHeaders = buildHeaders()
     return URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: nil)
+  }
+  
+  required public init(method: String, URLString: String, parameters: [String : Any]?, isBody: Bool, headers: [String : String] = [:]) {
+    super.init(method: method, URLString: URLString, parameters: parameters, isBody: isBody, headers: headers)
+    let handler = RetryHandler(URLString)
+    super.taskCompletionShouldRetry = handler.taskCompletionShouldRetry
   }
 }
 

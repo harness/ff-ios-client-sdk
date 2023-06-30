@@ -184,7 +184,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
   ) {
 
     completionHandler(URLSession.ResponseDisposition.allow)
-
+    SdkCodes.info_stream_connected()
     readyState = .open
     mainQueue.async { [weak self] in self?.onOpenCallback?() }
   }

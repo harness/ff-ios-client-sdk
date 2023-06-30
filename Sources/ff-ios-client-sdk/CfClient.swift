@@ -187,6 +187,8 @@ public class CfClient {
     _ onCompletion: ((Swift.Result<Void, CFError>) -> Void)? = nil
 
   ) {
+    OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
+    
     if let factory = configuration.loggerFactory {
       SdkLog.setLoggerFactory(factory)
     } else if configuration.debug {
@@ -240,7 +242,7 @@ public class CfClient {
       }
     }
   }
-
+  
   /**
 	Completion block of this method will be called on each SSE response event.
 	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
@@ -734,7 +736,7 @@ public class CfClient {
         if self.configuration.streamEnabled {
           self.setupFlowFor(.onlineStreaming)
         }
-        CfClient.log.info("Polling ENABLED due to NETWORK AVAILABLE")
+        CfClient.log.debug("Polling/Streaming ENABLED due to NETWORK AVAILABLE")
       } else {
         self.setupFlowFor(.offline)
         CfClient.log.info("Polling/Streaming DISABLED due to NO NETWORK")
@@ -767,7 +769,6 @@ public class CfClient {
     //ON OPEN
     eventSourceManager.onOpen {
       CfClient.log.info("SSE connection has been opened")
-      SdkCodes.info_stream_connected()
 
       onEvent(EventType.onOpen, nil)
 
