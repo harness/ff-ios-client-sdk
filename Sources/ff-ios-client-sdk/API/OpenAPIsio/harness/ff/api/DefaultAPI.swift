@@ -8,6 +8,9 @@
 import Foundation
 
 open class DefaultAPI {
+
+    private static let log = SdkLog.get("io.harness.ff.sdk.ios.DefaultAPI")
+
     /**
      Authenticate with the admin server.
      
@@ -157,7 +160,7 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("API getEvaluations: \(req.URLString)")
+        DefaultAPI.log.debug("API getEvaluations: \(req.URLString)")
         return req
     }
     
@@ -199,7 +202,7 @@ open class DefaultAPI {
             method: "GET", URLString: (url?.string ?? URLString), parameters: parameters, isBody: false
         )
         
-        NSLog("API getEvaluationByIdentifier: \(req.URLString)")
+        DefaultAPI.log.debug("API getEvaluationByIdentifier: \(req.URLString)")
         return req
     }
 }

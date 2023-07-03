@@ -1,7 +1,9 @@
 import Foundation
 
 open class MetricsAPI {
-    
+
+    private static let log = SdkLog.get("io.harness.ff.sdk.ios.MetricsAPI")
+
     /**
      Post metrics data.
      
@@ -76,7 +78,7 @@ open class MetricsAPI {
             isBody: true
         )
         
-        NSLog("API postMetrics: URL=\(req.URLString), HEADERS=\(req.headers), METHOD=\(req.method)")
+        MetricsAPI.log.debug("API postMetrics: URL=\(req.URLString), HEADERS=\(req.headers), METHOD=\(req.method)")
         return req
     }
 }

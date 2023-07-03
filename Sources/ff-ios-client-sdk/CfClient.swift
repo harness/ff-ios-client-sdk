@@ -790,12 +790,14 @@ public class CfClient {
       self.setupFlowFor(.onlinePolling)
       guard error == nil else {
 
-        NSLog("Api, eventSourceManager.onComplete: \(error!)")
+        let errStr = error?.localizedDescription ?? ""
+        CfClient.log.warn("Api, eventSourceManager.onComplete: error=\(errStr)")
         onEvent(EventType.onComplete, error)
         return
       }
 
-      NSLog("Api, eventSourceManager.onComplete: \(statusCode!)")
+      let statusStr = statusCode ?? -1;
+      CfClient.log.info("Api, eventSourceManager.onComplete: status=\(statusStr)")
       onEvent(EventType.onComplete, nil)
     }
 
