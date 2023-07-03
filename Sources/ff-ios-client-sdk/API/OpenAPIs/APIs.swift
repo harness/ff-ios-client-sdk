@@ -9,7 +9,7 @@ import Foundation
 open class OpenAPIClientAPI {
 	
     public static var configPath = CfConstants.Server.configUrl // "https://config.ff.harness.io/api/1.0"
-	public static var streamPath = CfConstants.Server.streamUrl // "https://config.ff.harness.io/api/1.0"
+    public static var streamPath = CfConstants.Server.streamUrl // "https://config.ff.harness.io/api/1.0"
     public static var eventPath = CfConstants.Server.eventUrl   // "https://events.ff.harness.io/api/1.0"
     
     public static var credential: URLCredential?
@@ -19,6 +19,7 @@ open class OpenAPIClientAPI {
 }
 
 open class RequestBuilder<T> {
+    private let log = SdkLog.get("io.harness.ff.sdk.ios.RequestBuilder")
     var credential: URLCredential?
     var headers: [String:String]
     public let parameters: [String:Any]?
@@ -51,8 +52,7 @@ open class RequestBuilder<T> {
         addHeaders(additionalHeaders)
         
         for (header, value) in self.headers {
-            
-            NSLog("Header: \(header) -> \(value)")
+            log.debug("Header: \(header) -> \(value)")
         }
     }
 

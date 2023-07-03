@@ -33,7 +33,7 @@ You can also add the `ff-ios-client-sdk` dependency locally by dragging the SDK 
 
 ```Swift
 dependencies: [
-	.package(url: "https://github.com/harness/ff-ios-client-sdk.git", .upToNextMinor(from: "1.0.4"))
+	.package(url: "https://github.com/harness/ff-ios-client-sdk.git", .upToNextMinor(from: "1.1.0"))
 ]
 ```
 &nbsp;
