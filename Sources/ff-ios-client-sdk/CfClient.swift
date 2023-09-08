@@ -60,7 +60,7 @@ public class CfClient {
     case offline
   }
 
-  private init(
+  internal init(
 
     authenticationManager: AuthenticationManagerProtocol = AuthenticationManager(),
     networkInfoProvider: NetworkInfoProviderProtocol = NetworkInfoProvider()
@@ -69,6 +69,7 @@ public class CfClient {
     self.authenticationManager = authenticationManager
     self.eventSourceManager = EventSourceManager.shared()
     self.networkInfoProvider = networkInfoProvider
+    self.target = CfTarget.builder().setIdentifier("").build()
   }
 
   private var lastEventId: String?
@@ -109,7 +110,7 @@ public class CfClient {
   //MARK: - Internal properties -
 
   var configuration: CfConfiguration!
-  var target: CfTarget!
+  var target: CfTarget
   var authenticationManager: AuthenticationManagerProtocol!
   var eventSourceManager: EventSourceManagerProtocol!
   var onPollingResultCallback: ((Swift.Result<EventType, CFError>) -> Void)?
@@ -234,6 +235,7 @@ public class CfClient {
 
         if (success) {
           self.ready = true
+          CfClient.log.info("SDK version: \(Version.version)")
           SdkCodes.info_sdk_init_ok()
           onCompletion?(.success(()))
         } else {
@@ -602,7 +604,7 @@ public class CfClient {
     }
   }
 
-  private func fetchIfReady(
+  internal func fetchIfReady(
 
     evaluationId: String,
     defaultValue: Any? = nil,
@@ -618,11 +620,15 @@ public class CfClient {
     case is [String: ValueType]: valueType = ValueType.object(defaultValue as! [String: ValueType])
     default: valueType = nil
     }
-    if ready {
+    if ready && target.isValid() {
       self.getEvaluationById(
         forKey: evaluationId, target: target.identifier, defaultValue: valueType,
         completion: completion)
     } else {
+      if !target.isValid() {
+        CfClient.log.warn("Target has not yet been set");
+      }
+
       guard let defaultValue = valueType else {
         completion(nil)
         return
