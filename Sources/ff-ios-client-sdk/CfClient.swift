@@ -235,6 +235,7 @@ public class CfClient {
 
         if (success) {
           self.ready = true
+          CfClient.log.info("SDK version: \(Version.version)")
           SdkCodes.info_sdk_init_ok()
           onCompletion?(.success(()))
         } else {
