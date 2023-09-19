@@ -11,7 +11,6 @@ class AnalyticsPublisherService {
   private static let SDK_TYPE: String = "SDK_TYPE"
   private static let SDK_VERSION: String = "SDK_VERSION"
   private static let SDK_LANGUAGE: String = "SDK_LANGUAGE"
-  private static let GLOBAL_TARGET: String = "__global__cf_target"
   private static let TARGET_ATTRIBUTE: String = "target"
   private static let FEATURE_NAME_ATTRIBUTE: String = "featureName"
   private static let VARIATION_IDENTIFIER_ATTRIBUTE: String = "variationIdentifier"
