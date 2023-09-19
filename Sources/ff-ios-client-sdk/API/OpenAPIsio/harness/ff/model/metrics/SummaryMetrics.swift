@@ -5,7 +5,7 @@ import Foundation
     public var featureName: String
     public var variationValue: String
     public var variationIdentifier: String
-    public var target: String
+    public var targetIdentifier: String
     
     init (
     
