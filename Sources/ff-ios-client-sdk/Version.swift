@@ -2,5 +2,5 @@ import Foundation
 
 class Version {
 
-  static let version: String = "1.1.1"
+  static let version: String = "1.1.2"
 }
