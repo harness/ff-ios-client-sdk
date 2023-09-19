@@ -11,7 +11,6 @@ class AnalyticsPublisherService {
   private static let SDK_TYPE: String = "SDK_TYPE"
   private static let SDK_VERSION: String = "SDK_VERSION"
   private static let SDK_LANGUAGE: String = "SDK_LANGUAGE"
-  private static let GLOBAL_TARGET: String = "__global__cf_target"
   private static let TARGET_ATTRIBUTE: String = "target"
   private static let FEATURE_NAME_ATTRIBUTE: String = "featureName"
   private static let VARIATION_IDENTIFIER_ATTRIBUTE: String = "variationIdentifier"
@@ -130,7 +129,7 @@ class AnalyticsPublisherService {
         KeyValue(
 
           key: AnalyticsPublisherService.TARGET_ATTRIBUTE,
-          value: AnalyticsPublisherService.GLOBAL_TARGET
+          value: key.targetIdentifier
         )
       )
       attributes.append(
@@ -178,7 +177,8 @@ class AnalyticsPublisherService {
 
       featureName: key.variation.name,
       variationValue: key.variation.value,
-      variationIdentifier: key.variation.identifier
+      variationIdentifier: key.variation.identifier,
+      targetIdentifier: key.target.identifier
     )
   }
 
