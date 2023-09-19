@@ -12,13 +12,13 @@ import Foundation
         featureName: String,
         variationValue: String,
         variationIdentifier: String,
-        target: String
+        targetIdentifier: String
     
     ) {
         
         self.featureName = featureName
         self.variationValue = variationValue
         self.variationIdentifier = variationIdentifier
-        self.target = target
+        self.targetIdentifier = targetIdentifier
     }
 }

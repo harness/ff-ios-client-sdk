@@ -129,7 +129,7 @@ class AnalyticsPublisherService {
         KeyValue(
 
           key: AnalyticsPublisherService.TARGET_ATTRIBUTE,
-          value: key.target
+          value: key.targetIdentifier
         )
       )
       attributes.append(
@@ -178,7 +178,7 @@ class AnalyticsPublisherService {
       featureName: key.variation.name,
       variationValue: key.variation.value,
       variationIdentifier: key.variation.identifier,
-      target: key.target.identifier
+      targetIdentifier: key.target.identifier
     )
   }
 
