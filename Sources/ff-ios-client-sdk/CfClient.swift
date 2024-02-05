@@ -524,13 +524,11 @@ public class CfClient {
             self.analyticsManager?.destroy()
             self.ready = false
             CfClient.sharedInstance.dispose()
+            
             CfClient.log.info("SDK shut down succesfully")
-
-            // Indicate success
             completion(.success)
         } else {
             CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
-            // Indicate failure with reason
             completion(.failure(reason: "SDK already destroyed or uninitialized."))
         }
     }
@@ -542,7 +540,6 @@ public class CfClient {
             case .success:
                 break
             case .failure(let reason):
-                // Log the failure reason or handle it as necessary
                 CfClient.log.warn("Failed to destroy SDK: \(reason)")
             }
         }
