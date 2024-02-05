@@ -33,11 +33,6 @@ public enum EventType: Equatable {
     case onEventListener
     case onPolling
   }
-    
-  enum DestructionResult {
-    case success
-    case failure(reason: String)
-  }
 
   var comparableType: ComparableType {
     switch self {
@@ -65,6 +60,11 @@ public class CfClient {
     case onlinePolling
     case offline
   }
+    
+    public enum DestructionResult {
+        case success
+        case failure(reason: String)
+    }
 
   internal init(
 
@@ -510,7 +510,7 @@ public class CfClient {
      
      Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
      */
-    public func destroy(completion: @escaping (DestructionResult) -> Void) {
+    public func destroy(completion: @escaping (_ result: DestructionResult) -> Void) {
         if self.configuration != nil {
             // Existing destruction logic...
             self.pollingEnabled = false
