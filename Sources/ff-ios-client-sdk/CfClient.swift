@@ -499,7 +499,7 @@ public class CfClient {
 	 After calling this method, the [intialize](x-source-tag://initialize) must be called again. It will also
 	 remove any registered event listeners.
 	*/
-  public func destroy() {
+  public func destroy(completion: @escaping () -> Void) {
     if self.configuration != nil {
 
       self.pollingEnabled = false
@@ -513,9 +513,13 @@ public class CfClient {
       self.analyticsManager?.destroy()
       self.ready = false
       CfClient.sharedInstance.dispose()
+      completion()
+
     } else {
 
       CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
+      completion()
+
     }
   }
 
