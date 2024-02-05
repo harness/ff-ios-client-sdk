@@ -508,7 +508,7 @@ public class CfClient {
      
      It is recommended to handle the completion to understand the outcome of the destruction process, especially for debugging and proper resource management.
      
-     Note: If the SDK is alre
+     Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
      */
     public func destroy(completion: @escaping (DestructionResult) -> Void) {
         if self.configuration != nil {
