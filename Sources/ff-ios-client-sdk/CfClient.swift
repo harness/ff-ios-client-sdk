@@ -43,6 +43,7 @@ public enum EventType: Equatable {
     case .onPolling: return .onPolling
     }
   }
+    
 
   static public func == (lhs: EventType, rhs: EventType) -> Bool {
     return lhs.comparableType.rawValue == rhs.comparableType.rawValue
@@ -59,6 +60,11 @@ public class CfClient {
     case onlinePolling
     case offline
   }
+    
+    public enum DestructionResult {
+        case success
+        case failure(reason: String)
+    }
 
   internal init(
 
@@ -494,30 +500,52 @@ public class CfClient {
     }
   }
 
-  /**
-	 Clears the occupied resources and shuts down the sdk.
-	 After calling this method, the [intialize](x-source-tag://initialize) must be called again. It will also
-	 remove any registered event listeners.
-	*/
-  public func destroy() {
-    if self.configuration != nil {
-
-      self.pollingEnabled = false
-      self.eventSourceManager.destroy()
-      self.setupFlowFor(.offline)
-      self.configuration.streamEnabled = false
-      self.isInitialized = false
-      self.lastEventId = nil
-      self.onPollingResultCallback = nil
-      self.featureRepository.defaultAPIManager = nil
-      self.analyticsManager?.destroy()
-      self.ready = false
-      CfClient.sharedInstance.dispose()
-    } else {
-
-      CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
+    /**
+     Clears the occupied resources and shuts down the SDK. This method performs necessary cleanup and resets various components.
+     After calling this method, the SDK is no longer functional until it is reinitialized with the [initialize](x-source-tag://initialize) method.
+     
+     The method accepts a completion handler that returns a `DestructionResult` enum. This enum indicates whether the destruction process was successful (`DestructionResult.success`) or failed (`DestructionResult.failure(reason: String)`), along with a reason for the failure.
+     
+     It is recommended to handle the completion to understand the outcome of the destruction process, especially for debugging and proper resource management.
+     
+     Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
+     */
+    public func destroy(completion: @escaping (_ result: DestructionResult) -> Void) {
+        if self.configuration != nil {
+            // Existing destruction logic...
+            self.pollingEnabled = false
+            self.eventSourceManager.destroy()
+            self.setupFlowFor(.offline)
+            self.configuration.streamEnabled = false
+            self.isInitialized = false
+            self.lastEventId = nil
+            self.onPollingResultCallback = nil
+            self.featureRepository.defaultAPIManager = nil
+            self.analyticsManager?.destroy()
+            self.ready = false
+            CfClient.sharedInstance.dispose()
+            
+            CfClient.log.info("SDK shut down succesfully")
+            completion(.success)
+        } else {
+            CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
+            completion(.failure(reason: "SDK already destroyed or uninitialized."))
+        }
     }
-  }
+    
+    
+    public func destroy() {
+        destroy { result in
+            switch result {
+            case .success:
+                break
+            case .failure(let reason):
+                CfClient.log.warn("Failed to destroy SDK: \(reason)")
+            }
+        }
+    }
+
+
 
   //MARK: - Private methods -
 
