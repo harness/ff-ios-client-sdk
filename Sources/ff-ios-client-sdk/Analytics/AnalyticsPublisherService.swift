@@ -6,6 +6,7 @@ class AnalyticsPublisherService {
   private let cluster: String
   private let environmentID: String
   private let config: CfConfiguration
+  private let metricsApi: MetricsAPI
 
   private static let CLIENT: String = "client"
   private static let SDK_TYPE: String = "SDK_TYPE"
@@ -19,13 +20,15 @@ class AnalyticsPublisherService {
 
     cluster: String,
     environmentID: String,
-    config: CfConfiguration
+    config: CfConfiguration,
+    metricsApi: MetricsAPI
 
   ) {
 
     self.config = config
     self.cluster = cluster
     self.environmentID = environmentID
+    self.metricsApi = metricsApi
   }
 
   func sendDataAndResetCache(cache: inout [String: AnalyticsWrapper]) {
@@ -42,7 +45,7 @@ class AnalyticsPublisherService {
 
         if !metricsData.isEmpty {
 
-          MetricsAPI.postMetrics(
+          metricsApi.postMetrics(
 
             environmentUUID: environmentID,
             cluster: cluster,

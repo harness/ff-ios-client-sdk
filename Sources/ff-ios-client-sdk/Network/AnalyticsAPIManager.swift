@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AnalyticsAPIManagerProtocol.swift
 //
 //
 //  Created by Milos Vasic on 22.6.21..
@@ -15,6 +15,7 @@ protocol AnalyticsAPIManagerProtocol {
     cluster: String,
     metrics: Metrics,
     apiResponseQueue: DispatchQueue,
+    metricsApi: MetricsAPI,
     completion: @escaping ((EmptyResponse?, CFError?) -> Void)
   )
 }
@@ -27,11 +28,12 @@ class AnalyticsAPIManager: AnalyticsAPIManagerProtocol {
     cluster: String,
     metrics: Metrics,
     apiResponseQueue: DispatchQueue,
+    metricsApi: MetricsAPI,
     completion: @escaping ((EmptyResponse?, CFError?) -> Void)
 
   ) {
 
-    MetricsAPI.postMetrics(
+    metricsApi.postMetrics(
 
       environmentUUID: environmentUUID,
       cluster: cluster,

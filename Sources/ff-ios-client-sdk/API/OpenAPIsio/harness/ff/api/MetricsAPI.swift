@@ -13,7 +13,7 @@ open class MetricsAPI {
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
-    open class func postMetrics(
+    open func postMetrics(
         
         environmentUUID: String,
         cluster: String,
@@ -47,7 +47,7 @@ open class MetricsAPI {
      - parameter metrics: Metrics data.
      - returns: RequestBuilder<EmptyResponse>
      */
-    open class func postMetricsRequestBuilder(
+    open func postMetricsRequestBuilder(
         
         environmentUUID: String,
         cluster: String,

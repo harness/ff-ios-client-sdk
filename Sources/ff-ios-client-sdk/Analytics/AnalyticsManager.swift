@@ -8,6 +8,7 @@ class AnalyticsManager: Destroyable {
   private let cluster: String
   private let authToken: String
   private let config: CfConfiguration
+  private let metricsApi: MetricsAPI
 
   private var ready: Bool
   private var timer: Timer?
@@ -19,7 +20,8 @@ class AnalyticsManager: Destroyable {
     cluster: String,
     authToken: String,
     config: CfConfiguration,
-    cache: inout [String: AnalyticsWrapper]
+    cache: inout [String: AnalyticsWrapper],
+    metricsApi: MetricsAPI = MetricsAPI()
 
   ) {
 
@@ -27,6 +29,7 @@ class AnalyticsManager: Destroyable {
     self.cluster = cluster
     self.authToken = authToken
     self.config = config
+    self.metricsApi = metricsApi
     self.cache = cache
     self.ready = true
 
@@ -41,7 +44,8 @@ class AnalyticsManager: Destroyable {
 
       cluster: self.cluster,
       environmentID: self.environmentID,
-      config: self.config
+      config: self.config,
+      metricsApi: self.metricsApi
     )
 
     analyticsPublisherService.sendDataAndResetCache(cache: &self.cache)
