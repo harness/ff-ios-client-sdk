@@ -8,7 +8,6 @@
 import Foundation
 
 import XCTest
-import SwiftConcurrentCollections
 
 @testable import ff_ios_client_sdk
 

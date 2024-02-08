@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftConcurrentCollections
 
 ///An enum with associated values,  representing possible event types.
 /// - `case` onOpen(`String`)
