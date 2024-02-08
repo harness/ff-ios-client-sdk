@@ -56,7 +56,7 @@ class AnalyticsManager: Destroyable {
         cacheSnapshot[key] = v
       }
     }
-    AnalyticsManager.log.info("Sending metrics")
+    AnalyticsManager.log.info("Sending \(cacheSnapshot.count) metrics")
     service.sendDataAndResetCache(cache: cacheSnapshot)
   }
 
