@@ -1,4 +1,5 @@
 import Foundation
+import SwiftConcurrentCollections
 
 class AnalyticsManager: Destroyable {
 
@@ -8,43 +9,55 @@ class AnalyticsManager: Destroyable {
   private let cluster: String
   private let authToken: String
   private let config: CfConfiguration
+  private let metricsApi: MetricsAPI
+  private let analyticsPublisherService: AnalyticsPublisherService
 
   private var ready: Bool
   private var timer: Timer?
-  private var cache: [String: AnalyticsWrapper]
+  private var cache: ConcurrentDictionary<String, AnalyticsWrapper>
 
   init(
-
     environmentID: String,
     cluster: String,
     authToken: String,
     config: CfConfiguration,
-    cache: inout [String: AnalyticsWrapper]
-
+    cache: inout ConcurrentDictionary<String, AnalyticsWrapper>,
+    metricsApi: MetricsAPI = MetricsAPI()
   ) {
 
     self.environmentID = environmentID
     self.cluster = cluster
     self.authToken = authToken
     self.config = config
+    self.metricsApi = metricsApi
     self.cache = cache
     self.ready = true
 
+    self.analyticsPublisherService = AnalyticsPublisherService(
+      cluster: self.cluster,
+      environmentID: self.environmentID,
+      config: self.config,
+      metricsApi: self.metricsApi
+    )
+
+    self.timer = Timer.scheduledTimer( withTimeInterval: TimeInterval(config.analyticsFrequency), repeats: true) { timer in
+      AnalyticsManager.send(self.analyticsPublisherService, self.cache);
+    }
+
+    AnalyticsManager.log.debug("Scheduled metrics timer")
     SdkCodes.info_metrics_thread_started()
   }
 
-  @objc func send() {
-
-    AnalyticsManager.log.info("Sending metrics")
-
-    let analyticsPublisherService = AnalyticsPublisherService(
-
-      cluster: self.cluster,
-      environmentID: self.environmentID,
-      config: self.config
-    )
-
-    analyticsPublisherService.sendDataAndResetCache(cache: &self.cache)
+  class func send(_ service: AnalyticsPublisherService, _ cache: ConcurrentDictionary<String, AnalyticsWrapper>) {
+    // Create a working snapshot of the cache so it doesn't get modified underneath us
+    var cacheSnapshot = [String: AnalyticsWrapper]()
+    for key in cache.keys {
+      if let v = cache.remove(key) {
+        cacheSnapshot[key] = v
+      }
+    }
+    AnalyticsManager.log.info("Sending \(cacheSnapshot.count) metrics")
+    service.sendDataAndResetCache(cache: cacheSnapshot)
   }
 
   func push(
@@ -78,33 +91,16 @@ class AnalyticsManager: Destroyable {
       AnalyticsManager.log.trace("Metrics data appended [1], \(variation.name) has count of: 1")
     } else {
 
-      wrapper?.count += 1
+      wrapper?.increment()
       if let w = wrapper {
 
         AnalyticsManager.log.trace(
-          "Metrics data appended [2], \(variation.name) has count of: \(w.count)")
+          "Metrics data appended [2], \(variation.name) has count of: \(w.count())")
       } else {
 
         AnalyticsManager.log.trace(
           "Metrics data appended [3], \(variation.name) has count of: ERROR")
       }
-    }
-
-    if self.timer == nil {
-
-      AnalyticsManager.log.debug("Scheduling metrics timer")
-
-      self.timer = Timer.scheduledTimer(
-
-        timeInterval: TimeInterval(config.analyticsFrequency),
-        target: self,
-        selector: #selector(send),
-        userInfo: nil,
-        repeats: true
-      )
-    } else {
-
-      AnalyticsManager.log.trace("Scheduling metrics timer SKIPPED")
     }
   }
 
@@ -114,7 +110,6 @@ class AnalyticsManager: Destroyable {
 
     ready = false
     self.timer?.invalidate()
-    self.timer = nil
   }
 
   private func getAnalyticsCacheKey(

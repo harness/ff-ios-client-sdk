@@ -64,7 +64,21 @@ class EventSourceManagerTest: XCTestCase {
     XCTAssertTrue(callbackCalled)
     XCTAssertEqual(id, resultID)
     XCTAssertEqual(event, resultEvent)
-    XCTAssertEqual(data, resultData)
+
+    do {
+      if let expectedJson = try JSONSerialization.jsonObject(with: Data(data.utf8), options: []) as? [String: Any],
+         let actualJson = try JSONSerialization.jsonObject(with: Data(resultData.utf8), options: []) as? [String: Any] {
+
+        XCTAssertEqual(expectedJson["version"] as? Int, actualJson["version"] as? Int)
+        XCTAssertEqual(expectedJson["event"] as? String, actualJson["event"] as? String)
+        XCTAssertEqual(expectedJson["identifier"] as? String, actualJson["identifier"] as? String)
+        XCTAssertEqual(expectedJson["domain"] as? String, actualJson["domain"] as? String)
+      } else {
+        XCTFail("JSONSerialization failed")
+      }
+    } catch let error as NSError {
+      XCTFail(error.description)
+    }
   }
 
   func testAddEventListenerFailure() {

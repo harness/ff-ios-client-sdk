@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftConcurrentCollections
 
 ///An enum with associated values,  representing possible event types.
 /// - `case` onOpen(`String`)
@@ -108,7 +109,7 @@ public class CfClient {
   private var ready: Bool = false
 
   private var analyticsManager: AnalyticsManager?
-  private var analyticsCache = [String: AnalyticsWrapper]()
+  private var analyticsCache = ConcurrentDictionary<String, AnalyticsWrapper>()
   private var lastPollTime: Date?
   private var minimumRefreshIntervalSecs = 60.0
   private var currentState = State.offline
