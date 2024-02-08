@@ -22,7 +22,7 @@ class EvalThread : Thread {
   }
 
   override func start() {
-    print("start thread: ", self.debugDescription)
+    print("start thread:", self.debugDescription)
     latch.enter()
     super.start()
   }
@@ -47,7 +47,17 @@ class EvalThread : Thread {
 
 class DummyMetricsApi : MetricsAPI {
   override func postMetrics(environmentUUID: String, cluster: String, metrics: Metrics, apiResponseQueue: DispatchQueue = OpenAPIClientAPI.apiResponseQueue, completion: @escaping ((EmptyResponse?, Error?) -> Void)) {
-    print("postMetrics called")
+
+    var counter = 0;
+
+    if let metrics = metrics.metricsData {
+      for m in metrics {
+        counter += m.count
+      }
+    }
+
+    print("postMetrics called: total=\(counter)")
+
   }
 }
 
