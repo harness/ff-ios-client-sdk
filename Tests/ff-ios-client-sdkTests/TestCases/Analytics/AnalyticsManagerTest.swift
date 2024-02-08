@@ -8,6 +8,7 @@
 import Foundation
 
 import XCTest
+import SwiftConcurrentCollections
 
 @testable import ff_ios_client_sdk
 
@@ -58,7 +59,7 @@ final class AnalyticsManagerTest: XCTestCase {
   func testConcurrentMetricsMapModifications() throws {
 
     let config = CfConfiguration.builder().build()
-    var cache = [String: AnalyticsWrapper]()
+    var cache = ConcurrentDictionary<String, AnalyticsWrapper>()
     let analyticsManager = AnalyticsManager(
       environmentID: "dummy",
       cluster: "dummy",

@@ -15,11 +15,16 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
+        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
+        .package(url: "https://github.com/peterprokop/SwiftConcurrentCollections.git", .branch("master"))
     ],
     targets: [
         .target(
             name: "ff-ios-client-sdk",
-            dependencies: [],
+            dependencies: [
+                .product(name: "Atomics", package: "swift-atomics"),
+                .product(name: "SwiftConcurrentCollections", package: "SwiftConcurrentCollections")
+            ],
 			path: "Sources/ff-ios-client-sdk"),
         .testTarget(
             name: "ff-ios-client-sdkTests",

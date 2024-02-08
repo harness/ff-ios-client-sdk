@@ -17,92 +17,85 @@ class AnalyticsPublisherService {
   private static let VARIATION_IDENTIFIER_ATTRIBUTE: String = "variationIdentifier"
 
   init(
-
     cluster: String,
     environmentID: String,
     config: CfConfiguration,
     metricsApi: MetricsAPI
-
   ) {
-
     self.config = config
     self.cluster = cluster
     self.environmentID = environmentID
     self.metricsApi = metricsApi
   }
 
-  func sendDataAndResetCache(cache: inout [String: AnalyticsWrapper]) {
-
-    if cache.isEmpty {
-
+  func sendDataAndResetCache(cache: [String: AnalyticsWrapper]) {
+    if cache.keys.isEmpty {
       AnalyticsPublisherService.log.trace("Metrics data cache size: empty")
-    } else {
+      return
+    }
 
-      AnalyticsPublisherService.log.trace("Metrics data cache size: \(cache.count)")
+    AnalyticsPublisherService.log.trace("Metrics data cache snapshot size: \(cache.keys.count)")
 
-      let metrics = prepareSummaryMetricsBody(cache: &cache)
-      if let metricsData = metrics.metricsData {
+    let metrics = prepareSummaryMetricsBody(cache: cache)
+    if let metricsData = metrics.metricsData {
 
-        if !metricsData.isEmpty {
+      if !metricsData.isEmpty {
 
-          metricsApi.postMetrics(
+        metricsApi.postMetrics(
 
-            environmentUUID: environmentID,
-            cluster: cluster,
-            metrics: metrics
+          environmentUUID: environmentID,
+          cluster: cluster,
+          metrics: metrics
 
-          ) { (response, error) in
+        ) { (response, error) in
 
-            var success = true
+          var success = true
 
-            if let errResp = error as? ErrorResponse {
-              switch errResp {
-              case .error(let statusCode, let data, let error):
-                if statusCode != 200 {
-                  let dataStr = data?.description ?? ""
-                  let errorStr = error?.localizedDescription ?? ""
-                  SdkCodes.warn_post_metrics_failed(
-                    "HTTP status=\(statusCode) data=\(dataStr) error=\(errorStr)")
-                  success = false
-                }
+          if let errResp = error as? ErrorResponse {
+            switch errResp {
+            case .error(let statusCode, let data, let error):
+              if statusCode != 200 {
+                let dataStr = data?.description ?? ""
+                let errorStr = error?.localizedDescription ?? ""
+                SdkCodes.warn_post_metrics_failed(
+                  "HTTP status=\(statusCode) data=\(dataStr) error=\(errorStr)")
+                success = false
               }
             }
-
-            if success {
-              AnalyticsPublisherService.log.trace("Metrics data: sending finished")
-            }
           }
-        } else {
 
-          AnalyticsPublisherService.log.trace("Metrics data: no metrics data to send")
+          if success {
+            AnalyticsPublisherService.log.trace("Metrics data: sending finished")
+          }
         }
+      } else {
 
-        cache.removeAll(keepingCapacity: true)
-        AnalyticsPublisherService.log.debug(
-          "Metrics data cache is cleaned up, size: \(cache.count)")
+        AnalyticsPublisherService.log.trace("Metrics data: no metrics data to send")
       }
     }
+
   }
 
-  private func prepareSummaryMetricsBody(cache: inout [String: AnalyticsWrapper]) -> Metrics {
+  private func prepareSummaryMetricsBody(cache: [String: AnalyticsWrapper]) -> Metrics {
 
     let data = [MetricsData]()
     let metrics = Metrics(metricsData: data)
     var summaryMetricsData = [SummaryMetrics: Int]()
 
-    for (key:_, value:value) in cache {
+    for value in cache.values {
 
       let summaryMetrics = prepareSummaryMetricsKey(key: value.analytics)
       let summaryCount = summaryMetricsData[summaryMetrics]
+      let count = value.count()
 
       if summaryCount == nil {
 
-        summaryMetricsData[summaryMetrics] = value.count
+        summaryMetricsData[summaryMetrics] = count
       } else {
 
-        if let count = summaryCount {
+        if let sc = summaryCount {
 
-          summaryMetricsData[summaryMetrics] = count + value.count
+          summaryMetricsData[summaryMetrics] = sc + count
         }
       }
     }
