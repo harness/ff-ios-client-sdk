@@ -1,5 +1,4 @@
 import Foundation
-import SwiftConcurrentCollections
 
 class AnalyticsManager: Destroyable {
 
