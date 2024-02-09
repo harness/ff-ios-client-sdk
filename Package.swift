@@ -15,13 +15,11 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/apple/swift-atomics.git", .upToNextMajor(from: "1.2.0")),
     ],
     targets: [
         .target(
             name: "ff-ios-client-sdk",
             dependencies: [
-                .product(name: "Atomics", package: "swift-atomics")
             ],
 			path: "Sources/ff-ios-client-sdk"),
         .testTarget(
