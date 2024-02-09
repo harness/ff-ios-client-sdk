@@ -1,22 +1,21 @@
 import Foundation
-import Atomics
 
 @objc public class AnalyticsWrapper : NSObject, Codable {
     
   public var analytics: Analytics
-  private var counter: ManagedAtomic<Int>
+  private var counter: AtomicInt
 
   init (analytics: Analytics, count: Int) {
       self.analytics = analytics
-      self.counter = ManagedAtomic<Int>(0)
+      self.counter = AtomicInt(0)
   }
 
   public func increment() {
-    counter.wrappingIncrement(ordering: .relaxed)
+    counter.increment()
   }
 
   public func count() -> Int {
-    return counter.load(ordering: .relaxed)
+    return counter.get()
   }
 
   private enum CodingKeys : String, CodingKey {
@@ -35,7 +34,7 @@ import Atomics
     let values = try decoder.container(keyedBy: CodingKeys.self)
     self.analytics = try values.decode(Analytics.self, forKey: .analytics)
     let c = try values.decode(Int.self, forKey: .counter)
-    self.counter = ManagedAtomic<Int>(c)
+    self.counter = AtomicInt(c)
   }
 
 }
