@@ -25,6 +25,8 @@ public enum EventType: Equatable {
   case onEventListener(Evaluation?)
   ///Returns  `[Evaluation]?` on initialization and after SSE has been established.
   case onPolling([Evaluation]?)
+  ///Returns  `String?` which is the identifier of the flag that has been deleted
+  case onDelete(String?)
 
   enum ComparableType: String {
     case onOpen
@@ -32,6 +34,7 @@ public enum EventType: Equatable {
     case onMessage
     case onEventListener
     case onPolling
+    case onDelete
   }
 
   var comparableType: ComparableType {
@@ -41,6 +44,7 @@ public enum EventType: Equatable {
     case .onMessage: return .onMessage
     case .onEventListener: return .onEventListener
     case .onPolling: return .onPolling
+    case .onDelete: return .onDelete
     }
   }
     
@@ -687,7 +691,6 @@ public class CfClient {
         }
         SdkCodes.warn_default_variation_served(key, target, "\(defaultValue)")
         let evaluation = Evaluation(flag: key, identifier: key, value: defaultValue)
-        self.pushToAnalyticsQueue(key: key, evaluation: evaluation)
         completion(evaluation)
 
       case .success(let evaluation):
@@ -940,8 +943,27 @@ public class CfClient {
                   })
               }
             } else if decoded.event == "delete" {
-              // TODO - delete flag from local cache on delete - FFM-8138
+                // Check if decoded.identifier (the flag ID) is available
+                if let flagIdToDelete = decoded.identifier, !flagIdToDelete.isEmpty {
+                    // Call deleteEvaluations to remove all evaluations associated with the flag ID from the cache
+                    self.featureRepository.deleteEvaluations(forFlagId: flagIdToDelete, target: self.target.identifier, onCompletion: { result in
+                        switch result {
+                        case .failure(let error):
+                            // Handle the error case, e.g., by logging or notifying a listener
+                            // TODO add this log message to the error that was passed
+                            CfClient.log.info("Failed to delete evaluations from cache after '\(flagIdToDelete) was deleted, reason: \(error)")
+                            onEvent(EventType.onDelete(nil), error)
+                        case .success():
+                            // Optionally, notify that the evaluations for the flag were successfully deleted.
+                            // This example uses nil to indicate successful deletion without specifying an evaluation,
+                            // but you should adjust this based on your event handling needs.
+                            CfClient.log.info("Deleted evaluations from cache because flag '\(flagIdToDelete)' was deleted")
+                            onEvent(EventType.onDelete(flagIdToDelete), nil)
+                        }
+                    })
+                }
             }
+
           }
 
         } catch {
