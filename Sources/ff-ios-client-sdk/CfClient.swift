@@ -943,21 +943,12 @@ public class CfClient {
                   })
               }
             } else if decoded.event == "delete" {
-                // Check if decoded.identifier (the flag ID) is available
                 if let flagIdToDelete = decoded.identifier, !flagIdToDelete.isEmpty {
-                    // Call deleteEvaluations to remove all evaluations associated with the flag ID from the cache
                     self.featureRepository.deleteEvaluations(forFlagId: flagIdToDelete, target: self.target.identifier, onCompletion: { result in
                         switch result {
                         case .failure(let error):
-                            // Handle the error case, e.g., by logging or notifying a listener
-                            // TODO add this log message to the error that was passed
-                            CfClient.log.info("Failed to delete evaluations from cache after '\(flagIdToDelete) was deleted, reason: \(error)")
                             onEvent(EventType.onDelete(nil), error)
                         case .success():
-                            // Optionally, notify that the evaluations for the flag were successfully deleted.
-                            // This example uses nil to indicate successful deletion without specifying an evaluation,
-                            // but you should adjust this based on your event handling needs.
-                            CfClient.log.info("Deleted evaluations from cache because flag '\(flagIdToDelete)' was deleted")
                             onEvent(EventType.onDelete(flagIdToDelete), nil)
                         }
                     })
