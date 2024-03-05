@@ -183,33 +183,26 @@ class FeatureRepository {
         let allKey = CfConstants.Persistance.features(self.config.environmentId, target).value
 
         do {
-            // Attempt to fetch the list of all evaluations from cache
-            if let allEvaluations: [Evaluation] = try self.storageSource.getValue(forKey: allKey) {
-                // Filter to find evaluations that match the flag ID to delete
-                let evaluationsToDelete = allEvaluations.filter { $0.flag == flagId }
+            
+            let key = CfConstants.Persistance.feature(self.config.environmentId, target, flagId)
+              .value
+            
+            // Remove the flag's evaluation from the cache
+            try self.storageSource.removeValue(forKey: key)
+            
+            // Also update the allEvaluations list by removing the deleted evaluations and save it back to cache
+            if var allEvaluations: [Evaluation] = try self.storageSource.getValue(forKey: allKey) {
+                allEvaluations.removeAll { $0.flag == flagId }
                 
-                // Iterate over these evaluations and remove each from the cache individually
-                for evaluation in evaluationsToDelete {
-                    let individualKey = CfConstants.Persistance.feature(self.config.environmentId, target, evaluation.identifier).value
-                    try self.storageSource.removeValue(forKey: individualKey)
-                }
-                
-                // Also update the allEvaluations list by removing the deleted evaluations and save it back to cache
-                let updatedEvaluations = allEvaluations.filter { $0.flag != flagId }
-                try self.storageSource.saveValue(updatedEvaluations, key: allKey)
-
-                FeatureRepository.logger.debug("Successfully deleted evaluations for flag '\(flagId)' from cache")
-                onCompletion(.success(()))
-            } else {
-                // A very unlikely, but possible, state: if no evaluations present then nothing to delete.
-                onCompletion(.success(()))
+                try self.storageSource.saveValue(allEvaluations, key: allKey)
             }
+            FeatureRepository.logger.debug("Deleted evaluations from cache because flag '\(flagId)' was deleted")
+            onCompletion(.success(()))
         } catch {
-            FeatureRepository.logger.warn("Failed to delete evaluations for flag |\(flagId)| from cache")
+            FeatureRepository.logger.warn("Flag |\(flagId)| was deleted, but failed to remove its evaluations from cache")
             onCompletion(.failure(CFError.storageError))
         }
     }
-
 
 
 
