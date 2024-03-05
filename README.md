@@ -170,6 +170,8 @@ class ViewController: UIViewController {
                     print("Event: SSE stream has been opened")
                   case .onMessage(let messageObj):
                     print(messageObj?.event ?? "Event: Message received")
+                  case .onDelete(let flagID):
+                    print("Flag was deleted:, \(flagID!)")
                 }
             }
           }

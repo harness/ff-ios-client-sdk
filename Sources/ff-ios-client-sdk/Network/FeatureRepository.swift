@@ -178,6 +178,33 @@ class FeatureRepository {
     }
 
   }
+    
+    func deleteEvaluations(forFlagId flagId: String, target: String, onCompletion: @escaping (Result<Void, CFError>) -> Void) {
+        let allKey = CfConstants.Persistance.features(self.config.environmentId, target).value
+
+        do {
+            
+            let key = CfConstants.Persistance.feature(self.config.environmentId, target, flagId)
+              .value
+            
+            // Remove the flag's evaluation from the cache
+            try self.storageSource.removeValue(forKey: key)
+            
+            // Also update the allEvaluations list by removing the deleted evaluations and save it back to cache
+            if var allEvaluations: [Evaluation] = try self.storageSource.getValue(forKey: allKey) {
+                allEvaluations.removeAll { $0.flag == flagId }
+                
+                try self.storageSource.saveValue(allEvaluations, key: allKey)
+            }
+            FeatureRepository.logger.debug("Deleted evaluations from cache because flag '\(flagId)' was deleted")
+            onCompletion(.success(()))
+        } catch {
+            FeatureRepository.logger.warn("Flag |\(flagId)| was deleted, but failed to remove its evaluations from cache")
+            onCompletion(.failure(CFError.storageError))
+        }
+    }
+
+
 
   private func updateAll(_ eval: Evaluation) {
     let allKey = CfConstants.Persistance.features(self.config.environmentId, self.target.identifier)
