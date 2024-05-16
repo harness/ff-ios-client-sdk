@@ -1,7 +1,7 @@
 Pod::Spec.new do |ff|
 
   ff.name         = "ff-ios-client-sdk"
-  ff.version      = "1.3.0"
+  ff.version      = "1.3.1"
   ff.summary      = "iOS SDK for Harness Feature Flags Management"
 
   ff.description  = <<-DESC
