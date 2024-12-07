@@ -1108,9 +1108,9 @@ extension String {
             // Allow fragments to handle the top-level string
             let jsonFragment = try JSONSerialization.jsonObject(with: firstData, options: .allowFragments)
             
-            // The result should be a string representing the inner JSON
+            // The result should be a string representing the inner json
             if let innerString = jsonFragment as? String {
-                // Step 2: Now parse the innerString as actual JSON
+                // Now parse the innerString as actual JSON
                 guard let secondData = innerString.data(using: .utf8) else {
                     return innerString
                 }
