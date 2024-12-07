@@ -465,7 +465,6 @@ public class CfClient {
             }
             
             // Open api generator is double escaping json strings.  This is a workaround, to manually double unescape them.
-            // 
             if let jsonString = evaluation.value.stringValue {
                 // Unescape the JSON string
                 let unescapedString = jsonString.doubleUnescapeJSONString()
