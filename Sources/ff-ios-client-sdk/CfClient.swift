@@ -1119,7 +1119,6 @@ extension String {
                 return String(data: cleanData, encoding: .utf8) ?? innerString
             }
         } catch {
-            print("JSON double unescaping error: \(error)")
             log.warn("JSON double unescaping error: \(error)")
         }
         
