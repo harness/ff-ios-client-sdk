@@ -467,7 +467,7 @@ public class CfClient {
             // Open api generator is double escaping json strings.  This is a workaround, to manually double unescape them.
             if let jsonString = evaluation.value.stringValue {
                 // Unescape the JSON string
-                let unescapedString = jsonString.doubleUnescapeJSONString()
+                let unescapedString = jsonString.doubleUnescapeJSONString(log: CfClient.log)
                 // Create a new Evaluation with the unescaped string
                 let parsedEvaluation = Evaluation(flag: evaluation.flag, identifier: evaluation.identifier, value: .string(unescapedString))
                 completion(parsedEvaluation)
@@ -509,7 +509,7 @@ public class CfClient {
                 // Defensive check: Ensure `stringValue` is valid
                 if let jsonString = eval.value.stringValue {
                     // Open api generator is double escaping json strings.  This is a workaround, to manually double unescape them.
-                    result = jsonString.doubleUnescapeJSONString()
+                    result = jsonString.doubleUnescapeJSONString(log: CfClient.log)
                 } else {
                     // Defensive check, string values are always returned from ff-server. But in case there has been an issue, log a warning and return the default.
                     CfClient.log.warn("Expected a JSON string for evaluation '\(evaluationId)', but received a non-string value. Returning default variation.")
@@ -1098,7 +1098,7 @@ public class CfClient {
 }
 
 extension String {
-    func doubleUnescapeJSONString() -> String {
+    func doubleUnescapeJSONString(log: any SdkLogger) -> String {
         // get as JSON fragment (a JSON-encoded string)
         guard let firstData = self.data(using: .utf8) else {
             return self
@@ -1120,6 +1120,7 @@ extension String {
             }
         } catch {
             print("JSON double unescaping error: \(error)")
+            log.warn("JSON double unescaping error: \(error)")
         }
         
         return self
