@@ -436,48 +436,101 @@ public class CfClient {
     return result
   }
 
-  /**
-	Fetch `[String:ValueType]` `Evaluation` from cache.
-	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
-	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
-	 - Note:
-	 `ValueType` can be one of the following:
-	   	- `ValueType.bool(Bool)`
-	   	- `ValueType.string(String)`
-	   	- `ValueType.int(Int)`
-	   	- `ValueType.object([String:ValueType])`
-	 - Parameters:
-	 	- evaluationId: ID of the `Evaluation` you want to fetch.
-	 	- target: The account name for which this `Evaluation` is evaluated.
-		- defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
-		- completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
-		- result: `Evaluation?`
-	*/
+ /**
+    Fetch `[String:ValueType]` `Evaluation` from cache.
+    Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+    If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
+     - Note:
+     `ValueType` can be one of the following:
+        - `ValueType.bool(Bool)`
+        - `ValueType.string(String)`
+        - `ValueType.int(Int)`
+        - `ValueType.object([String:ValueType])`
+     - Parameters:
+        - evaluationId: ID of the `Evaluation` you want to fetch.
+        - target: The account name for which this `Evaluation` is evaluated.
+        - defaultValue: Value to be returned if no such `Evaluation` exists in the cache.
+        - completion: Contains an optional `Evaluation`. `nil` is returned if no such value exists and no `defaultValue` was specified
+        - result: `Evaluation?`
+    */
   public func jsonVariation(
-    evaluationId: String, defaultValue: [String: ValueType]? = nil,
+    evaluationId: String,
+    defaultValue: [String: ValueType]? = nil,
     _ completion: @escaping (_ result: Evaluation?) -> Void
   ) {
-    self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue, completion)
+    self.fetchIfReady(evaluationId: evaluationId, defaultValue: defaultValue) { evaluation in
+      guard let evaluation = evaluation else {
+        completion(nil)
+        return
+      }
+
+      // Open api generator is double escaping json strings.  This is a workaround, to manually double unescape them.
+      if let jsonString = evaluation.value.stringValue {
+        // Unescape the JSON string
+        let unescapedString = jsonString.doubleUnescapeJSONString(log: CfClient.log)
+        // Create a new Evaluation with the unescaped string
+        let parsedEvaluation = Evaluation(
+          flag: evaluation.flag, 
+          identifier: evaluation.identifier, 
+          value: .string(unescapedString)
+        )
+        completion(parsedEvaluation)
+      }
+
+      // Defensive check, string values are always returned from ff-server. But in case there has been an issue, log a warning and return the default.
+      else {
+        // Log a warning for unexpected value type
+        CfClient.log.warn(
+          "Expected a JSON string for evaluation '\(evaluationId)', but received a non-string value. Returning default variation."
+        )
+        if let defaultValue = defaultValue {
+          let defaultEvaluation = Evaluation(
+            flag: evaluationId, 
+            identifier: evaluationId, 
+            value: .object(defaultValue)
+          )
+          completion(defaultEvaluation)
+        } else {
+          completion(nil)
+        }
+      }
+    }
   }
 
   /**
-	Fetch JSON flag from cache. This method returns a string value directly and does not require a closure. Also the JSON is returned as a string.
-	Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
-	If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
-	 - Parameters:
-	     - evaluationId: ID of the `Evaluation` you want to fetch.
-	    - defaultValue: Default JSON string to be returned if no such `Evaluation` exists in the cache.
-	    - result: JSON string
-	*/
+    Fetch JSON flag from cache. This method returns a string value directly and does not require a closure. Also the JSON is returned as a string.
+    Make sure to call [intialize](x-source-tag://initialize) prior to calling this method.
+    If called prior to calling [intialize](x-source-tag://initialize), `defaultValue` will be returned or `nil`, if `defaultValue` was not specified.
+     - Parameters:
+         - evaluationId: ID of the `Evaluation` you want to fetch.
+         - defaultValue: Default JSON string to be returned if no such `Evaluation` exists in the cache.
+         - result: JSON string
+    */
   public func jsonVariation(evaluationId: String, defaultValue: String) -> String {
     var result: String = defaultValue
     self.jsonVariation(
-      evaluationId: evaluationId, defaultValue: nil,
-      { (eval) in
-        result = eval?.value.stringValue ?? defaultValue
-      })
+      evaluationId: evaluationId, defaultValue: nil
+    ) { (eval) in
+      if let eval = eval {
+        // Defensive check: Ensure `stringValue` is valid
+        if let jsonString = eval.value.stringValue {
+          // Open api generator is double escaping json strings.  This is a workaround, to manually double unescape them.
+          result = jsonString.doubleUnescapeJSONString(log: CfClient.log)
+        } else {
+          // Defensive check, string values are always returned from ff-server. But in case there has been an issue, log a warning and return the default.
+          CfClient.log.warn(
+            "Expected a JSON string for evaluation '\(evaluationId)', but received a non-string value. Returning default variation."
+          )
+          result = defaultValue
+        }
+      } else {
+        // No evaluation returned, fallback to default
+        result = defaultValue
+      }
+    }
     return result
   }
+
 
   /**
     Ask the SDK to refresh all flags. This should only be used to prompt the SDK to refresh its cache when an app comes to the foreground
@@ -1050,4 +1103,34 @@ public class CfClient {
     self.analyticsManager = manager
     return manager
   }
+    
+}
+
+extension String {
+    func doubleUnescapeJSONString(log: any SdkLogger) -> String {
+        // get as JSON fragment (a JSON-encoded string)
+        guard let firstData = self.data(using: .utf8) else {
+            return self
+        }
+        
+        do {
+            // Allow fragments to handle the top-level string
+            let jsonFragment = try JSONSerialization.jsonObject(with: firstData, options: .allowFragments)
+            
+            // The result should be a string representing the inner json
+            if let innerString = jsonFragment as? String {
+                // Now parse the innerString as actual JSON
+                guard let secondData = innerString.data(using: .utf8) else {
+                    return innerString
+                }
+                let jsonObject = try JSONSerialization.jsonObject(with: secondData, options: [])
+                let cleanData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
+                return String(data: cleanData, encoding: .utf8) ?? innerString
+            }
+        } catch {
+            log.warn("JSON double unescaping error: \(error)")
+        }
+        
+        return self
+    }
 }
