@@ -27,7 +27,21 @@ class CfCacheTest: XCTestCase {
     XCTAssertTrue(type(of: sut) === CfCache.self)
   }
 
+
   //MARK: Writing Tests
+
+  func testWritingLotsOfDataDoesNotDeadlock() {
+    let tempCache = CfCache();
+
+    do {
+      for i in 0..<1000 {
+        let value: Evaluation = CacheMocks.createFlagMocks(count: 100, evalId: "eval\(i)").first!
+        try tempCache.saveValue(value, key: key)
+      }
+    } catch {}
+
+  }
+
   func testSaveValueSuccess() {
     // Given
     let value: Evaluation = CacheMocks.createFlagMocks(count: 1).first!

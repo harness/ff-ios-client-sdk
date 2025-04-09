@@ -50,7 +50,7 @@ struct CacheMocks {
 			}
 		}
 	}
-	static func createFlagMocks(_ type: ValueType? = nil, count: Int) -> [Evaluation]  {
+	static func createFlagMocks(_ type: ValueType? = nil, count: Int, evalId: String = "test") -> [Evaluation]  {
 		var mocks = [Evaluation]()
 		for _ in 0..<count  {
 			if let type = type {
@@ -63,11 +63,11 @@ struct CacheMocks {
 			} else {
 				let random = Int(arc4random_uniform(UInt32(TestFlagValue.RawValue.allCases.count)))
 				let randomValueType = TestFlagValue(TestFlagValue.RawValue(rawValue: random)!)
-                mocks.append(.init(flag: randomValueType.key, identifier: "test", value: randomValueType.value))
+                mocks.append(.init(flag: randomValueType.key, identifier: evalId, value: randomValueType.value))
 			}
 		}
-        return mocks
-    }
+    return mocks
+  }
 	
 	static func createEvalForStringType(_ string: String) -> Evaluation? {
 		switch string {

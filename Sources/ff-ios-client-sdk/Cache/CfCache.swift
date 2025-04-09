@@ -22,6 +22,9 @@ public final class CfCache: StorageRepositoryProtocol {
 
   ///In-memory cache
   var cache = [String: Any]()
+
+  private let diskWriteQueue = DispatchQueue(label: "DiskWriteQueue")
+
   public init() {
     let notificationCenter = NotificationCenter.default
     notificationCenter.addObserver(
@@ -77,8 +80,16 @@ public final class CfCache: StorageRepositoryProtocol {
     guard let url = makeURL(forFileNamed: name) else {
       throw CFError.cacheError(.invalidDirectory)
     }
-    let data = try! JSONEncoder().encode(feature)
-    try data.write(to: url, options: .atomic)
+
+    diskWriteQueue.async{
+        do {
+          let data = try! JSONEncoder().encode(feature)
+          try data.write(to: url, options: .atomic)
+        } catch {
+          CfCache.log.warn("ERROR: Failed to write to disk path: \(url.path)")
+        }
+
+    }
   }
 
   private func readFromDisk<Value: Codable>(
