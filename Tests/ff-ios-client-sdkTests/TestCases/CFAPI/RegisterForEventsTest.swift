@@ -134,6 +134,10 @@ class RegisterForEventsTest: XCTestCase {
           callbackCalled = true
           XCTAssertEqual(eventType.comparableType, EventType.ComparableType.onEventListener)
           exp.fulfill()
+        case .onDelete(_):
+          callbackCalled = true
+          XCTAssertEqual(eventType.comparableType, EventType.ComparableType.onEventListener)
+          exp.fulfill()
         }
       }
     }
