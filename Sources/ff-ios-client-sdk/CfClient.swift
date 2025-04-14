@@ -111,7 +111,6 @@ public class CfClient {
   ///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
   private var ready: Bool = false
     
-  ///Tracks if destroy() has successfully executed its cleanup logic.
   ///Used within destroy() to prevent redundant cleanup operations.
   private var isDestroyed: Bool = false
     
@@ -120,6 +119,7 @@ public class CfClient {
   private var lastPollTime: Date?
   private var minimumRefreshIntervalSecs = 60.0
   private var currentState = State.offline
+  private let lifecycleLock = NSLock()
 
   //MARK: - Internal properties -
 
@@ -185,6 +185,8 @@ public class CfClient {
     _ onCompletion: ((Swift.Result<Void, CFError>) -> Void)? = nil
 
   ) {
+    lifecycleLock.lock()
+        defer { lifecycleLock.unlock() }
     self.isDestroyed = false
     OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
     
@@ -556,6 +558,8 @@ public class CfClient {
      Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
      */
     public func destroy(completion: @escaping (_ result: DestructionResult) -> Void) {
+      lifecycleLock.lock()
+        defer { lifecycleLock.unlock() }
         if self.isDestroyed || self.configuration == nil {
             if self.isDestroyed {
                  CfClient.log.warn("destroy() called on already destroyed instance.")
@@ -564,7 +568,6 @@ public class CfClient {
                  CfClient.log.warn("destroy() called on uninitialized instance.")
                  completion(.failure(reason: "SDK uninitialized."))
             }
-            // Exit the function early
             return
         }
 
