@@ -137,25 +137,8 @@ public class CfClient {
   )
 
   //MARK: - Public properties -
-
-  struct Static {
-
-    fileprivate static var instance: CfClient?
-  }
-
-  public static var sharedInstance: CfClient {
-
-    if Static.instance == nil {
-
-      Static.instance = CfClient()
-    }
-    return Static.instance!
-  }
-
-  func dispose() {
-
-    CfClient.Static.instance = nil
-  }
+    
+  public static let sharedInstance = CfClient()
 
   ///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
   public var isInitialized: Bool = false
@@ -568,26 +551,25 @@ public class CfClient {
      Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
      */
     public func destroy(completion: @escaping (_ result: DestructionResult) -> Void) {
-        if self.configuration != nil {
-            // Existing destruction logic...
-            self.pollingEnabled = false
-            self.eventSourceManager.destroy()
-            self.setupFlowFor(.offline)
-            self.configuration.streamEnabled = false
-            self.isInitialized = false
-            self.lastEventId = nil
-            self.onPollingResultCallback = nil
-            self.featureRepository.defaultAPIManager = nil
-            self.analyticsManager?.destroy()
-            self.ready = false
-            CfClient.sharedInstance.dispose()
-            
-            CfClient.log.info("SDK shut down succesfully")
-            completion(.success)
-        } else {
-            CfClient.log.warn("destroy() already called. Please reinitialize the SDK.")
+        guard self.configuration != nil else {
+            CfClient.log.warn("destroy() called on already destroyed or uninitialized instance.")
             completion(.failure(reason: "SDK already destroyed or uninitialized."))
+            return
         }
+        
+        self.pollingEnabled = false
+        self.eventSourceManager.destroy()
+        self.setupFlowFor(.offline)
+        self.configuration.streamEnabled = false
+        self.isInitialized = false
+        self.lastEventId = nil
+        self.onPollingResultCallback = nil
+        self.featureRepository.defaultAPIManager = nil
+        self.analyticsManager?.destroy()
+        self.ready = false
+        
+        CfClient.log.info("SDK shut down succesfully")
+        completion(.success)
     }
     
     
