@@ -110,7 +110,11 @@ public class CfClient {
   ///Tracks the `ready` state of CfClient.
   ///Set to `false` on `destroy()` call and `true` on `initialize(apiKey:configuration:target:cache:onCompletion)` call.
   private var ready: Bool = false
-
+    
+  ///Tracks if destroy() has successfully executed its cleanup logic.
+  ///Used within destroy() to prevent redundant cleanup operations.
+  private var isDestroyed: Bool = false
+    
   private var analyticsManager: AnalyticsManager?
   private var analyticsCache = ConcurrentDictionary<String, AnalyticsWrapper>()
   private var lastPollTime: Date?
@@ -181,6 +185,7 @@ public class CfClient {
     _ onCompletion: ((Swift.Result<Void, CFError>) -> Void)? = nil
 
   ) {
+    self.isDestroyed = false
     OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
     
     if let factory = configuration.loggerFactory {
@@ -453,8 +458,8 @@ public class CfClient {
         let unescapedString = jsonString.doubleUnescapeJSONString(log: CfClient.log)
         // Create a new Evaluation with the unescaped string
         let parsedEvaluation = Evaluation(
-          flag: evaluation.flag, 
-          identifier: evaluation.identifier, 
+          flag: evaluation.flag,
+          identifier: evaluation.identifier,
           value: .string(unescapedString)
         )
         completion(parsedEvaluation)
@@ -468,8 +473,8 @@ public class CfClient {
         )
         if let defaultValue = defaultValue {
           let defaultEvaluation = Evaluation(
-            flag: evaluationId, 
-            identifier: evaluationId, 
+            flag: evaluationId,
+            identifier: evaluationId,
             value: .object(defaultValue)
           )
           completion(defaultEvaluation)
@@ -551,11 +556,18 @@ public class CfClient {
      Note: If the SDK is already destroyed or uninitialized, calling this method will result in a failure response.
      */
     public func destroy(completion: @escaping (_ result: DestructionResult) -> Void) {
-        guard self.configuration != nil else {
-            CfClient.log.warn("destroy() called on already destroyed or uninitialized instance.")
-            completion(.failure(reason: "SDK already destroyed or uninitialized."))
+        if self.isDestroyed || self.configuration == nil {
+            if self.isDestroyed {
+                 CfClient.log.warn("destroy() called on already destroyed instance.")
+                 completion(.failure(reason: "SDK already destroyed."))
+            } else { // If not destroyed, then configuration must have been nil
+                 CfClient.log.warn("destroy() called on uninitialized instance.")
+                 completion(.failure(reason: "SDK uninitialized."))
+            }
+            // Exit the function early
             return
         }
+
         
         self.pollingEnabled = false
         self.eventSourceManager.destroy()
@@ -568,6 +580,7 @@ public class CfClient {
         self.analyticsManager?.destroy()
         self.ready = false
         
+        self.isDestroyed = true
         CfClient.log.info("SDK shut down succesfully")
         completion(.success)
     }
