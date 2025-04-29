@@ -271,9 +271,11 @@ public class CfClient {
   ) {
     guard isInitialized else { return }
     self.clearEventsListener()
+
     let allKey = CfConstants.Persistance.features(
       self.configuration.environmentId, self.target.identifier
     ).value
+
     do {
       let initialEvaluations: [Evaluation]? = try self.featureRepository.storageSource.getValue(
         forKey: allKey)
@@ -281,10 +283,10 @@ public class CfClient {
     } catch {
       CfClient.log.warn("Could not fetch from cache")
     }
+
     if self.configuration.streamEnabled, let token = self.token {
 
       let parameterConfig = ParameterConfig(
-
         headers: [
           CFHTTPHeaderField.authorization.rawValue: "Bearer \(token)",
           CFHTTPHeaderField.apiKey.rawValue: self.apiKey,
@@ -294,12 +296,14 @@ public class CfClient {
         ],
         cluster: self.cluster!
       )
+
       self.eventSourceManager.configuration = self.configuration
       self.eventSourceManager.parameterConfig = parameterConfig
 
       if self.eventSourceManager.forceDisconnected {
         self.setupFlowFor(.onlinePolling)
       }
+
       startStream(events) { (startStreamResult) in
         switch startStreamResult {
         case .failure(let error):
@@ -308,6 +312,7 @@ public class CfClient {
           onCompletion(.success(eventType))
         }
       }
+
     } else {
       self.setupFlowFor(.onlinePolling)
     }
