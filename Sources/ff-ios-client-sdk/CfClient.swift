@@ -213,6 +213,7 @@ public class CfClient {
     OpenAPIClientAPI.eventPath = configuration.eventUrl
 
     let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
+
     self.authenticate(authRequest, cache: cache) { (response) in
 
       switch response {
@@ -630,8 +631,6 @@ public class CfClient {
         return
       }
 
-      SdkCodes.info_sdk_auth_ok()
-
       //Set storage to provided cache or CfCache by default
       self.storageSource = cache
 
@@ -670,14 +669,18 @@ public class CfClient {
       // Initial getEvaluations to be stored in cache
       self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
         guard let self = self else { return }
+
         let allKey = CfConstants.Persistance.features(
           self.configuration.environmentId, self.target.identifier
         ).value
+
         switch result {
         case .success(let evaluations):
           do {
             try self.storageSource?.saveValue(evaluations, key: allKey)
             self.lastPollTime = Date()
+
+            SdkCodes.info_sdk_auth_ok()
             onCompletion(.success(()))
           } catch {
             //If saving to cache fails, pass success for authorization and continue
