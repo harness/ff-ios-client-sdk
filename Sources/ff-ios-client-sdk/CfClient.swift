@@ -188,8 +188,12 @@ public class CfClient {
     lifecycleLock.lock()
         defer { lifecycleLock.unlock() }
     self.isDestroyed = false
-    OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
-    
+
+    if !configuration.failFastOnInit {
+      // Enable retries
+      OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
+    }
+
     if let factory = configuration.loggerFactory {
       SdkLog.setLoggerFactory(factory)
     } else if configuration.debug {

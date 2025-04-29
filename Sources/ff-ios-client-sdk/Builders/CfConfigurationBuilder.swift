@@ -119,7 +119,8 @@ public class CfConfigurationBuilder {
 
   /**
     When the initialize() function is called, any startup errors will be reported immediately in the completion handler, including (but not limited to):
-     * Get all evaluations will immediately return a failure instead of using the cache
+      * Get all evaluations will immediately return a failure instead of using the cache
+      * Disable retries when getting evaluations on init
 
      - Parameter failFastOnInit: true to enable. Set to `false` by default.
      */
