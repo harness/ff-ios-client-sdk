@@ -115,6 +115,29 @@ CfClient.sharedInstance.jsonVariation("your_evaluation_id", defaultValue: [Strin
 * `ValueType.object([String:ValueType])`
 
 
+## Setting Endpoint URLs
+
+The SDK defaults to SaaS for all network requests.  In order to use the [Harness Relay Proxy](https://developer.harness.io/docs/feature-flags/use-ff/relay-proxy/relay_proxy_v2/)  you must update the following URLs:
+
+| Method           | When to use                         |
+|------------------|-------------------------------------|
+| `setConfigUrl()` | Initialization and polling          |
+| `setEventUrl()`  | Sending analytics                   |
+| `setStreamUrl()` | Server-Sent Events (live streaming) |
+
+> **Important**  
+> The iOS SDK expects the **stream URL** to *always* include the trailing `/stream` path segment. Omitting it will prevent the client from connecting to SSE.
+
+### Example – Relay Proxy on `localhost`
+
+```swift
+let config = CfConfiguration.builder()
+    .setConfigUrl("http://localhost:8001")
+    .setEventUrl("http://localhost:8001")
+    .setStreamUrl("http://localhost:8001/stream") // <-- note the `/stream` suffix
+    .build()
+```
+
 ## Custom Loggers
 The SDK comes with a basic default logger that logs to info level via [os_log()](https://developer.apple.com/documentation/os/os_log). You can configure debug and trace logs to be shown as
 well by setting `setDebug(true)` on the configuration builder. However if you need more control over logs or have your own logging system you can integrate with that system by providing
