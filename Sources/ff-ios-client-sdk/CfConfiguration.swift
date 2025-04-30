@@ -23,6 +23,7 @@ public struct CfConfiguration {
   var tlsTrustedCAs: [String]
   var loggerFactory: SdkLoggerFactory?
   var debug: Bool
+  var failFastOnInit: Bool
 
   internal init(
 
@@ -35,8 +36,8 @@ public struct CfConfiguration {
     environmentId: String,
     tlsTrustedCAs: [String],
     loggerFactory: SdkLoggerFactory?,
-    debug: Bool
-
+    debug: Bool,
+    failFastOnInit: Bool = false
   ) {
 
     self.configUrl = configUrl
@@ -50,6 +51,7 @@ public struct CfConfiguration {
     self.tlsTrustedCAs = tlsTrustedCAs
     self.loggerFactory = loggerFactory
     self.debug = debug
+    self.failFastOnInit = failFastOnInit
   }
 
   public static func builder() -> CfConfigurationBuilder {

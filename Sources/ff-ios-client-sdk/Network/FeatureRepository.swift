@@ -60,18 +60,23 @@ class FeatureRepository {
         self.config.environmentId, self.target.identifier
       ).value
       switch result {
-      case .failure(_):
-        FeatureRepository.logger.warn("Failed getting ALL from CLOUD. Try CACHE/STORAGE")
-        do {
-          let evals: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
-          onCompletion(.success(evals ?? []))
-          FeatureRepository.logger.debug("SUCCESS: Got ALL from CACHE/STORAGE")
-        } catch {
-          FeatureRepository.logger.warn("FAILURE: Unable to get ALL from CACHE/STORAGE")
-          onCompletion(.failure(CFError.storageError))
+      case .failure(let error):
+        if config.failFastOnInit {
+          FeatureRepository.logger.warn("Failed getting all evaluations from cloud.")
+          onCompletion(.failure(error))
+        } else {
+          FeatureRepository.logger.warn("Failed getting all evaluations from CLOUD. Try CACHE/STORAGE")
+          do {
+            let evals: [Evaluation]? = try self.storageSource.getValue(forKey: allKey)
+            onCompletion(.success(evals ?? []))
+            FeatureRepository.logger.debug("SUCCESS: Got all evaluations from CACHE/STORAGE")
+          } catch {
+            FeatureRepository.logger.warn("FAILURE: Unable to get all evaluations from CACHE/STORAGE")
+            onCompletion(.failure(CFError.storageError))
+          }
         }
       case .success(let evaluations):
-        FeatureRepository.logger.debug("SUCCESS: Got ALL from CLOUD")
+        FeatureRepository.logger.debug("SUCCESS: Got all evaluations from CLOUD")
 
         for eval in evaluations {
           let key = CfConstants.Persistance.feature(

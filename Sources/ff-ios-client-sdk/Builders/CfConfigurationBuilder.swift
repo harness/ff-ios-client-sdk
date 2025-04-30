@@ -25,7 +25,8 @@ public class CfConfigurationBuilder {
       environmentId: "",
       tlsTrustedCAs: [],
       loggerFactory: nil,
-      debug: false
+      debug: false,
+      failFastOnInit: false
     )
   }
   /**
@@ -113,6 +114,18 @@ public class CfConfigurationBuilder {
      */
   public func setDebug(_ debug: Bool) -> CfConfigurationBuilder {
     config.debug = debug
+    return self
+  }
+
+  /**
+    When the initialize() function is called, any startup errors will be reported immediately in the completion handler, including (but not limited to):
+      * Get all evaluations will immediately return a failure instead of using the cache
+      * Disable retries when getting evaluations on init
+
+     - Parameter failFastOnInit: true to enable. Set to `false` by default.
+     */
+  public func setFailFastOnInit(_ failFastOnInit: Bool) -> CfConfigurationBuilder {
+    config.failFastOnInit = failFastOnInit
     return self
   }
 

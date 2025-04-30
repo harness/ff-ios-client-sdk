@@ -188,8 +188,12 @@ public class CfClient {
     lifecycleLock.lock()
         defer { lifecycleLock.unlock() }
     self.isDestroyed = false
-    OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
-    
+
+    if !configuration.failFastOnInit {
+      // Enable retries
+      OpenAPIClientAPI.requestBuilderFactory = RetryURLSessionRequestBuilderFactory()
+    }
+
     if let factory = configuration.loggerFactory {
       SdkLog.setLoggerFactory(factory)
     } else if configuration.debug {
@@ -209,6 +213,7 @@ public class CfClient {
     OpenAPIClientAPI.eventPath = configuration.eventUrl
 
     let authRequest = AuthenticationRequest(apiKey: apiKey, target: target)
+
     self.authenticate(authRequest, cache: cache) { (response) in
 
       switch response {
@@ -266,9 +271,11 @@ public class CfClient {
   ) {
     guard isInitialized else { return }
     self.clearEventsListener()
+
     let allKey = CfConstants.Persistance.features(
       self.configuration.environmentId, self.target.identifier
     ).value
+
     do {
       let initialEvaluations: [Evaluation]? = try self.featureRepository.storageSource.getValue(
         forKey: allKey)
@@ -276,10 +283,10 @@ public class CfClient {
     } catch {
       CfClient.log.warn("Could not fetch from cache")
     }
+
     if self.configuration.streamEnabled, let token = self.token {
 
       let parameterConfig = ParameterConfig(
-
         headers: [
           CFHTTPHeaderField.authorization.rawValue: "Bearer \(token)",
           CFHTTPHeaderField.apiKey.rawValue: self.apiKey,
@@ -289,12 +296,14 @@ public class CfClient {
         ],
         cluster: self.cluster!
       )
+
       self.eventSourceManager.configuration = self.configuration
       self.eventSourceManager.parameterConfig = parameterConfig
 
       if self.eventSourceManager.forceDisconnected {
         self.setupFlowFor(.onlinePolling)
       }
+
       startStream(events) { (startStreamResult) in
         switch startStreamResult {
         case .failure(let error):
@@ -303,6 +312,7 @@ public class CfClient {
           onCompletion(.success(eventType))
         }
       }
+
     } else {
       self.setupFlowFor(.onlinePolling)
     }
@@ -626,8 +636,6 @@ public class CfClient {
         return
       }
 
-      SdkCodes.info_sdk_auth_ok()
-
       //Set storage to provided cache or CfCache by default
       self.storageSource = cache
 
@@ -666,14 +674,18 @@ public class CfClient {
       // Initial getEvaluations to be stored in cache
       self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
         guard let self = self else { return }
+
         let allKey = CfConstants.Persistance.features(
           self.configuration.environmentId, self.target.identifier
         ).value
+
         switch result {
         case .success(let evaluations):
           do {
             try self.storageSource?.saveValue(evaluations, key: allKey)
             self.lastPollTime = Date()
+
+            SdkCodes.info_sdk_auth_ok()
             onCompletion(.success(()))
           } catch {
             //If saving to cache fails, pass success for authorization and continue
