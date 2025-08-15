@@ -109,9 +109,12 @@ class FeatureRepository {
           .value
         let evaluation: Evaluation? = try self.storageSource.getValue(forKey: key)
         onCompletion(.success(evaluation!))
-      } catch {
-        FeatureRepository.logger.warn("ERROR: \(error)")
+
+      } catch CfCacheError.fileDoesNotExist {
         onCompletion(.failure(CFError.noDataError))
+      } catch {
+        FeatureRepository.logger.warn("CACHE ERROR: \(error)")
+        onCompletion(.failure(CFError.error(error)))
       }
       return
     }

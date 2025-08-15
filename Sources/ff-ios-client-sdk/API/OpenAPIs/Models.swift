@@ -61,7 +61,8 @@ public enum CFError: Error {
 	case storageError // 105
 	case streamError(StreamError) //106
 	case cacheError(CfCacheError)
-	
+  case error(any Error)
+
 	public var errorData: ErrorData {
 		switch self {
 			case .authError(let errorResponse):
@@ -97,7 +98,11 @@ public enum CFError: Error {
 				var errorData = self.parseCacheError(cacheError)
 				errorData.title = "Caching Error"
 				return errorData
-		}
+
+
+      case .error(let error):
+      return ErrorData(localizedMessage: "Error: " + String(describing: error), underlyingError: nil, statusCode: nil, data: nil)
+      }
 	}
 	
 	private func parseErrorResponse(_ errorResponse: ErrorResponse?) -> ErrorData {
