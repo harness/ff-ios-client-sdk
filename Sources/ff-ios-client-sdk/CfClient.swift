@@ -747,6 +747,7 @@ public class CfClient {
       switch result {
       case .failure(let f):
         CfClient.log.warn("getEvaluationById failed \(f)")
+
         guard let defaultValue = defaultValue else {
 
           completion(nil)

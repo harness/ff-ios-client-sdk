@@ -51,6 +51,12 @@ public final class CfCache: StorageRepositoryProtocol {
         CfCache.log.trace("Fetched from DISK & updated CACHE for key: \(key)")
         cache[key] = val
         return val
+      } catch CFError.cacheError(let error) {
+        if error != .fileDoesNotExist {
+          CfCache.log.warn("CACHE ERROR: \(error)")
+        }
+
+        throw error
       } catch {
         CfCache.log.warn("ERROR: Failed to get value for key \(key): \(error)")
         throw error
@@ -99,7 +105,7 @@ public final class CfCache: StorageRepositoryProtocol {
       throw CFError.cacheError(.invalidDirectory)
     }
     guard fileManager.fileExists(atPath: url.path) else {
-      CfCache.log.warn("ERROR: Failed to read from disk path: \(url.path)")
+      CfCache.log.trace("WARN: Failed to read from disk path: \(url.path)")
       throw CFError.cacheError(.fileDoesNotExist)
     }
     do {
