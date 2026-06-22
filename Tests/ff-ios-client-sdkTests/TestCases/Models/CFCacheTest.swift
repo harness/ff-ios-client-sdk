@@ -176,6 +176,63 @@ class CfCacheTest: XCTestCase {
     XCTAssertThrowsError(try sut.removeValue(forKey: randomKey))
   }
 
+  //MARK: Concurrency Tests
+
+  func testConcurrentReadsDoNotCrash() {
+    let value: Evaluation = CacheMocks.createFlagMocks(count: 1).first!
+    try? sut.saveValue(value, key: key)
+
+    let expectation = XCTestExpectation(description: "concurrent reads complete")
+    expectation.expectedFulfillmentCount = 200
+
+    for _ in 0..<200 {
+      DispatchQueue.global().async {
+        let _: Evaluation? = try? self.sut.getValue(forKey: self.key)
+        expectation.fulfill()
+      }
+    }
+    wait(for: [expectation], timeout: 5)
+  }
+
+  func testConcurrentReadWriteDoNotCrash() {
+    let expectation = XCTestExpectation(description: "concurrent read-write complete")
+    expectation.expectedFulfillmentCount = 200
+
+    for i in 0..<100 {
+      let writeKey = "key\(i)"
+      DispatchQueue.global().async {
+        let value: Evaluation = CacheMocks.createFlagMocks(count: 1, evalId: "eval\(i)").first!
+        try? self.sut.saveValue(value, key: writeKey)
+        expectation.fulfill()
+      }
+      DispatchQueue.global().async {
+        let _: Evaluation? = try? self.sut.getValue(forKey: writeKey)
+        expectation.fulfill()
+      }
+    }
+    wait(for: [expectation], timeout: 5)
+  }
+
+  func testConcurrentWritesAllPersist() {
+    let group = DispatchGroup()
+    let count = 50
+
+    for i in 0..<count {
+      group.enter()
+      DispatchQueue.global().async {
+        let value: Evaluation = CacheMocks.createFlagMocks(count: 1, evalId: "eval\(i)").first!
+        try? self.sut.saveValue(value, key: "ckey\(i)")
+        group.leave()
+      }
+    }
+    group.wait()
+
+    for i in 0..<count {
+      let v: Evaluation? = try? sut.getValue(forKey: "ckey\(i)")
+      XCTAssertNotNil(v, "ckey\(i) should be present after concurrent writes")
+    }
+  }
+
   //MARK: Helpers
   func throwsErrorFunctionReadValue(key: String = String.random(length: 5)) throws {
     do {

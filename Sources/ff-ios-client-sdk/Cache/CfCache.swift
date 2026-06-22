@@ -23,6 +23,7 @@ public final class CfCache: StorageRepositoryProtocol {
   ///In-memory cache
   var cache = [String: Any]()
 
+  private let cacheQueue = DispatchQueue(label: "io.harness.ff.sdk.ios.CfCache", attributes: .concurrent)
   private let diskWriteQueue = DispatchQueue(label: "DiskWriteQueue")
 
   public init() {
@@ -33,7 +34,9 @@ public final class CfCache: StorageRepositoryProtocol {
   }
 
   public func saveValue<Value: Codable>(_ value: Value, key: String) throws {
-    cache[key] = value
+    cacheQueue.sync(flags: .barrier) {
+      cache[key] = value
+    }
     CfCache.log.trace("Saved to CACHE at key: \(key)")
     do {
       try saveToDisk(value, withName: key)
@@ -45,12 +48,24 @@ public final class CfCache: StorageRepositoryProtocol {
   }
 
   public func getValue<Value: Codable>(forKey key: String) throws -> Value? {
-    guard let entry = cache[key] else {
+    var entry: Any? = nil
+    cacheQueue.sync {
+      entry = cache[key]
+    }
+    guard let entry = entry else {
       do {
         let val: Value? = try readFromDisk(key)
-        CfCache.log.trace("Fetched from DISK & updated CACHE for key: \(key)")
-        cache[key] = val
-        return val
+        var result: Value? = nil
+        cacheQueue.sync(flags: .barrier) {
+          if cache[key] == nil {
+            cache[key] = val
+            result = val
+            CfCache.log.trace("Fetched from DISK & updated CACHE for key: \(key)")
+          } else {
+            result = cache[key] as? Value
+          }
+        }
+        return result
       } catch CFError.cacheError(let error) {
         if error != .fileDoesNotExist {
           CfCache.log.warn("CACHE ERROR: \(error)")
@@ -66,7 +81,9 @@ public final class CfCache: StorageRepositoryProtocol {
   }
 
   public func removeValue(forKey key: String) throws {
-    cache.removeValue(forKey: key)
+    cacheQueue.sync(flags: .barrier) {
+      cache.removeValue(forKey: key)
+    }
     do {
       try removeFromDisk(key)
     } catch {
@@ -77,7 +94,9 @@ public final class CfCache: StorageRepositoryProtocol {
   //MARK: - Private methods -
   //Called when the host app enters background in order to empty in-memory cache
   @objc func cleanupCache() {
-    cache = [:]
+    cacheQueue.sync(flags: .barrier) {
+      cache = [:]
+    }
   }
 
   private func saveToDisk<Value: Codable>(
