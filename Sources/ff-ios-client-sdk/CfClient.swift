@@ -144,8 +144,6 @@ public class CfClient {
     
   public static let sharedInstance = CfClient()
 
-  /// Factory used when re-creating the API manager after `destroy()` (FFM-13064).
-  /// Overridable in unit tests via `@testable import`.
   static var makeDefaultAPIManager: () -> DefaultAPIManagerProtocol = { DefaultAPIManager() }
 
   ///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
@@ -676,7 +674,6 @@ public class CfClient {
       self.featureRepository.config = self.configuration
       self.featureRepository.target = self.target
       self.featureRepository.cluster = self.cluster!
-      // destroy() nils the manager; recreate so re-initialize can fetch evaluations (FFM-13064)
       if self.featureRepository.defaultAPIManager == nil {
         self.featureRepository.defaultAPIManager = CfClient.makeDefaultAPIManager()
       }

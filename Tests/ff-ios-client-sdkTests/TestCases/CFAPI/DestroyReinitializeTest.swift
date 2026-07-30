@@ -2,8 +2,6 @@
 //  DestroyReinitializeTest.swift
 //  ff-ios-client-sdkTests
 //
-//  FFM-13064: initialize() after destroy() must fire its completion callback.
-//
 
 import XCTest
 
@@ -48,7 +46,6 @@ class DestroyReinitializeTest: XCTestCase {
   func testInitializeAfterDestroyCompletesSuccessfully() {
     let firstInit = XCTestExpectation(description: "first initialize succeeds")
     let destroyed = XCTestExpectation(description: "destroy succeeds")
-    // FFM-13064: without the fix this expectation times out (callback never fires).
     let secondInit = XCTestExpectation(description: "second initialize succeeds")
 
     let configuration = CfConfiguration.builder().setStreamEnabled(false).build()
