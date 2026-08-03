@@ -144,6 +144,8 @@ public class CfClient {
     
   public static let sharedInstance = CfClient()
 
+  static var makeDefaultAPIManager: () -> DefaultAPIManagerProtocol = { DefaultAPIManager() }
+
   ///This flag determines if the `authToken` has been received, indicating that the Authorization has been successful.
   public var isInitialized: Bool = false
 
@@ -188,6 +190,7 @@ public class CfClient {
     lifecycleLock.lock()
         defer { lifecycleLock.unlock() }
     self.isDestroyed = false
+    self.pollingEnabled = true
 
     if !configuration.failFastOnInit {
       // Enable retries
@@ -591,6 +594,7 @@ public class CfClient {
         self.onPollingResultCallback = nil
         self.featureRepository.defaultAPIManager = nil
         self.analyticsManager?.destroy()
+        self.analyticsManager = nil
         self.ready = false
         
         self.isDestroyed = true
@@ -670,6 +674,9 @@ public class CfClient {
       self.featureRepository.config = self.configuration
       self.featureRepository.target = self.target
       self.featureRepository.cluster = self.cluster!
+      if self.featureRepository.defaultAPIManager == nil {
+        self.featureRepository.defaultAPIManager = CfClient.makeDefaultAPIManager()
+      }
 
       // Initial getEvaluations to be stored in cache
       self.featureRepository.getEvaluations(onCompletion: { [weak self] (result) in
