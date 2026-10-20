@@ -229,7 +229,8 @@ class AuthenticationRequestTest: XCTestCase {
     // Then
     wait(for: [exp], timeout: 2)
     XCTAssertEqual(resultEval?.flag, eval.flag)
-    XCTAssertEqual(resultEval?.value, eval.value)
+    // jsonVariation returns the string form. Object values are stringified, then left unchanged when they are not double-escaped JSON.
+    XCTAssertEqual(resultEval?.value.stringValue, eval.value.stringValue)
   }
 
   func testGetEvaluationByIdFailureDefaultStringValue() {
@@ -322,8 +323,9 @@ class AuthenticationRequestTest: XCTestCase {
     var resultEval: Evaluation?
 
     // When
+    let defaultObject: [String: ValueType] = ["defaultObjKey": .bool(false)]
     cfClient.jsonVariation(
-      evaluationId: "randomObject", defaultValue: ["defaultObjKey": .bool(false)]
+      evaluationId: "randomObject", defaultValue: defaultObject
     ) { (evaluation) in
       resultEval = evaluation
       exp.fulfill()
@@ -332,7 +334,7 @@ class AuthenticationRequestTest: XCTestCase {
     // Then
     wait(for: [exp], timeout: 2)
     XCTAssertEqual(resultEval?.flag, "randomObject")
-    XCTAssertEqual(resultEval?.value.objectValue, ["defaultObjKey": .bool(false)])
+    XCTAssertEqual(resultEval?.value.stringValue, ValueType.object(defaultObject).stringValue)
   }
 
   func testGetEvaluationByIdFailureNilDefaultStringValue() {

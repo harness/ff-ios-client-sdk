@@ -248,6 +248,9 @@ class RegisterForEventsTest: XCTestCase {
     let newSharedInstance = CfClient.sharedInstance
     newSharedInstance.destroy()
 
-    XCTAssertNil(newSharedInstance.configuration)
+    // destroy() disables the client but keeps the configuration object.
+    XCTAssertFalse(newSharedInstance.configuration.streamEnabled)
+    XCTAssertFalse(newSharedInstance.isInitialized)
+    XCTAssertNil(newSharedInstance.onPollingResultCallback)
   }
 }
